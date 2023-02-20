@@ -43,7 +43,7 @@ class Marktplaats(AuctionExtractor):
             auction = {'auction_id': item['itemId'],
                        'description': f"{item['priceInfo']['priceType']}: "
                                       f"{item['priceInfo']['priceCents'] / 100:.2f}\n{item['description']}",
-                       'link': 'https://www.marktplaats.nl' + item['vipUrl'],
+                       'link': f"https://www.{self.DOMAIN}{item['vipUrl']}",
                        'image_link': image_link,
                        'title': item['title'],
                        'seller': item['sellerInformation']['sellerName'],
