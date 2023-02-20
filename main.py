@@ -1,16 +1,17 @@
 from functools import lru_cache
 from typing import Optional
 
-from rss import generate_rss_response
-from auction_extractors.delcampe import Delcampe
 from fastapi import FastAPI, Depends, Query
 from fastapi.responses import RedirectResponse
 from fastapi_rss import RSSResponse
 
 import config
+from auction_extractors.delcampe import Delcampe
 from auction_extractors.ebay import EbayApi, SiteId
 from auction_extractors.marktplaats import Marktplaats
+from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.todocoleccion import Todocoleccion
+from rss import generate_rss_response
 
 app = FastAPI(title='Auction to RSS')
 
@@ -39,6 +40,12 @@ async def ebay_rss(
 @app.get('/marktplaats', response_class=RSSResponse)
 async def marktplaats_rss(search_term: str, search_in_seller_name: Optional[bool] = False) -> RSSResponse:
     auction_extractor = Marktplaats(search_term=search_term, search_in_seller_name=search_in_seller_name)
+    return generate_rss_response(auction_extractor=auction_extractor)
+
+
+@app.get('/2dehands', response_class=RSSResponse)
+async def tweedehands_rss(search_term: str, search_in_seller_name: Optional[bool] = False) -> RSSResponse:
+    auction_extractor = TweedeHands(search_term=search_term, search_in_seller_name=search_in_seller_name)
     return generate_rss_response(auction_extractor=auction_extractor)
 
 

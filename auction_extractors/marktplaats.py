@@ -8,6 +8,8 @@ class Marktplaats(AuctionExtractor):
     search_in_seller_name: bool = False
     CURRENT_PAGE = 0
     LIMIT = 100
+    DOMAIN = 'marktplaats.nl'
+    SITE_DESC = 'Marktplaats'
 
     def search(self, ) -> AuctionSearchResponse:
         params = {
@@ -20,7 +22,8 @@ class Marktplaats(AuctionExtractor):
             'sortOrder': 'DECREASING',
             'viewOptions': 'list-view'
         }
-        api_endpoint = f'https://www.marktplaats.nl/lrp/api/search'
+
+        api_endpoint = f'https://www.{self.DOMAIN}/lrp/api/search'
         r = requests.get(api_endpoint, params=params)
         mp_items = r.json()['listings']
 
@@ -49,8 +52,8 @@ class Marktplaats(AuctionExtractor):
             auctions.append(Auction(**auction))
 
         return AuctionSearchResponse(
-            search_link=f'https://www.marktplaats.nl/q/{self.search_term}',
+            search_link=f'https://www.{self.DOMAIN}/q/{self.search_term}',
             search_term=self.search_term,
-            site_desc=f'Marktplaats',
+            site_desc=f'{self.SITE_DESC}',
             auctions=auctions
         )
