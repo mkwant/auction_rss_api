@@ -6,6 +6,9 @@ from bs4 import BeautifulSoup
 from auction_extractors.base import AuctionExtractor
 from models import AuctionSearchResponse, Auction
 
+# TODO Add if sold: <div class="soldOut__text">SOLD</div>
+# TODO Translate
+
 
 class BuyeeMercari(AuctionExtractor):
     search_term: str
