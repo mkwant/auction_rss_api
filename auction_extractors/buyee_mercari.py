@@ -49,7 +49,3 @@ class BuyeeMercari(AuctionExtractor):
                                      search_term=self.search_term,
                                      site_desc='Buyee (Mercari)',
                                      auctions=auctions)
-
-
-bm = BuyeeMercari(search_term='bowie')
-bm.search()
