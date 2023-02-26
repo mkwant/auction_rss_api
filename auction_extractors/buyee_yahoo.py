@@ -50,9 +50,3 @@ class BuyeeYahoo(AuctionExtractor):
                                      search_term=self.search_term,
                                      site_desc='Buyee (Yahoo)',
                                      auctions=auctions)
-
-
-if __name__ == '__main__':
-    bm = BuyeeYahoo(search_term='(デビッド・ボウイ bowie) -シャツ -dvd -cd-r -cdr')
-    result = bm.search()
-    print(result)
