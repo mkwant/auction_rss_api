@@ -69,7 +69,7 @@ async def buyee_mercari_rss(search_term: str) -> RSSResponse:
     return generate_rss_response(auction_extractor=auction_extractor)
 
 
-@app.get('/buyee_yahoo', response_class=RSSResponse)
+@app.get('/buyee_yahoo', response_class=RSSResponse, deprecated=True)
 async def buyee_yahoo_rss(search_term: str) -> RSSResponse:
     auction_extractor = BuyeeYahoo(search_term=search_term)
     return generate_rss_response(auction_extractor=auction_extractor)
