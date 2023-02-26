@@ -16,7 +16,10 @@ class BuyeeYahoo(AuctionExtractor):
 
     def search(self) -> AuctionSearchResponse:
         url = f'https://buyee.jp/item/search/query/{self.search_term}'
-        params = {'translationType': 1}
+        params = {'sort': 'end',
+                  'order': 'd',
+                  'conversionType': 'top_page_search',
+                  'new': 1}
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
         page = requests.get(url=url, params=params, headers=headers)
         soup = BeautifulSoup(page.content, 'html.parser')
