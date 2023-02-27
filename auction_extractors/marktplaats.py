@@ -56,7 +56,6 @@ class Marktplaats(AuctionExtractor):
                        'title': self.clean_control_chars(item['title']),
                        'seller': item['sellerInformation']['sellerName'],
                        'start_date': item['date']}
-            print(auction)
 
             auctions.append(Auction(**auction))
 
