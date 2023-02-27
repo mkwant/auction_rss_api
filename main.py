@@ -8,6 +8,7 @@ from fastapi_rss import RSSResponse
 import config
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_yahoo import BuyeeYahoo
+from auction_extractors.cdandlp import CdAndLp
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.ebay import EbayApi, SiteId
 from auction_extractors.marktplaats import Marktplaats
@@ -69,7 +70,13 @@ async def buyee_mercari_rss(search_term: str) -> RSSResponse:
     return generate_rss_response(auction_extractor=auction_extractor)
 
 
-@app.get('/buyee_yahoo', response_class=RSSResponse, deprecated=True)
+@app.get('/buyee_yahoo', response_class=RSSResponse)
 async def buyee_yahoo_rss(search_term: str) -> RSSResponse:
     auction_extractor = BuyeeYahoo(search_term=search_term)
+    return generate_rss_response(auction_extractor=auction_extractor)
+
+
+@app.get('/cdandlp', response_class=RSSResponse)
+async def cdandlp_rss(search_term: str) -> RSSResponse:
+    auction_extractor = CdAndLp(search_term=search_term)
     return generate_rss_response(auction_extractor=auction_extractor)

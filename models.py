@@ -9,7 +9,7 @@ class Auction(BaseModel):
     title: str
     auction_id: str
     description: str
-    link: HttpUrl
+    link: str
     image_link: Optional[str]
     seller: Optional[str]
     start_date: datetime
