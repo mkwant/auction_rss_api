@@ -29,38 +29,9 @@ async def docs_redirect():
     return RedirectResponse(url='/docs')
 
 
-@app.get('/ebay', response_class=RSSResponse)
-async def ebay_rss(
-        search_term: str,
-        site_id: SiteId = SiteId.EBAY_US,
-        ebay_app_id: str = Query(description='An Ebay app id. You can request one from https://developer.ebay.com'),
-        _settings: config.Settings = Depends(get_settings)
-) -> RSSResponse:
-    auction_extractor = EbayApi(search_term=search_term, appid=ebay_app_id, site_id=site_id.value)
-    return generate_rss_response(auction_extractor=auction_extractor)
-
-
-@app.get('/marktplaats', response_class=RSSResponse)
-async def marktplaats_rss(search_term: str, search_in_seller_name: Optional[bool] = False) -> RSSResponse:
-    auction_extractor = Marktplaats(search_term=search_term, search_in_seller_name=search_in_seller_name)
-    return generate_rss_response(auction_extractor=auction_extractor)
-
-
 @app.get('/2dehands', response_class=RSSResponse)
 async def tweedehands_rss(search_term: str, search_in_seller_name: Optional[bool] = False) -> RSSResponse:
     auction_extractor = TweedeHands(search_term=search_term, search_in_seller_name=search_in_seller_name)
-    return generate_rss_response(auction_extractor=auction_extractor)
-
-
-@app.get('/todocoleccion', response_class=RSSResponse)
-async def todocoleccion_rss(search_term: str) -> RSSResponse:
-    auction_extractor = Todocoleccion(search_term=search_term)
-    return generate_rss_response(auction_extractor=auction_extractor)
-
-
-@app.get('/delcampe', response_class=RSSResponse)
-async def delcampe_rss(search_term: str) -> RSSResponse:
-    auction_extractor = Delcampe(search_term=search_term)
     return generate_rss_response(auction_extractor=auction_extractor)
 
 
@@ -79,4 +50,33 @@ async def buyee_yahoo_rss(search_term: str) -> RSSResponse:
 @app.get('/cdandlp', response_class=RSSResponse)
 async def cdandlp_rss(search_term: str) -> RSSResponse:
     auction_extractor = CdAndLp(search_term=search_term)
+    return generate_rss_response(auction_extractor=auction_extractor)
+
+
+@app.get('/delcampe', response_class=RSSResponse)
+async def delcampe_rss(search_term: str) -> RSSResponse:
+    auction_extractor = Delcampe(search_term=search_term)
+    return generate_rss_response(auction_extractor=auction_extractor)
+
+
+@app.get('/ebay', response_class=RSSResponse)
+async def ebay_rss(
+        search_term: str,
+        site_id: SiteId = SiteId.EBAY_US,
+        ebay_app_id: str = Query(description='An Ebay app id. You can request one from https://developer.ebay.com'),
+        _settings: config.Settings = Depends(get_settings)
+) -> RSSResponse:
+    auction_extractor = EbayApi(search_term=search_term, appid=ebay_app_id, site_id=site_id.value)
+    return generate_rss_response(auction_extractor=auction_extractor)
+
+
+@app.get('/marktplaats', response_class=RSSResponse)
+async def marktplaats_rss(search_term: str, search_in_seller_name: Optional[bool] = False) -> RSSResponse:
+    auction_extractor = Marktplaats(search_term=search_term, search_in_seller_name=search_in_seller_name)
+    return generate_rss_response(auction_extractor=auction_extractor)
+
+
+@app.get('/todocoleccion', response_class=RSSResponse)
+async def todocoleccion_rss(search_term: str) -> RSSResponse:
+    auction_extractor = Todocoleccion(search_term=search_term)
     return generate_rss_response(auction_extractor=auction_extractor)
