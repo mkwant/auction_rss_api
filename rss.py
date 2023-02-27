@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
 
 from auction_extractors.base import AuctionExtractor
@@ -33,7 +35,9 @@ def generate_rss_response(auction_extractor: AuctionExtractor) -> RSSResponse:
         'language': 'en-us',
         'generator': 'Auction RSS api',
         'ttl': 40,
-        'item': items
+        'item': items,
+        'pub_date': datetime.now(),
+        'last_build_date': datetime.now()
     }
     feed = RSSFeed(**feed_data)
 
