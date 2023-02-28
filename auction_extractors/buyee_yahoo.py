@@ -28,7 +28,7 @@ class BuyeeYahoo(AuctionExtractor):
         auctions = []
 
         for auction in soup.findAll("div", {"class": "itemCard__item"}):
-            title = auction.find("div", {"class": "itemCard__itemName"}).get_text().strip()
+            title = auction.find("div", {"class": "itemCard__itemName"}).text.strip()
             _url_ext = auction.find("div", {"class": "itemCard__itemName"}).find("a")["href"].split('?')[0]
             link = f"https://buyee.jp{_url_ext}"
             auction_id = _url_ext.split('/')[-1]
@@ -37,7 +37,7 @@ class BuyeeYahoo(AuctionExtractor):
             _price_details = auction.find_all("div", {"class": "g-priceDetails"})
             _auction_price = ' '.join([x.get_text().split() for x in _price_details][0])
             _auction_days_left = auction.find("li", {"class": "itemCard__infoItem"}).find("span", {
-                "class": "g-text g-text--attention"}).get_text().encode('utf-8')
+                "class": "g-text g-text--attention"}).text
             description = f'<b>{_auction_price}<br><b>Time left:</b> {_auction_days_left}<br>'
 
             auctions.append(Auction(title=title,
@@ -51,8 +51,3 @@ class BuyeeYahoo(AuctionExtractor):
                                      search_term=self.search_term,
                                      site_desc='Buyee (Yahoo)',
                                      auctions=auctions)
-
-
-if __name__ == '__main__':
-    b = BuyeeYahoo(search_term='(デビッド・ボウイ bowie) -シャツ -dvd -cd')
-    b.search()
