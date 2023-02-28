@@ -34,8 +34,7 @@ class BuyeeYahoo(AuctionExtractor):
             auction_id = _url_ext.split('/')[-1]
             _image_thumb = auction.find("div", {"class": "g-thumbnail"}).findAll("img")[1]["data-src"]
             image_link = _image_thumb.replace('wing-auctions.c.yimg.jp/sim?furl=', '').split('&')[0]
-            _price_details = auction.find_all("div", {"class": "g-priceDetails"})
-            _auction_price = ' '.join([x.get_text().split() for x in _price_details][0])
+            _auction_price = auction.find_all("div", {"class": "g-priceDetails"})[0].get_text(separator=' ', strip=True)
             _auction_days_left = auction.find("li", {"class": "itemCard__infoItem"}).find("span", {
                 "class": "g-text g-text--attention"}).text
             description = f'<b>{_auction_price}<br><b>Time left:</b> {_auction_days_left}<br>'
@@ -51,3 +50,8 @@ class BuyeeYahoo(AuctionExtractor):
                                      search_term=self.search_term,
                                      site_desc='Buyee (Yahoo)',
                                      auctions=auctions)
+
+
+if __name__ == '__main__':
+    b = BuyeeYahoo(search_term='bowie')
+    b.search()
