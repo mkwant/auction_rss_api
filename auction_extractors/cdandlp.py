@@ -36,11 +36,8 @@ class CdAndLp(AuctionExtractor):
             link = auction.find('a')['href']
             auction_id = link.split('/')[-2]
 
-            try:
-                _artist, _, _item_title = auction.find('a', {'class': 'listingTitle textColor12 capitalize'}).contents
-                title = f'{_artist} - {_item_title}'
-            except ValueError:
-                title = auction.find('a', {'class': 'listingTitle textColor12 capitalize'}).text.strip()
+            title = auction.find('a', {'class': 'listingTitle textColor12 capitalize'}).get_text(separator=': ',
+                                                                                                 strip=True)
 
             image_link = auction.find('img')['data-src']
 
