@@ -1,11 +1,12 @@
 from functools import lru_cache
 from typing import Optional
+from typing_extensions import Annotated
 
 from fastapi import FastAPI, Depends, Query
 from fastapi.responses import RedirectResponse
 from fastapi_rss import RSSResponse
 
-import config
+from config import Settings
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_extractors.cdandlp import CdAndLp
@@ -21,7 +22,7 @@ app = FastAPI(title='Auction to RSS')
 
 @lru_cache
 def get_settings():
-    return config.Settings()
+    return Settings()
 
 
 @app.get('/', include_in_schema=False)
@@ -63,10 +64,9 @@ async def delcampe_rss(search_term: str) -> RSSResponse:
 async def ebay_rss(
         search_term: str,
         site_id: SiteId = SiteId.EBAY_US,
-        ebay_app_id: str = Query(description='An Ebay app id. You can request one from https://developer.ebay.com'),
-        _settings: config.Settings = Depends(get_settings)
+        settings: Settings = Depends(get_settings)
 ) -> RSSResponse:
-    auction_extractor = EbayApi(search_term=search_term, appid=ebay_app_id, site_id=site_id.value)
+    auction_extractor = EbayApi(search_term=search_term, appid=settings.ebay_app_id, site_id=site_id.value)
     return generate_rss_response(auction_extractor=auction_extractor)
 
 
