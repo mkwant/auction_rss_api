@@ -1,7 +1,8 @@
 from typing import List, Dict
 
 import requests
-import xmltodict as xmltodict
+import xmltodict
+from bs4 import BeautifulSoup
 
 from auction_extractors.base import AuctionExtractor
 from models import AuctionSearchResponse, Auction
@@ -39,14 +40,22 @@ class DiscogsWantlist(AuctionExtractor):
             }]
 
     def _get_wantlist(self) -> List[int]:
-
+        url = f'https://www.discogs.com/wantlist'
         params = {
             'page': 1,
-            'per_page': 100
+            'limit': 250,
+            'user': self.search_term
         }
-        r = requests.get(url=f'https://api.discogs.com/users/{self.search_term}/wants',
-                         headers=self.headers, params=params)
-        return [item['basic_information']['id'] for item in r.json()['wants']]
+        r = requests.get(url=url, params=params, headers=self.headers)
+        soup = BeautifulSoup(r.content, 'html.parser')
+        links = soup.findAll('span', {'class': 'marketplace_for_sale_count'})
+        result = []
+        for link in links:
+            link = link.find('a')['href']
+            link = link.split('?')[0].split('/')[-1]
+            result.append(link)
+
+        return result
 
     def search(self) -> AuctionSearchResponse:
         wantlist = self._get_wantlist()
@@ -68,7 +77,7 @@ class DiscogsWantlist(AuctionExtractor):
         all_offers = sorted(all_offers, key=lambda x: x.start_date, reverse=True)
 
         return AuctionSearchResponse(
-            search_link=f'https://api.discogs.com/users/{self.search_term}/wants',
+            search_link=f'https://www.discogs.com/wantlist?page=1&limit=250&user={self.search_term}',
             search_term=self.search_term,
             site_desc='Discogs wantlist',
             auctions=all_offers
