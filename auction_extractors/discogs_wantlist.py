@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 from auction_extractors.base import AuctionExtractor
 from models import AuctionSearchResponse, Auction
 
+# TODO scrape HTML marketplace page instead of using the xml version - get item image, shipping costs a.o.
+
 
 class DiscogsWantlist(AuctionExtractor):
     search_term: str
