@@ -6,6 +6,7 @@ from fastapi import FastAPI, Depends, Query
 from fastapi.responses import RedirectResponse
 from fastapi_rss import RSSResponse
 
+from auction_extractors.discogs_wantlist import DiscogsWantlist
 from config import Settings
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_yahoo import BuyeeYahoo
@@ -57,6 +58,12 @@ async def cdandlp_rss(search_term: str) -> RSSResponse:
 @app.get('/delcampe', response_class=RSSResponse)
 async def delcampe_rss(search_term: str) -> RSSResponse:
     auction_extractor = Delcampe(search_term=search_term)
+    return generate_rss_response(auction_extractor=auction_extractor)
+
+
+@app.get('/discogs_wantlist', response_class=RSSResponse)
+async def discogs_wantlist_rss(search_term: str) -> RSSResponse:
+    auction_extractor = DiscogsWantlist(search_term=search_term)
     return generate_rss_response(auction_extractor=auction_extractor)
 
 
