@@ -13,6 +13,7 @@ class DiscogsWantlist(AuctionExtractor):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:111.0) Gecko/20100101 Firefox/111.0'
     }
+    discogs_logo = 'https://st.discogs.com/0a84c7967109f1985415586f903c0f9e93e01e60/images/discogs-logo.svg'
 
     def _get_item_offers(self, item_id: int) -> List[Dict]:
         url = f"https://www.discogs.com/sell/release/{item_id}"
@@ -69,6 +70,7 @@ class DiscogsWantlist(AuctionExtractor):
                     Auction(title=offer['title'],
                             auction_id=offer['link'].split('/')[-1],
                             description=offer['text'],
+                            image_link=self.discogs_logo,
                             link=offer['link'],
                             seller=offer['text'].split(' - ')[1],
                             start_date=offer['updated']
