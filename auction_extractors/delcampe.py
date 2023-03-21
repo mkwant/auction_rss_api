@@ -24,7 +24,6 @@ class Delcampe(AuctionExtractor):
         return site_auctions
 
     def search(self) -> AuctionSearchResponse:
-
         auctions = []
 
         for auction in self._get_auctions():

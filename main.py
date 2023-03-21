@@ -1,21 +1,20 @@
 from functools import lru_cache
 from typing import Optional
-from typing_extensions import Annotated
 
-from fastapi import FastAPI, Depends, Query
+from fastapi import FastAPI, Depends
 from fastapi.responses import RedirectResponse
 from fastapi_rss import RSSResponse
 
-from auction_extractors.discogs_wantlist import DiscogsWantlist
-from config import Settings
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_extractors.cdandlp import CdAndLp
 from auction_extractors.delcampe import Delcampe
+from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.ebay import EbayApi, SiteId
 from auction_extractors.marktplaats import Marktplaats
-from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.todocoleccion import Todocoleccion
+from auction_extractors.tweedehands import TweedeHands
+from config import Settings
 from rss import generate_rss_response
 
 app = FastAPI(title='Auction to RSS')
