@@ -2,13 +2,11 @@ from datetime import datetime
 
 from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
 
-from auction_extractors.base import AuctionExtractor
+from models import AuctionSearchResponse
 
 
-def generate_rss_response(auction_extractor: AuctionExtractor) -> RSSResponse:
+def generate_rss_response(auction_search_response: AuctionSearchResponse) -> RSSResponse:
     """From an AuctionExtractor create an RSSResponse that can be used as a FastApi response."""
-
-    auction_search_response = auction_extractor.search()
 
     items = []
     for auction in auction_search_response.auctions:

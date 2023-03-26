@@ -10,3 +10,11 @@ class AuctionExtractor(BaseModel):
     @abstractmethod
     def search(self) -> AuctionSearchResponse:
         ...
+
+
+class AuctionExtractorAsync(BaseModel):
+    search_term: str
+
+    @abstractmethod
+    async def search(self) -> AuctionSearchResponse:
+        ...
