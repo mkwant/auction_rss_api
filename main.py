@@ -11,7 +11,7 @@ from auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_extractors.cdandlp import CdAndLp
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.discogs_wantlist import DiscogsWantlist
-from auction_extractors.discogs_wantlist_async import DiscogsWantlistAsync
+from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.ebay import EbayApi, SiteId
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.todocoleccion import Todocoleccion
@@ -67,15 +67,8 @@ def delcampe_rss(search_term: str) -> RSSResponse:
 
 
 @app.get('/discogs_wantlist', response_class=RSSResponse)
-def discogs_wantlist_rss(username: str) -> RSSResponse:
+async def discogs_wantlist_rss(username: str) -> RSSResponse:
     auction_extractor = DiscogsWantlist(search_term=username)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
-
-
-@app.get('/discogs_wantlist_async', response_class=RSSResponse)
-async def discogs_wantlist_async_rss(username: str) -> RSSResponse:
-    auction_extractor = DiscogsWantlistAsync(search_term=username)
     auction_search_response = await auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
 
