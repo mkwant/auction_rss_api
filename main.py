@@ -67,15 +67,15 @@ def delcampe_rss(search_term: str) -> RSSResponse:
 
 
 @app.get('/discogs_wantlist', response_class=RSSResponse)
-def discogs_wantlist_rss(search_term: str) -> RSSResponse:
-    auction_extractor = DiscogsWantlist(search_term=search_term)
+def discogs_wantlist_rss(username: str) -> RSSResponse:
+    auction_extractor = DiscogsWantlist(search_term=username)
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
 
 
 @app.get('/discogs_wantlist_async', response_class=RSSResponse)
-async def discogs_wantlist_async_rss(search_term: str) -> RSSResponse:
-    auction_extractor = DiscogsWantlistAsync(search_term=search_term)
+async def discogs_wantlist_async_rss(username: str) -> RSSResponse:
+    auction_extractor = DiscogsWantlistAsync(search_term=username)
     auction_search_response = await auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
 

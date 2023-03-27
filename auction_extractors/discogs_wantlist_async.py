@@ -22,16 +22,17 @@ class DiscogsWantlistAsync(AuctionExtractorAsync):
     }
     discogs_logo = 'https://st.discogs.com/0a84c7967109f1985415586f903c0f9e93e01e60/images/discogs-logo.svg'
 
-    async def _get_offer_page(self, item_id: int) -> str:
+    async def _get_offer_page(self, client, item_id: int) -> str:
         url = f"https://www.discogs.com/sell/release/{item_id}"
         params = {
             'ev': 'rb',
             'output': 'rss'}
 
-        response = httpx.get(url=url, params=params, headers=self.headers, follow_redirects=True)
+        response = await client.get(url=url, params=params)
         return response.text
 
-    async def _get_offers(self, offer_page) -> List[Dict[str, Any]]:
+    @staticmethod
+    async def _get_offers(offer_page) -> List[Dict[str, Any]]:
         """From an offer page in rss format, get the listed offers"""
         result = xmltodict.parse(offer_page)
         entries = result['feed'].get('entry')
@@ -51,7 +52,7 @@ class DiscogsWantlistAsync(AuctionExtractorAsync):
                 'text': item['summary']['#text']
             }]
 
-    async def _get_wantlist(self) -> List[int]:
+    async def _get_wantlist(self, client) -> List[int]:
         """Get a users wantlist in the form of a list of item id's."""
         url = f'https://www.discogs.com/wantlist'
         params = {
@@ -59,7 +60,7 @@ class DiscogsWantlistAsync(AuctionExtractorAsync):
             'limit': 250,
             'user': self.search_term
         }
-        r = httpx.get(url=url, params=params, follow_redirects=True)
+        r = await client.get(url=url, params=params)
         soup = BeautifulSoup(r.content, 'html.parser')
         links = soup.findAll('span', {'class': 'marketplace_for_sale_count'})
         result = []
@@ -71,9 +72,12 @@ class DiscogsWantlistAsync(AuctionExtractorAsync):
         return result
 
     async def search(self) -> AuctionSearchResponse:
-        wantlist = await self._get_wantlist()
-        offer_pages = await asyncio.gather(*[self._get_offer_page(item) for item in wantlist])
-        offers = await asyncio.gather(*[self._get_offers(offer_page) for offer_page in offer_pages])
+
+        async with httpx.AsyncClient(headers=self.headers, follow_redirects=True) as client:
+            wantlist = await self._get_wantlist(client)
+            offer_pages = await asyncio.gather(*[self._get_offer_page(client, item) for item in wantlist])
+            offers = await asyncio.gather(*[self._get_offers(offer_page) for offer_page in offer_pages])
+
         offers = itertools.chain(*offers)  # flatten list of lists
 
         rss_items = []
@@ -97,7 +101,6 @@ class DiscogsWantlistAsync(AuctionExtractorAsync):
             site_desc='Discogs wantlist',
             auctions=rss_items
         )
-
 
 # async def main():
 #     d = DiscogsWantlist(search_term='maartenkwant')
