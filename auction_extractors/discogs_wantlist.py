@@ -1,10 +1,8 @@
+import asyncio
 import itertools
-from pprint import pprint
 from typing import List, Dict, Any
 
 import httpx
-import asyncio
-# import requests
 import xmltodict
 from bs4 import BeautifulSoup
 

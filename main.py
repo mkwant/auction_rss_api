@@ -4,13 +4,11 @@ from typing import Optional
 from fastapi import FastAPI, Depends
 from fastapi.responses import RedirectResponse
 from fastapi_rss import RSSResponse
-import time
 
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_extractors.cdandlp import CdAndLp
 from auction_extractors.delcampe import Delcampe
-from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.ebay import EbayApi, SiteId
 from auction_extractors.marktplaats import Marktplaats
