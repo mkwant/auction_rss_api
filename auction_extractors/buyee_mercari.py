@@ -10,6 +10,7 @@ from requests.exceptions import HTTPError
 from auction_extractors.base import AuctionExtractorAsync
 from models import AuctionSearchResponse, Auction
 
+# TODO Change translate engine... (https://learn.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-translate ?) # noqa
 
 class BuyeeMercari(AuctionExtractorAsync):
     search_term: str
