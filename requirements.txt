@@ -4,7 +4,8 @@ ebaysdk==2.2.0
 fastapi==0.95.0
 fastapi_rss==0.2.0
 httpx==0.23.3
-pydantic==1.10.6
+pydantic==1.10.7
 python-dotenv==1.0.0
 requests==2.28.2
+translators==5.6.3
 xmltodict==0.13.0
