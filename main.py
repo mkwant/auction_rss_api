@@ -37,9 +37,9 @@ def tweedehands_rss(search_term: str, search_in_seller_name: Optional[bool] = Fa
 
 
 @app.get('/buyee_mercari', response_class=RSSResponse)
-def buyee_mercari_rss(search_term: str) -> RSSResponse:
-    auction_extractor = BuyeeMercari(search_term=search_term)
-    auction_search_response = auction_extractor.search()
+async def buyee_mercari_rss(search_term: str, translate_titles: bool = True) -> RSSResponse:
+    auction_extractor = BuyeeMercari(search_term=search_term, translate_titles=translate_titles)
+    auction_search_response = await auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
 
 
