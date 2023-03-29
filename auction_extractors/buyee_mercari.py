@@ -3,19 +3,19 @@ from datetime import datetime
 from typing import List
 
 import httpx
-import translators
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
 
 from auction_extractors.base import AuctionExtractorAsync
+from dependencies.translate import translate_text
 from models import AuctionSearchResponse, Auction
 
-
-# TODO Change translate engine... (https://learn.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-translate ?) # noqa
 
 class BuyeeMercari(AuctionExtractorAsync):
     search_term: str
     translate_titles = True
+    ms_translate_api_key: str
+    ms_translate_api_location: str
 
     async def _get_page(self, client: httpx.AsyncClient) -> httpx.Response:
         """Retrieve search page."""
@@ -57,18 +57,22 @@ class BuyeeMercari(AuctionExtractorAsync):
                 }))
         return auctions
 
-    @staticmethod
-    async def _translate_auction(auction: Auction,
+    async def _translate_auction(self,
+                                 client: httpx.AsyncClient,
+                                 auction: Auction,
                                  from_lang: str,
-                                 to_lang: str = 'en',
-                                 translator: str = 'bing') -> Auction:
+                                 to_lang: str = 'en') -> Auction:
         """Translate the auction title. Append the original title to the description."""
         original_title = auction.title
         try:
-            translated_title = translators.translate_text(query_text=auction.title,
-                                                          from_language=from_lang,
-                                                          to_language=to_lang,
-                                                          translator=translator)
+
+            translated_title = await translate_text(
+                client=client,
+                text=auction.title,
+                from_language=from_lang,
+                to_language=to_lang,
+                ms_translate_api_key=self.ms_translate_api_key,
+                ms_translate_api_location=self.ms_translate_api_location)
         except HTTPError:
             return auction
 
@@ -82,9 +86,11 @@ class BuyeeMercari(AuctionExtractorAsync):
             page = await self._get_page(client=client)
             auction_list = await self._parse_page(page=page.text)
 
-        if self.translate_titles:
-            auction_list = await asyncio.gather(
-                *[self._translate_auction(auction, from_lang='ja') for auction in auction_list])
+            if self.translate_titles:
+                auction_list = await asyncio.gather(
+                    *[self._translate_auction(client=client,
+                                              auction=auction,
+                                              from_lang='ja') for auction in auction_list])
 
         return AuctionSearchResponse(search_link=str(page.url),
                                      search_term=self.search_term,
