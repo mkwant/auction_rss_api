@@ -11,6 +11,7 @@ from auction_extractors.cdandlp import CdAndLp
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.ebay import EbayApi, SiteId
+from auction_extractors.juno import Juno
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.todocoleccion import Todocoleccion
 from auction_extractors.tweedehands import TweedeHands
@@ -83,6 +84,13 @@ def ebay_rss(
         settings: Settings = Depends(get_settings)
 ) -> RSSResponse:
     auction_extractor = EbayApi(search_term=search_term, appid=settings.ebay_app_id, site_id=site_id.value)
+    auction_search_response = auction_extractor.search()
+    return generate_rss_response(auction_search_response=auction_search_response)
+
+
+@app.get('/juno', response_class=RSSResponse)
+def juno_rss(search_term: str) -> RSSResponse:
+    auction_extractor = Juno(search_term=search_term)
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
 
