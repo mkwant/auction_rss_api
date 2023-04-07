@@ -4,7 +4,7 @@ from typing import List
 
 import httpx
 from bs4 import BeautifulSoup
-from requests.exceptions import HTTPError
+from httpx import HTTPError
 
 from auction_extractors.base import AuctionExtractorAsync
 from dependencies.translate import translate_text
