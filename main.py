@@ -50,7 +50,7 @@ async def buyee_mercari_rss(search_term: str,
     return generate_rss_response(auction_search_response=auction_search_response)
 
 
-@app.get('/buyee_yahoo_', response_class=RSSResponse)
+@app.get('/buyee__yahoo', response_class=RSSResponse)
 async def buyee_yahoo_rss(search_term: str,
                           translate_titles: bool = True,
                           settings: Settings = Depends(get_settings)) -> RSSResponse:
