@@ -64,7 +64,7 @@ def cdandlp_rss(search_term: str) -> RSSResponse:
     return generate_rss_response(auction_search_response=auction_search_response)
 
 
-@app.get('/delcampe', response_class=RSSResponse)
+@app.get('/delcampe_', response_class=RSSResponse)
 def delcampe_rss(search_term: str) -> RSSResponse:
     auction_extractor = Delcampe(search_term=search_term)
     auction_search_response = auction_extractor.search()
