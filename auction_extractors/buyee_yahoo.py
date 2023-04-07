@@ -98,5 +98,5 @@ class BuyeeYahoo(AuctionExtractorAsync):
 
         return AuctionSearchResponse(search_link=str(page.url),
                                      search_term=self.search_term,
-                                     site_desc='Buyee (Mercari)',
+                                     site_desc='Buyee (Yahoo)',
                                      auctions=auction_list)
