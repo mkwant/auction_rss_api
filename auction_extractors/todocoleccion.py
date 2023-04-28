@@ -26,7 +26,7 @@ class Todocoleccion(AuctionExtractor):
         auctions = []
 
         for auction in self._get_auctions(search_term=self.search_term):
-            image_link = auction.find('img')['data-src'].split('?')[0]
+            image_link = auction.find('img')['src'].split('?')[0]
 
             _item_info = auction.find('a', {'class': 'ga-track-click-in-lote_item-link js-lot-titles block'})
             title = _item_info.text.strip()
