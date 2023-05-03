@@ -15,6 +15,7 @@ from auction_extractors.juno import Juno
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.todocoleccion import Todocoleccion
 from auction_extractors.tweedehands import TweedeHands
+from auction_extractors.variaworld import Variaworld
 from config import Settings
 from rss import generate_rss_response
 
@@ -111,5 +112,12 @@ def marktplaats_rss(search_term: str, search_in_seller_name: Optional[bool] = Fa
 @app.get('/todocoleccion', response_class=RSSResponse)
 def todocoleccion_rss(search_term: str) -> RSSResponse:
     auction_extractor = Todocoleccion(search_term=search_term)
+    auction_search_response = auction_extractor.search()
+    return generate_rss_response(auction_search_response=auction_search_response)
+
+
+@app.get('/variaworld', response_class=RSSResponse)
+def variaworld_rss(search_term: str) -> RSSResponse:
+    auction_extractor = Variaworld(search_term=search_term)
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
