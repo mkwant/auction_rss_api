@@ -1,0 +1,17 @@
+# Spacefile Docs: https://go.deta.dev/docs/spacefile/v0
+v: 0
+micros:
+  - name: auction_rss_api
+    src: .
+    engine: python3.9
+    presets:
+      env:
+        - name: ebay_app_id
+          description: An Ebay app id. You can request one from https://developer.ebay.com
+        - name: ms_translate_api_key
+          description: A Microsoft translate api key
+        - name: ms_translate_api_location
+          description: A Microsoft translate api location
+    public_routes:
+      - "*"
+    run: uvicorn main:app
