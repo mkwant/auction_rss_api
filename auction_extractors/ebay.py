@@ -7,7 +7,7 @@ from ebaysdk.finding import Connection
 from models import Auction, AuctionSearchResponse
 
 
-class EbayApi(AuctionExtractor):
+class Ebay(AuctionExtractor):
     """A wrapper class around the Ebay api."""
     appid: str
     site_id: str
