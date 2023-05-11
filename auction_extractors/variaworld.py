@@ -45,8 +45,7 @@ class Variaworld(AuctionExtractor):
                                     ))
 
         return AuctionSearchResponse(
-            search_link=f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}&zoek_at=a&m_sr=lig&startpagina=1',
-            # noqa
+            search_link=f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}&zoek_at=a&m_sr=lig&startpagina=1',  # noqa
             search_term=self.search_term,
             site_desc=f'Variaworld',
             auctions=auctions
