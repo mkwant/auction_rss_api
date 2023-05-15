@@ -2,7 +2,8 @@ import re
 from datetime import datetime
 
 import requests
-from bs4 import BeautifulSoup, ResultSet
+from bs4 import BeautifulSoup
+from bs4.element import ResultSet
 
 from auction_extractors.base import AuctionExtractor
 from models import AuctionSearchResponse, Auction

@@ -2,7 +2,8 @@ from datetime import datetime
 
 import cloudscraper as cloudscraper
 from auction_extractors.base import AuctionExtractor
-from bs4 import BeautifulSoup, ResultSet
+from bs4 import BeautifulSoup
+from bs4.element import  ResultSet
 from models import AuctionSearchResponse, Auction
 
 
