@@ -12,8 +12,8 @@ class PleasuresOfPastTimes(AuctionExtractor):
     search_term: str
 
     def _get_auctions(self) -> ResultSet:
-        self.search_term_url = self.search_term.replace(' ', '-')
-        url = f'https://pleasuresofpasttimes.com/shop/product-category/memorabilia/{self.search_term_url}/?orderby=date'
+        self.search_term = self.search_term.replace(' ', '-')
+        url = f'https://pleasuresofpasttimes.com/shop/product-category/memorabilia/{self.search_term}/?orderby=date'
 
         r = requests.get(url=url)
         soup = BeautifulSoup(r.content, 'html.parser')
@@ -44,7 +44,7 @@ class PleasuresOfPastTimes(AuctionExtractor):
                                     ))
 
         return AuctionSearchResponse(
-            search_link=f'https://pleasuresofpasttimes.com/shop/product-category/memorabilia/{self.search_term_url}/?orderby=date',  # noqa
+            search_link=f'https://pleasuresofpasttimes.com/shop/product-category/memorabilia/{self.search_term}/?orderby=date',  # noqa
             search_term=self.search_term,
             site_desc=f'Pleasures Of Past Times',
             auctions=auctions
