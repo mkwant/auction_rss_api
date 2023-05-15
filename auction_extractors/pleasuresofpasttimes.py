@@ -34,7 +34,6 @@ class PleasuresOfPastTimes(AuctionExtractor):
             except AttributeError:
                 _price = '-'
             description = '\n'.join([_price, _desc])
-            print(auction_id)
 
             auctions.append(Auction(auction_id=auction_id,
                                     description=description,
