@@ -14,6 +14,7 @@ from auction_extractors.discords import Discords
 from auction_extractors.ebay import Ebay, SiteId
 from auction_extractors.juno import Juno
 from auction_extractors.marktplaats import Marktplaats
+from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_extractors.todocoleccion import Todocoleccion
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
@@ -113,6 +114,13 @@ def juno_rss(search_term: str) -> RSSResponse:
 @app.get('/marktplaats', response_class=RSSResponse)
 def marktplaats_rss(search_term: str, search_in_seller_name: Optional[bool] = False) -> RSSResponse:
     auction_extractor = Marktplaats(search_term=search_term, search_in_seller_name=search_in_seller_name)
+    auction_search_response = auction_extractor.search()
+    return generate_rss_response(auction_search_response=auction_search_response)
+
+
+@app.get('/pleasuresofpasttimes', response_class=RSSResponse)
+def pleasuresofpasttimes_rss(search_term: str) -> RSSResponse:
+    auction_extractor = PleasuresOfPastTimes(search_term=search_term)
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
 
