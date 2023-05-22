@@ -28,7 +28,7 @@ class TokyoMusicJapan(AuctionExtractor):
                 f"Cat no: {item['CatNb']}",
                 f"Disc: {item['Dsk']}",
                 f"Sleeve: {item['Slv']}",
-                f"Price: {item['Price']}"
+                f"Price: ${item['Price']:.2f}"
             ])
 
             auctions.append(Auction(auction_id=auction_id,
