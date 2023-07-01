@@ -39,8 +39,7 @@ class CdAndLp(AuctionExtractor):
 
             title = auction.find('a', {'class': 'listingTitle textColor12 capitalize'}).get_text(separator=': ',
                                                                                                  strip=True)
-
-            image_link = auction.find('img')['data-src']
+            image_link = auction.find('img').get('data-src')
 
             _seller = auction.find('div', {'class': 'one large-20 medium-20 columns listingSeller show-for-medium-up'})
             _seller_name = _seller.find('a').text
