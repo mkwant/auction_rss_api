@@ -30,10 +30,14 @@ class Discords(AuctionExtractor):
         for item in self._get_items():
             item_id = item.find('input', {'name': 'id'})['value']
             _product_info = item.find('a', {'class': 'product-item__title text--strong link'})
+            print(item)
             item_url = f"{self.SITE}{_product_info['href']}"
             title = _product_info.get_text().strip()
-            _inventory = item.find('span',
+            try:
+                _inventory = item.find('span',
                                    {'class': re.compile('product-item__inventory inventory.*')}).get_text().strip()
+            except AttributeError:
+                _inventory = ''
             _price = item.find('span', {'class': 'price'}).get_text(separator=' ', strip=True).split(' ')[1]
             description = '\n'.join([_price, _inventory])
             image_url = f"https:{item.find_all('img')[-1]['src']}"
