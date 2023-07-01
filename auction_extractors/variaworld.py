@@ -31,7 +31,10 @@ class Variaworld(AuctionExtractor):
             _item_name, _item_type = auction.find_all('div', {'class': 'tekst'})
             _item_name = _item_name.text.strip()
             _item_type = _item_type.text.strip()
-            _item_price = auction.find('span', {'class': 'div_kleur_prijs_1'}).text.strip()
+            try:
+                _item_price = auction.find('span', {'class': 'div_kleur_prijs_1'}).text.strip()
+            except AttributeError:
+                _item_price = auction.find('span', {'class': 'div_kleur_prijs_2'}).text.strip()
             title = f"{_artist_name} - '{_item_name}' ({_item_type})"
             description = '\n'.join([_artist_name, _item_name, _item_type, _item_price])
             start_date = auction.find('div', {'class', 'overzicht_datum_ingebracht'}).text.strip()
