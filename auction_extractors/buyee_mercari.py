@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List
 
 import httpx
+import json
 from bs4 import BeautifulSoup
 from httpx import HTTPError
 
@@ -19,8 +20,16 @@ class BuyeeMercari(AuctionExtractorAsync):
 
     async def _get_page(self, client: httpx.AsyncClient) -> httpx.Response:
         """Retrieve search page."""
-        url = 'https://buyee.jp/mercari/search'
-        params = {'keyword': self.search_term, 'status': 'all'}
+        # url = 'https://buyee.jp/mercari/search'
+        # params = {'keyword': self.search_term, 'status': 'all'}
+        url = 'https://asf.myeeglobal.com/mercari'
+        params = {'keyword': 'bowie',
+                  'status': 'all',
+                  'conversionType': 'Mercari_DirectSearch',
+                  'currencyCode': 'EUR',
+                  'myee': 0,
+                  'languageCode': 'en',
+                  'lang': 'en'}
         r = await client.get(url=url, params=params)
         return r
 
@@ -28,23 +37,23 @@ class BuyeeMercari(AuctionExtractorAsync):
     async def _parse_page(page: str) -> List[Auction]:
         """Parse search page."""
         soup = BeautifulSoup(page, 'html.parser')
+        json_string = soup.find('script', {'type': 'application/json'}).contents[0]
+        parsed_json = json.loads(json_string)
+        auction_list = parsed_json['props']['pageProps']['catalog']['entries']
 
-        auction_list = soup.find('ul', {'class': 'item-lists'})
-        auctions_source = auction_list.findAll('li', {'class': 'list'})
         auctions = []
 
-        for auction in auctions_source:
-            title = auction.find('h2', {'class': 'name'}).text
-            link = f"https://buyee.jp{auction.find('a')['href'].split('?')[0]}"
-            auction_id = link.split('/')[-1]
+        for auction in auction_list:
+            title = auction['names']['ja']
+            auction_id = auction['item']['code']
+            link = f"https://buyee.jp/mercari/item/{auction_id}"
             image_link = f"https://static.mercdn.net/item/detail/orig/photos/{auction_id}_1.jpg"
-            _price_yen = auction.find('p', {'class': 'price'}).text
-            _price_eur = auction.find('p', {'class': 'price-fx'}).text
-            _sold_out = auction.find('div', {'class': 'soldOut__text'})
-            if _sold_out:
-                description = f'{_sold_out.text} - {_price_yen} {_price_eur}'
+            _price_yen = f"{auction['price']['value']:,} yen"
+            _price_eur = f"€{auction['localPrice']['value']}"
+            if not auction['hasStock']:
+                description = f'SOLD - ({_price_yen}) {_price_eur}'
             else:
-                description = f'{_price_yen} {_price_eur}'
+                description = f'({_price_yen}) {_price_eur}'
 
             auctions.append(
                 Auction(**{
