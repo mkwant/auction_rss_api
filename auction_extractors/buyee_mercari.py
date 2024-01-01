@@ -49,7 +49,7 @@ class BuyeeMercari(AuctionExtractorAsync):
             link = f"https://buyee.jp/mercari/item/{auction_id}"
             image_link = f"https://static.mercdn.net/item/detail/orig/photos/{auction_id}_1.jpg"
             _price_yen = f"{auction['price']['value']:,} yen"
-            _price_eur = f"€{auction['localPrice']['value']}"
+            _price_eur = f"€{auction['localPrice']['value']:.2f}"
             if not auction['hasStock']:
                 description = f'SOLD - ({_price_yen}) {_price_eur}'
             else:
@@ -101,7 +101,9 @@ class BuyeeMercari(AuctionExtractorAsync):
                 auction_list = await asyncio.gather(
                     *[self._translate_auction(client=client,
                                               auction=auction,
-                                              from_lang='ja') for auction in auction_list])
+                                              from_lang='ja')
+                      for auction in auction_list
+                      ])
 
         return AuctionSearchResponse(search_link=str(page.url),
                                      search_term=self.search_term,
