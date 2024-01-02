@@ -82,9 +82,11 @@ class BuyeeMercari(AuctionExtractorAsync):
                 to_language=to_lang,
                 ms_translate_api_key=self.ms_translate_api_key,
                 ms_translate_api_location=self.ms_translate_api_location)
-        except HTTPError:
+        except HTTPError as e:
+            auction.__dict__.update({'description': f"{auction.description}\n\nTranslate failed: '{e}"})
             return auction
-        except ConnectionError:
+        except ConnectionError as e:
+            auction.__dict__.update({'description': f"{auction.description}\n\nTranslate failed: '{e}"})
             return auction
 
         auction.__dict__.update({'title': translated_title})
