@@ -51,9 +51,9 @@ class BuyeeMercari(AuctionExtractorAsync):
             _price_yen = f"{auction['price']['value']:,} yen"
             _price_eur = f"€{auction['localPrice']['value']:.2f}"
             if not auction['hasStock']:
-                description = f'SOLD - ({_price_yen}) {_price_eur}'
+                description = f'SOLD - {_price_yen} ({_price_eur})'
             else:
-                description = f'({_price_yen}) {_price_eur}'
+                description = f'{_price_yen} ({_price_eur})'
 
             auctions.append(
                 Auction(**{
