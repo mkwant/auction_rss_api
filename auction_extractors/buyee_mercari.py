@@ -20,8 +20,6 @@ class BuyeeMercari(AuctionExtractorAsync):
 
     async def _get_page(self, client: httpx.AsyncClient) -> httpx.Response:
         """Retrieve search page."""
-        # url = 'https://buyee.jp/mercari/search'
-        # params = {'keyword': self.search_term, 'status': 'all'}
         url = 'https://asf.myeeglobal.com/mercari'
         params = {'keyword': 'bowie',
                   'status': 'all',
