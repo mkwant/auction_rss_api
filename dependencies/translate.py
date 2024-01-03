@@ -29,6 +29,5 @@ async def translate_text(client: httpx.AsyncClient,
     try:
         result = r.json()[0]['translations'][0]['text']
     except Exception:
-        print(r.json())
-        raise ConnectionError(f'{r.json}')
+        raise ConnectionError(f'{r.json()}')
     return result
