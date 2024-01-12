@@ -18,6 +18,7 @@ from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_extractors.recordmecca import RecordMecca
 from auction_extractors.todocoleccion import Todocoleccion
 from auction_extractors.tokyomusicjapan import TokyoMusicJapan
+from auction_extractors.tracks import Tracks
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
 from config import Settings
@@ -144,6 +145,13 @@ def todocoleccion_rss(search_term: str) -> RSSResponse:
 @app.get('/tokyomusicjapan', response_class=RSSResponse)
 def tokyomusicjapan_rss(search_term: str) -> RSSResponse:
     auction_extractor = TokyoMusicJapan(search_term=search_term)
+    auction_search_response = auction_extractor.search()
+    return generate_rss_response(auction_search_response=auction_search_response)
+
+
+@app.get('/tracks', response_class=RSSResponse)
+def tracks_rss(search_term: str) -> RSSResponse:
+    auction_extractor = Tracks(search_term=search_term)
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
 
