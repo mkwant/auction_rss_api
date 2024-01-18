@@ -27,7 +27,7 @@ class BuyeeYahoo(AuctionExtractorAsync):
         params = {'sort': 'end',
                   'order': 'd',
                   'conversionType': 'top_page_search',
-                  'new': 1,
+                  # 'new': 1,
                   'translationType': 1}
 
         r = await client.get(url=url, params=params)
