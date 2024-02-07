@@ -57,7 +57,7 @@ async def buyee_mercari_rss(search_term: str,
     return generate_rss_response(auction_search_response=auction_search_response)
 
 
-@app.get('/buyee_rakuma', response_class=RSSResponse)
+@app.get('/buyee__rakuma', response_class=RSSResponse)
 def buyee_rakuma_rss(search_term: str) -> RSSResponse:
     auction_extractor = BuyeeRakuma(search_term=search_term)
     auction_search_response = auction_extractor.search()
