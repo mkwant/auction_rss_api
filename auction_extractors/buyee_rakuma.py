@@ -37,7 +37,7 @@ class BuyeeRakuma(AuctionExtractor):
             link = f'https://buyee.jp{_link}'
             auction_id = _link.split('/')[-1]
             _image_link = item.select_one('img')['data-bind'].replace('\n', ' ').split('\'')[1].replace('/s/', '/l/')
-            image_link = f"https{_image_link}"
+            image_link = f"https{_image_link.split('?')[0]}"
 
             auctions.append(Auction(auction_id=auction_id,
                                     description=description,
