@@ -6,6 +6,7 @@ from fastapi.responses import RedirectResponse
 from fastapi_rss import RSSResponse
 
 from auction_extractors.buyee_mercari import BuyeeMercari
+from auction_extractors.buyee_rakuma import BuyeeRakuma
 from auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_extractors.cdandlp import CdAndLp
 from auction_extractors.delcampe import Delcampe
@@ -53,6 +54,13 @@ async def buyee_mercari_rss(search_term: str,
                                      ms_translate_api_key=settings.ms_translate_api_key,
                                      ms_translate_api_location=settings.ms_translate_api_location)
     auction_search_response = await auction_extractor.search()
+    return generate_rss_response(auction_search_response=auction_search_response)
+
+
+@app.get('/buyee_rakuma', response_class=RSSResponse)
+def buyee_rakuma_rss(search_term: str) -> RSSResponse:
+    auction_extractor = BuyeeRakuma(search_term=search_term)
+    auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
 
 
