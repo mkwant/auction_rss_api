@@ -1,4 +1,4 @@
-name: Push to Space
+name: Push to Deta Space
 on:
   push:
     branches:
@@ -9,8 +9,9 @@ jobs:
   push-to-space:
     runs-on: "ubuntu-20.04"
     steps:
-      - uses: actions/checkout@v4
-      - name: Deta Space Deployment Github Action
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Deta Space Deployment
         uses: neobrains/space-deployment-github-action@v0.5
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
