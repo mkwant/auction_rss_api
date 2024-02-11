@@ -1,11 +1,15 @@
 name: Push to Space
-on: push
+on:
+  push:
+    branches:
+      - master
+
 
 jobs:
   push-to-space:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-20.04"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Deta Space Deployment Github Action
         uses: neobrains/space-deployment-github-action@v0.5
         with:
