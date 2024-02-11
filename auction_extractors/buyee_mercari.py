@@ -27,7 +27,8 @@ class BuyeeMercari(AuctionExtractorAsync):
                   'currencyCode': 'EUR',
                   'myee': 0,
                   'languageCode': 'en',
-                  'lang': 'en'}
+                  'lang': 'en'
+                  }
         r = await client.get(url=url, params=params)
         return r
 
