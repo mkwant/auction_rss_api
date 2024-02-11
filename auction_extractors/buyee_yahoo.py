@@ -44,8 +44,7 @@ class BuyeeYahoo(AuctionExtractorAsync):
             _url_ext = auction.find("div", {"class": "itemCard__itemName"}).find("a")["href"].split('?')[0]
             link = f"https://buyee.jp{_url_ext}"
             auction_id = _url_ext.split('/')[-1]
-            _image_thumb = auction.select_one('img.g-thumbnail__image')["data-src"]
-            image_link = _image_thumb.replace('wing-auctions.c.yimg.jp/sim?furl=', '').split('&')[0]
+            image_link = auction.select_one('img.g-thumbnail__image')["data-src"].split('?')[0]
             _auction_price = auction.find_all("div", {"class": "g-priceDetails"})[0].get_text(separator=' ', strip=True)
             _auction_days_left = auction.find("li", {"class": "itemCard__infoItem"}).find("span", {
                 "class": "g-text g-text--attention"}).text
