@@ -2,7 +2,7 @@ from functools import lru_cache
 from typing import Optional
 
 from fastapi import FastAPI, Depends
-from fastapi.responses import RedirectResponse
+from fastapi.responses import PlainTextResponse, RedirectResponse
 from fastapi_rss import RSSResponse
 
 from auction_extractors.buyee_mercari import BuyeeMercari
@@ -25,7 +25,7 @@ from auction_extractors.variaworld import Variaworld
 from config import Settings
 from rss import generate_rss_response
 
-app = FastAPI(title='Auction to RSS', version='1.1.0')
+app = FastAPI(title='Auction to RSS', version='1.2.0')
 
 
 @lru_cache
@@ -169,3 +169,9 @@ def variaworld_rss(search_term: str) -> RSSResponse:
     auction_extractor = Variaworld(search_term=search_term)
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
+
+
+@app.get(path='/robots.txt', response_class=PlainTextResponse)
+def robots():
+    data = """User-agent: *\nDisallow: /"""
+    return data
