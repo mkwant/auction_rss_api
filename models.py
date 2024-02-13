@@ -11,7 +11,7 @@ class Auction(BaseModel):
     description: str
     link: str
     image_link: Optional[str]
-    seller: Optional[str]
+    seller: Optional[str] = None
     start_date: datetime
 
 
