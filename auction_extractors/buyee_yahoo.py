@@ -39,15 +39,14 @@ class BuyeeYahoo(AuctionExtractorAsync):
 
         auctions = []
 
-        for auction in soup.findAll("div", {"class": "itemCard__item"}):
-            title = auction.find("div", {"class": "itemCard__itemName"}).text.strip()
-            _url_ext = auction.find("div", {"class": "itemCard__itemName"}).find("a")["href"].split('?')[0]
+        for auction in soup.select('div.itemCard__item'):
+            title = auction.select_one('div.itemCard__itemName').text.strip()
+            _url_ext = auction.select_one('div.itemCard__itemName>a')['href'].split('?')[0]
             link = f"https://buyee.jp{_url_ext}"
             auction_id = _url_ext.split('/')[-1]
-            image_link = auction.select_one('img.g-thumbnail__image')["data-src"].split('?')[0]
-            _auction_price = auction.find_all("div", {"class": "g-priceDetails"})[0].get_text(separator=' ', strip=True)
-            _auction_days_left = auction.find("li", {"class": "itemCard__infoItem"}).find("span", {
-                "class": "g-text g-text--attention"}).text
+            image_link = auction.select_one('img.g-thumbnail__image')['data-src'].split('?')[0]
+            _auction_price = auction.select('div.g-priceDetails')[0].get_text(separator=' ', strip=True)
+            _auction_days_left = auction.select_one('li.itemCard__infoItem>span.g-text--attention').text
             description = f'<b>{_auction_price}<br><b>Time left:</b> {_auction_days_left}<br>'
             seller = auction.select_one('span.auctionSearchResult__seller>a').text.strip()
 
