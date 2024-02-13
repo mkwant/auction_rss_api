@@ -12,7 +12,7 @@ from models import AuctionSearchResponse, Auction
 
 class Delcampe(AuctionExtractor):
     search_term: str
-    URL = 'https://www.delcampe.net/en_GB/collectables/search'
+    URL: str = 'https://www.delcampe.net/en_GB/collectables/search'
 
     def _get_auctions(self) -> ResultSet:
         params = {'term': self.search_term}

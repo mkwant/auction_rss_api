@@ -10,7 +10,7 @@ from models import AuctionSearchResponse, Auction
 
 class CdAndLp(AuctionExtractor):
     search_term: str
-    URL = 'https://www.cdandlp.com/en/search/'
+    URL: str = 'https://www.cdandlp.com/en/search/'
 
     @staticmethod
     def strike(text):

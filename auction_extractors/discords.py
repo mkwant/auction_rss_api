@@ -11,8 +11,8 @@ from models import AuctionSearchResponse, Auction
 
 class Discords(AuctionExtractor):
     search_term: str
-    SITE = 'https://discords.nl'
-    URL = f'{SITE}/collections/vendors'
+    SITE: str = 'https://discords.nl'
+    URL: str = f'{SITE}/collections/vendors'
 
     def _get_items(self) -> ResultSet:
         params = {'q': self.search_term,

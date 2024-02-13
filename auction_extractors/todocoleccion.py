@@ -9,7 +9,7 @@ from models import AuctionSearchResponse, Auction
 
 class Todocoleccion(AuctionExtractor):
     search_term: str
-    URL = 'https://en.todocoleccion.net/buscador'
+    URL: str = 'https://en.todocoleccion.net/buscador'
 
     def _get_auctions(self, search_term: str) -> ResultSet:
         params = {'from': 'top',

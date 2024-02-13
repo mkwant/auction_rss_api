@@ -12,10 +12,10 @@ from models import AuctionSearchResponse, Auction
 
 class DiscogsWantlist(AuctionExtractorAsync):
     search_term: str
-    headers = {
+    headers: dict = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:111.0) Gecko/20100101 Firefox/111.0'
     }
-    discogs_logo = \
+    discogs_logo: str = \
         'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Discogs_record_icon.svg/480px-Discogs_record_icon.svg.png'  # noqa
 
     @staticmethod
