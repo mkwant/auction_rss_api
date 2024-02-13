@@ -17,7 +17,7 @@ from models import AuctionSearchResponse, Auction
 
 class BuyeeYahoo(AuctionExtractorAsync):
     search_term: str
-    translate_titles = True
+    translate_titles: bool = True
     ms_translate_api_key: str
     ms_translate_api_location: str
 
