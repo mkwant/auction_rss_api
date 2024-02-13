@@ -64,7 +64,7 @@ def buyee_rakuma_rss(search_term: str) -> RSSResponse:
     return generate_rss_response(auction_search_response=auction_search_response)
 
 
-@app.get('/buyee__yahoo', response_class=RSSResponse)
+@app.get('/buyee_yahoo', response_class=RSSResponse)
 async def buyee_yahoo_rss(search_term: str,
                           translate_titles: bool = True,
                           settings: Settings = Depends(get_settings)) -> RSSResponse:
