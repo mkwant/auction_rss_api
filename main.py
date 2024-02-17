@@ -110,7 +110,13 @@ def ebay_rss(
         site_id: SiteId = SiteId.EBAY_US,
         settings: Settings = Depends(get_settings)
 ) -> RSSResponse:
-    auction_extractor = Ebay(search_term=search_term, appid=settings.ebay_app_id, site_id=site_id.value)
+    auction_extractor = Ebay(
+        search_term=search_term,
+        app_id=settings.ebay_app_id,
+        app_secret=settings.ebay_app_secret,
+        ru_name=settings.ebay_ru_name,
+        site_id=site_id.value
+    )
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
 

@@ -11,15 +11,17 @@ from models import Auction, AuctionSearchResponse
 
 class Ebay(AuctionExtractor):
     """A wrapper class around the Ebay api."""
-    appid: str
+    app_id: str
+    app_secret: str
+    ru_name: str
     site_id: str
     search_term: str
 
     @property
-    def _get_token(self) -> str:
+    def token(self) -> str:
         client = httpx.Client()
 
-        oauth_creds = base64.b64encode(f'{self.client_id}:{self.client_secret}'.encode())
+        oauth_creds = base64.b64encode(f'{self.app_id}:{self.app_secret}'.encode())
 
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -36,7 +38,7 @@ class Ebay(AuctionExtractor):
 
     def search(self) -> AuctionSearchResponse:
         auctions = []
-        country = self.site_id.split('_')[1]
+        country = self.site_id.split('-')[1]
 
         params = {
             'q': self.search_term,
@@ -91,7 +93,7 @@ class Ebay(AuctionExtractor):
             )
 
         return AuctionSearchResponse(
-            search_link=response.reply.itemSearchURL,
+            search_link='ebay.com',
             search_term=self.search_term,
             site_desc=f'Ebay: {self.site_id}',
             auctions=auctions
