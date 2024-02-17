@@ -1,9 +1,11 @@
+import base64
+from datetime import datetime
 from enum import Enum
 
-from auction_extractors.base import AuctionExtractor
-from ebaysdk.exception import ConnectionError
-from ebaysdk.finding import Connection
+import httpx
+import pytz
 
+from auction_extractors.base import AuctionExtractor
 from models import Auction, AuctionSearchResponse
 
 
@@ -14,53 +16,79 @@ class Ebay(AuctionExtractor):
     search_term: str
 
     @property
-    def connection(self) -> Connection:
-        """Connect to the Ebay api."""
-        try:
-            return Connection(appid=self.appid, siteid=self.site_id, config_file=None)
-        except ConnectionError as e:
-            print(e)
-            print(e.response.dict())
+    def _get_token(self) -> str:
+        client = httpx.Client()
+
+        oauth_creds = base64.b64encode(f'{self.client_id}:{self.client_secret}'.encode())
+
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': f'Basic {oauth_creds.decode()}'
+        }
+        payload = {
+            'grant_type': 'client_credentials',
+            'redirect_uri': self.ru_name,
+            'scope': 'https://api.ebay.com/oauth/api_scope'
+        }
+        url = 'https://api.ebay.com/identity/v1/oauth2/token'
+        r = client.post(url=url, headers=headers, data=payload)
+        return r.json()['access_token']
 
     def search(self) -> AuctionSearchResponse:
-        """Search Ebay for keywords."""
-        payload = {'keywords': f'{self.search_term}',
-                   'sortOrder': 'StartTimeNewest',
-                   'itemFilter':
-                       [
-                           {'name': 'HideDuplicateItems', 'value': True},
-                           {'name': 'ListedIn', 'value': self.site_id}
-                       ],
-                   'outputSelector':
-                       ['SellerInfo']
-                   }
-        response = self.connection.execute('findItemsAdvanced', payload)
-
         auctions = []
+        country = self.site_id.split('_')[1]
 
-        for item in response.reply.searchResult.item:
-            # noinspection PyProtectedMember
-            description = f'{item.sellingStatus.currentPrice._currencyId} ' \
-                          f'{float(item.sellingStatus.currentPrice.value):.2f}\nEnd Date: {item.listingInfo.endTime}'
-            if item.listingInfo.buyItNowAvailable == 'true':
-                # noinspection PyProtectedMember
-                description += f'\nBuy It Now for: {item.listingInfo.buyItNowPrice._currencyId} ' \
-                               f'{float(item.listingInfo.buyItNowPrice.value):.2f}'
-            seller = f'{item.sellerInfo.sellerUserName} ' \
-                     f'({item.sellerInfo.feedbackScore} / {item.sellerInfo.positiveFeedbackPercent}%)'
+        params = {
+            'q': self.search_term,
+            'sort': 'newlyListed',
+            'limit': 200,
+            'filter': f'buyingOptions:{{FIXED_PRICE|AUCTION|BEST_OFFER}},itemLocationCountry:{country}'
+        }
 
-            if item.galleryURL:
-                item.galleryURL = item.galleryURL.replace('/thumbs', '').replace('s-l140.jpg', 's-l1600.jpg')
-            else:
-                item.galleryURL = ''
+        headers = {
+            'Authorization': f'Bearer {self.token}',
+            'X-EBAY-C-MARKETPLACE-ID': self.site_id
+        }
+        endpoint = 'https://api.ebay.com/buy/browse/v1/item_summary/search'
 
-            auctions.append(Auction(auction_id=item.itemId,
-                                    description=description,
-                                    image_link=item.galleryURL,
-                                    link=item.viewItemURL,
-                                    title=item.title,
-                                    seller=seller,
-                                    start_date=item.listingInfo.startTime))
+        r = httpx.get(url=endpoint, headers=headers, params=params)
+
+        for item in r.json()['itemSummaries']:
+            auction_id = item['itemId'].split('|')[1]
+            title = item['title']
+            link = item['itemWebUrl'].split('?')[0]
+            try:
+                image_link = item['thumbnailImages'][0]['imageUrl']
+            except KeyError:
+                image_link = ''
+            start_date = datetime.fromisoformat(item['itemCreationDate'][:-1]).replace(
+                tzinfo=pytz.timezone('UTC')).astimezone(pytz.timezone('Europe/Amsterdam'))
+            seller = f"{item['seller']['username']} ({item['seller']['feedbackScore']} / " \
+                     f"{item['seller']['feedbackPercentage']}%)"
+
+            description = ''
+            if 'AUCTION' in item['buyingOptions']:
+                auction_price = f"{item['currentBidPrice']['currency']} {item['currentBidPrice']['value']} " \
+                                f"({item['bidCount']} bids)"
+                item_end_date = datetime.fromisoformat(item['itemEndDate'][:-1]).replace(
+                    tzinfo=pytz.timezone('UTC')).astimezone(pytz.timezone('Europe/Amsterdam'))
+                description += f"{auction_price}\nEnd Date: {item_end_date:%Y-%m-%d %H:%M:%S}\n"
+            if 'FIXED_PRICE' in item['buyingOptions']:
+                bin_price = f"{item['price']['currency']} {item['price']['value']}"
+                description += f'Buy It Now for: {bin_price}\n'
+            description = description.strip()
+
+            auctions.append(
+                Auction(
+                    auction_id=auction_id,
+                    description=description,
+                    image_link=image_link,
+                    link=link,
+                    title=title,
+                    seller=seller,
+                    start_date=start_date
+                )
+            )
 
         return AuctionSearchResponse(
             search_link=response.reply.itemSearchURL,
