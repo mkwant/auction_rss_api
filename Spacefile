@@ -8,6 +8,10 @@ micros:
       env:
         - name: ebay_app_id
           description: An Ebay app id. You can request one from https://developer.ebay.com
+        - name: ebay_app_secret
+          description: An Ebay app secret. You can request one from https://developer.ebay.com
+        - name: ebay_ru_name
+          description: An Ebay return url name. You can request one from https://developer.ebay.com
         - name: ms_translate_api_key
           description: A Microsoft translate api key
         - name: ms_translate_api_location
