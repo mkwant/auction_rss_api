@@ -42,7 +42,10 @@ class Ebay(AuctionExtractor):
 
     def search(self) -> AuctionSearchResponse:
         auctions = []
-        country = self.site_id.split('-')[1]
+
+        domain = site_id_meta[self.site_id]['domain']
+        search_link = f"{domain}/sch/i.html?_from=R40&_nkw={self.search_term}&_sacat=0&_sop=10"
+        country = site_id_meta[self.site_id]['country_code']
 
         params = {
             'q': self.search_term,
@@ -55,9 +58,9 @@ class Ebay(AuctionExtractor):
             'Authorization': f'Bearer {self.token}',
             'X-EBAY-C-MARKETPLACE-ID': self.site_id
         }
-        endpoint = 'https://api.ebay.com/buy/browse/v1/item_summary/search'
+        api_endpoint = 'https://api.ebay.com/buy/browse/v1/item_summary/search'
 
-        r = httpx.get(url=endpoint, headers=headers, params=params)
+        r = httpx.get(url=api_endpoint, headers=headers, params=params)
 
         for item in r.json()['itemSummaries']:
             auction_id = item['itemId'].split('|')[1]
@@ -84,6 +87,8 @@ class Ebay(AuctionExtractor):
                 description += f'Buy It Now for: {bin_price}\n'
             description = description.strip()
 
+
+
             auctions.append(
                 Auction(
                     auction_id=auction_id,
@@ -97,7 +102,7 @@ class Ebay(AuctionExtractor):
             )
 
         return AuctionSearchResponse(
-            search_link='ebay.com',
+            search_link=search_link,
             search_term=self.search_term,
             site_desc=f'Ebay: {self.site_id}',
             auctions=auctions
