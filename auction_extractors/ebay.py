@@ -87,8 +87,6 @@ class Ebay(AuctionExtractor):
                 description += f'Buy It Now for: {bin_price}\n'
             description = description.strip()
 
-
-
             auctions.append(
                 Auction(
                     auction_id=auction_id,
