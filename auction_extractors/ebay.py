@@ -8,10 +8,8 @@ import pytz
 from auction_extractors.base import AuctionExtractor
 from models import Auction, AuctionSearchResponse
 
-
-# TODO fix search_link.
-# TODO Use https://github.com/matecsaj/ebay_rest/blob/main/src/ebay_rest/references/marketplace_id_values.json ?
 # Todo change BE rss feed in Feedly to BENL
+
 
 class Ebay(AuctionExtractor):
     """A wrapper class around the Ebay api."""
