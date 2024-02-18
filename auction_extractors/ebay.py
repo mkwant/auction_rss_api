@@ -11,6 +11,7 @@ from models import Auction, AuctionSearchResponse
 
 # TODO fix search_link.
 # TODO Use https://github.com/matecsaj/ebay_rest/blob/main/src/ebay_rest/references/marketplace_id_values.json ?
+# Todo change BE rss feed in Feedly to BENL
 
 class Ebay(AuctionExtractor):
     """A wrapper class around the Ebay api."""
@@ -107,23 +108,49 @@ class SiteId(Enum):
     """The Ebay site id you want to use to search."""
     EBAY_AT = 'EBAY-AT'
     EBAY_AU = 'EBAY-AU'
+    EBAY_BEFR = 'EBAY-BEFR'
+    EBAY_BENL = 'EBAY-BENL'
+    EBAY_CAEN = 'EBAY-CAEN'
+    EBAY_CAFR = 'EBAY-CAFR'
     EBAY_CH = 'EBAY-CH'
     EBAY_DE = 'EBAY-DE'
-    EBAY_ENCA = 'EBAY-ENCA'
     EBAY_ES = 'EBAY-ES'
     EBAY_FR = 'EBAY-FR'
-    EBAY_FRBE = 'EBAY-FRBE'
-    EBAY_FRCA = 'EBAY-FRCA'
     EBAY_GB = 'EBAY-GB'
     EBAY_HK = 'EBAY-HK'
     EBAY_IE = 'EBAY-IE'
-    EBAY_IN = 'EBAY-IN'
     EBAY_IT = 'EBAY-IT'
     EBAY_MOTOR = 'EBAY-MOTOR'
     EBAY_MY = 'EBAY-MY'
     EBAY_NL = 'EBAY-NL'
-    EBAY_NLBE = 'EBAY-NLBE'
     EBAY_PH = 'EBAY-PH'
     EBAY_PL = 'EBAY-PL'
     EBAY_SG = 'EBAY-SG'
+    EBAY_TW = 'EBAY-TW'
     EBAY_US = 'EBAY-US'
+
+
+site_id_meta = {
+    'EBAY-AT': {'country_code': 'AT', 'domain': 'https://www.ebay.at'},
+    'EBAY-AU': {'country_code': 'AU', 'domain': 'https://www.ebay.com.au'},
+    'EBAY-BEFR': {'country_code': 'BE', 'domain': 'https://www.befr.ebay.be'},
+    'EBAY-BENL': {'country_code': 'BE', 'domain': 'https://www.benl.ebay.be'},
+    'EBAY-CAEN': {'country_code': 'CA', 'domain': 'https://www.ebay.ca'},
+    'EBAY-CAFR': {'country_code': 'CA', 'domain': 'https://www.cafr.ebay.ca'},
+    'EBAY-CH': {'country_code': 'CH', 'domain': 'https://www.ebay.ch'},
+    'EBAY-DE': {'country_code': 'DE', 'domain': 'https://www.ebay.de'},
+    'EBAY-ES': {'country_code': 'ES', 'domain': 'https://www.ebay.es'},
+    'EBAY-FR': {'country_code': 'FR', 'domain': 'https://www.ebay.fr'},
+    'EBAY-GB': {'country_code': 'GB', 'domain': 'https://www.ebay.co.uk'},
+    'EBAY-HK': {'country_code': 'HK', 'domain': 'https://www.ebay.com.hk'},
+    'EBAY-IE': {'country_code': 'IE', 'domain': 'https://www.ebay.ie'},
+    'EBAY-IT': {'country_code': 'IT', 'domain': 'https://www.ebay.it'},
+    'EBAY-MOTOR': {'country_code': 'US', 'domain': 'https://www.ebay.com/motors'},
+    'EBAY-MY': {'country_code': 'MY', 'domain': 'https://www.ebay.com.my'},
+    'EBAY-NL': {'country_code': 'NL', 'domain': 'https://www.ebay.nl'},
+    'EBAY-PH': {'country_code': 'PH', 'domain': 'https://www.ebay.ph'},
+    'EBAY-PL': {'country_code': 'PL', 'domain': 'https://www.ebay.pl'},
+    'EBAY-SG': {'country_code': 'SG', 'domain': 'https://www.ebay.com.sg'},
+    'EBAY-TW': {'country_code': 'TW', 'domain': 'https://www.ebay.com.tw'},
+    'EBAY-US': {'country_code': 'US', 'domain': 'https://www.ebay.com'},
+}
