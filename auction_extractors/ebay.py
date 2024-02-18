@@ -44,7 +44,7 @@ class Ebay(AuctionExtractor):
         auctions = []
 
         domain = site_id_meta[self.site_id]['domain']
-        search_link = f"{domain}/sch/i.html?_from=R40&_nkw={self.search_term}&_sacat=0&_sop=10"
+        search_link = f"{domain}/sch/i.html?_from=R40&_nkw={self.search_term}&_sacat=0&LH_PrefLoc=1&_sop=10"
         country = site_id_meta[self.site_id]['country_code']
 
         params = {
