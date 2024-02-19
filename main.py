@@ -25,7 +25,7 @@ from auction_extractors.variaworld import Variaworld
 from config import Settings
 from rss import generate_rss_response
 
-app = FastAPI(title='Auction to RSS', version='1.2.0')
+app = FastAPI(title='Auction to RSS', version='1.3.0')
 
 
 @lru_cache
