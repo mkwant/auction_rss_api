@@ -125,7 +125,6 @@ class SiteId(Enum):
     EBAY_PH = 'EBAY-PH'
     EBAY_PL = 'EBAY-PL'
     EBAY_SG = 'EBAY-SG'
-    EBAY_TW = 'EBAY-TW'
     EBAY_US = 'EBAY-US'
 
 
@@ -150,6 +149,5 @@ site_id_meta = {
     'EBAY-PH': {'country_code': 'PH', 'domain': 'https://www.ebay.ph'},
     'EBAY-PL': {'country_code': 'PL', 'domain': 'https://www.ebay.pl'},
     'EBAY-SG': {'country_code': 'SG', 'domain': 'https://www.ebay.com.sg'},
-    'EBAY-TW': {'country_code': 'TW', 'domain': 'https://www.ebay.com.tw'},
     'EBAY-US': {'country_code': 'US', 'domain': 'https://www.ebay.com'},
 }
