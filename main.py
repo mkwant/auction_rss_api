@@ -108,6 +108,7 @@ def discords_rss(search_term: str) -> RSSResponse:
 def ebay_rss(
         search_term: str,
         site_id: SiteId = SiteId.EBAY_US,
+        only_locally_listed_items: bool = True,
         settings: Settings = Depends(get_settings)
 ) -> RSSResponse:
     auction_extractor = Ebay(
@@ -115,7 +116,8 @@ def ebay_rss(
         app_id=settings.ebay_app_id,
         app_secret=settings.ebay_app_secret,
         ru_name=settings.ebay_ru_name,
-        site_id=site_id.value
+        site_id=site_id.value,
+        only_locally_listed_items=only_locally_listed_items
     )
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)

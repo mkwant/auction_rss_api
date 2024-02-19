@@ -16,6 +16,7 @@ class Ebay(AuctionExtractor):
     ru_name: str
     site_id: str
     search_term: str
+    only_locally_listed_items: bool = True
 
     @property
     def token(self) -> str:
@@ -40,14 +41,23 @@ class Ebay(AuctionExtractor):
         auctions = []
 
         domain = site_id_meta[self.site_id]['domain']
-        search_link = f"{domain}/sch/i.html?_from=R40&_nkw={self.search_term}&_sacat=0&LH_PrefLoc=1&_sop=10"
-        country = site_id_meta[self.site_id]['country_code']
+        search_link = f"{domain}/sch/i.html?_from=R40&_nkw={self.search_term}&_sacat=0&_sop=10"
+
+        # Build search filter
+        search_filter = 'buyingOptions:{FIXED_PRICE|AUCTION|BEST_OFFER}'
+        if self.only_locally_listed_items:
+            country = site_id_meta[self.site_id]['country_code']
+            search_filter += f',itemLocationCountry:{country}'
+            search_link += '&LH_PrefLoc=1'
+        else:
+            search_filter += f',itemLocationRegion:WORLDWIDE'
+            search_link += '&LH_PrefLoc=98'
 
         params = {
             'q': self.search_term,
             'sort': 'newlyListed',
             'limit': 200,
-            'filter': f'buyingOptions:{{FIXED_PRICE|AUCTION|BEST_OFFER}},itemLocationCountry:{country}'
+            'filter': search_filter
         }
 
         headers = {
