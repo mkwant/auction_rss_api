@@ -7,8 +7,10 @@ import xmltodict
 from bs4 import BeautifulSoup
 
 from auction_extractors.base import AuctionExtractorAsync
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
+
+# TODO Use cloudscraper to bypass Cloudflare challenge
 
 class DiscogsWantlist(AuctionExtractorAsync):
     search_term: str
@@ -17,6 +19,14 @@ class DiscogsWantlist(AuctionExtractorAsync):
     }
     discogs_logo: str = \
         'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Discogs_record_icon.svg/480px-Discogs_record_icon.svg.png'  # noqa
+
+    @property
+    def site_desc(self) -> str:
+        return 'Discogs wantlist'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://www.discogs.com/wantlist?page=1&limit=250&user={self.search_term}'
 
     @staticmethod
     async def _get_offer_page(client: httpx.AsyncClient, item_id: int) -> str:
@@ -60,6 +70,7 @@ class DiscogsWantlist(AuctionExtractorAsync):
         r = await client.get(url=url, params=params)
         soup = BeautifulSoup(r.content, 'html.parser')
         links = soup.findAll('span', {'class': 'marketplace_for_sale_count'})
+        print(soup.prettify())
         result = []
         for link in links:
             link = link.find('a')['href']
@@ -68,7 +79,7 @@ class DiscogsWantlist(AuctionExtractorAsync):
 
         return result
 
-    async def search(self) -> AuctionSearchResponse:
+    async def get_auctions(self) -> List[Auction]:
 
         async with httpx.AsyncClient(headers=self.headers, follow_redirects=True) as client:
             wantlist = await self._get_wantlist(client)
@@ -93,9 +104,4 @@ class DiscogsWantlist(AuctionExtractorAsync):
                 Auction(**offer_dict)
             )
 
-        return AuctionSearchResponse(
-            search_link=f'https://www.discogs.com/wantlist?page=1&limit=250&user={self.search_term}',
-            search_term=self.search_term,
-            site_desc='Discogs wantlist',
-            auctions=rss_items
-        )
+        return rss_items
