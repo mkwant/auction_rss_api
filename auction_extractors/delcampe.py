@@ -64,8 +64,3 @@ class Delcampe(AuctionExtractor):
             site_desc=f'Delcampe',
             auctions=auctions
         )
-
-
-if __name__ == '__main__':
-    d = Delcampe(search_term='bowie')
-    d.search()
