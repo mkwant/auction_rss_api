@@ -8,10 +8,9 @@ from httpx import HTTPError
 
 from auction_extractors.base import AuctionExtractorAsync
 from dependencies.translate import translate_text
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
-# TODO Translate
 # TODO Multiple pages? / keep in db?
 
 
@@ -20,6 +19,14 @@ class BuyeeYahoo(AuctionExtractorAsync):
     translate_titles: bool = True
     ms_translate_api_key: str
     ms_translate_api_location: str
+
+    @property
+    def site_desc(self) -> str:
+        return 'Buyee (Yahoo)'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://buyee.jp/item/search/query/{self.search_term}?sort=end&order=d&new=1&translationType=1'
 
     async def _get_page(self, client: httpx.AsyncClient) -> httpx.Response:
         """Retrieve search page."""
@@ -84,7 +91,7 @@ class BuyeeYahoo(AuctionExtractorAsync):
         auction.__dict__.update({'description': f"{auction.description}\n\nOriginal title: '{original_title}'"})
         return auction
 
-    async def search(self) -> AuctionSearchResponse:
+    async def get_auctions(self) -> List[Auction]:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
 
         async with httpx.AsyncClient(headers=headers, follow_redirects=True) as client:
@@ -97,7 +104,4 @@ class BuyeeYahoo(AuctionExtractorAsync):
                                               auction=auction,
                                               from_lang='ja') for auction in auction_list])
 
-        return AuctionSearchResponse(search_link=str(page.url),
-                                     search_term=self.search_term,
-                                     site_desc='Buyee (Yahoo)',
-                                     auctions=auction_list)
+        return auction_list
