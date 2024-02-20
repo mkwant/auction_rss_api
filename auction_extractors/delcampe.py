@@ -20,20 +20,20 @@ class Delcampe(AuctionExtractor):
         scraper = cloudscraper.create_scraper()
 
         r = scraper.get(self.URL, params=params)
-        soup = BeautifulSoup(r.content, 'html.parser')
-        site_auctions = soup.find_all('div', {'class': 'item-main-infos'})
+        soup = BeautifulSoup(r.content, features='html.parser')
+        site_auctions = soup.select('div.item-main-infos')
         return site_auctions
 
     def search(self) -> AuctionSearchResponse:
         auctions = []
 
         for auction in self._get_auctions():
-            image_link = auction.find('a', {'class': 'img-view'})['href']
-            auction_id = auction.find('a', {'class': 'img-view'})['data-item-id']
-            link = f"https://www.delcampe.net{auction.find('a', {'class': 'item-link'})['href']}"
-            title = auction.find('h2', {'class': 'item-title font-md font-normal'}).text
-            _price = auction.find('strong', {'class': 'item-price font-xl'}).text
-            _item_type = auction.find('div', {'class': 'selling-type'})['title']
+            image_link = auction.select_one('a.img-view')['href']
+            auction_id = auction.select_one('a.img-view')['data-item-id']
+            link = f"https://www.delcampe.net{auction.select_one('a.item-link')['href']}"
+            title = auction.select_one('h2.item-title').text
+            _price = auction.select_one('strong.item-price').text
+            _item_type = auction.select_one('div.selling-type')['title']
             desc = f'{_item_type} | {_price}'
 
             auctions.append(Auction(auction_id=auction_id,
