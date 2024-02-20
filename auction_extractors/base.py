@@ -46,7 +46,7 @@ class AuctionExtractor(BaseModel):
         :return: A list with one Auction record
         """
         return [Auction(auction_id='ERROR',
-                        description=f"Received this error when trying to retrieve the feed items: \n{error}",
+                        description=error,
                         link=self.search_link,
                         title="ERROR: Auctions couldn't be retrieved.",
                         start_date=datetime.now()
@@ -60,7 +60,11 @@ class AuctionExtractor(BaseModel):
         try:
             auctions = self.get_auctions()
         except Exception as e:
-            auctions = self.auctions_on_error(error=str(e))
+            auctions = self.auctions_on_error(
+                error=f'Received this error when trying to retrieve the feed items: \n{e}')
+
+        if len(auctions) == 0:
+            auctions = self.auctions_on_error(error='No auctions were retrieved from the site.')
 
         return AuctionSearchResponse(
             search_link=self.search_link,
