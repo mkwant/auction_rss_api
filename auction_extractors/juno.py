@@ -20,9 +20,8 @@ class Juno(AuctionExtractor):
         r = requests.get(url=url, params=params)
         page = r.text
 
-        soup = BeautifulSoup(page, 'html.parser')
-        product_list = soup.find('div', {'class': 'product-list'})
-        items = product_list.find_all('div', {'class': 'dv-item'})
+        soup = BeautifulSoup(page, features='html.parser')
+        items = soup.select('div.product-list>div.dv-item')
         return items
 
     def search(self) -> AuctionSearchResponse:
@@ -31,14 +30,16 @@ class Juno(AuctionExtractor):
         for item in self._get_auctions():
             item_id = item['id'].split("-")[1]
             try:
-                _forthcoming = item.find('div',
-                                         {'class': 'tag-status tag-status-stretch'}).text.strip() == 'FORTHCOMING'
+                _forthcoming = item.select_one('div.tag-status').text.strip() == 'FORTHCOMING'
             except AttributeError:
                 _forthcoming = False
-            link = 'https://www.juno.co.uk' + item.find('a')['href']
+            link = 'https://www.juno.co.uk' + item.select_one('a')['href']
             image_link = f'https://imagescdn.juno.co.uk/full/CS{item_id}-01A-BIG.jpg'
-            _artist, _title, _label, _cat = [x.text for x in item.find_all('div', {'class': 'vi-text mb-1'})]
-            _price = item.find('div', {'class': 'pl-big-price'}).text.strip()
+            print([x.text for x in item.select('div.vi-text')])
+            # exit(0)
+            _artist, _title, _label, _cat, *_ = [x.text for x in item.select('div.vi-text')]
+            _cat = _cat.replace(' Add to playlist', '')
+            _price = item.select_one('div.pl-big-price').text.strip()
             title = f'{_artist} - {_title}'
             if _forthcoming:
                 title = f'[Pre-order] {title}'
