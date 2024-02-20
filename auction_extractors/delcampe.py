@@ -12,7 +12,7 @@ from models import Auction
 
 class Delcampe(AuctionExtractor):
     search_term: str
-    URL: str = 'https://www.delcape.net/en_GB/collectables/search'
+    URL: str = 'https://www.delcampe.net/en_GB/collectables/search'
 
     @property
     def site_desc(self) -> str:
