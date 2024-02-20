@@ -1,15 +1,15 @@
 import asyncio
+import json
 from datetime import datetime
 from typing import List
 
 import httpx
-import json
 from bs4 import BeautifulSoup
 from httpx import HTTPError
 
 from auction_extractors.base import AuctionExtractorAsync
 from dependencies.translate import translate_text
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 class BuyeeMercari(AuctionExtractorAsync):
@@ -17,6 +17,14 @@ class BuyeeMercari(AuctionExtractorAsync):
     translate_titles: bool = True
     ms_translate_api_key: str
     ms_translate_api_location: str
+
+    @property
+    def site_desc(self) -> str:
+        return 'Buyee (Mercari)'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://buyee.jp/mercari/search?keyword={self.search_term}&status=all&items=40&lang=en&currencyCode=EUR'  # noqa
 
     async def _get_page(self, client: httpx.AsyncClient) -> httpx.Response:
         """Retrieve search page."""
@@ -90,7 +98,7 @@ class BuyeeMercari(AuctionExtractorAsync):
         auction.__dict__.update({'description': f"{auction.description}\n\nOriginal title: '{original_title}'"})
         return auction
 
-    async def search(self) -> AuctionSearchResponse:
+    async def get_auctions(self) -> List[Auction]:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
         async with httpx.AsyncClient(headers=headers, follow_redirects=True) as client:
             page = await self._get_page(client=client)
@@ -104,7 +112,4 @@ class BuyeeMercari(AuctionExtractorAsync):
                       for auction in auction_list
                       ])
 
-        return AuctionSearchResponse(search_link=str(page.url),
-                                     search_term=self.search_term,
-                                     site_desc='Buyee (Mercari)',
-                                     auctions=auction_list)
+        return auction_list
