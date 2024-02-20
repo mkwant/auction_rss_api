@@ -19,28 +19,25 @@ class Discords(AuctionExtractor):
                   'sort_by': 'created-descending'}
 
         r = requests.get(url=self.URL, params=params)
-        soup = BeautifulSoup(r.content, 'html.parser')
-
-        items = soup.find_all('div', {'class': 'product-item product-item--vertical 1/3--tablet 1/4--lap-and-up'})
+        soup = BeautifulSoup(r.content, features='html.parser')
+        items = soup.select('div.product-item')
         return items
 
     def search(self) -> AuctionSearchResponse:
         items = []
 
         for item in self._get_items():
-            item_id = item.find('input', {'name': 'id'})['value']
-            _product_info = item.find('a', {'class': 'product-item__title text--strong link'})
-            print(item)
+            item_id = item.select_one('input[name=id]')['value']
+            _product_info = item.select_one('a.product-item__title')
             item_url = f"{self.SITE}{_product_info['href']}"
-            title = _product_info.get_text().strip()
+            title = _product_info.text.strip()
             try:
-                _inventory = item.find('span',
-                                   {'class': re.compile('product-item__inventory inventory.*')}).get_text().strip()
+                _inventory = item.select_one('span.inventory').text.strip()
             except AttributeError:
                 _inventory = ''
-            _price = item.find('span', {'class': 'price'}).get_text(separator=' ', strip=True).split(' ')[1]
+            _price = item.select_one('span.price').get_text(separator='|', strip=True).split('|')[1]
             description = '\n'.join([_price, _inventory])
-            image_url = f"https:{item.find_all('img')[-1]['src']}"
+            image_url = f"https:{item.select_one('img:last-child')['src']}"
 
             items.append(Auction(auction_id=item_id,
                                  description=description,
@@ -56,3 +53,8 @@ class Discords(AuctionExtractor):
             site_desc=f'Discords',
             auctions=items
         )
+
+
+if __name__ == '__main__':
+    d = Discords(search_term='david bowie')
+    d.search()
