@@ -39,7 +39,7 @@ def docs_redirect():
 
 
 @app.get(path='/2dehands', response_class=RSSResponse)
-def tweedehands_rss(search_term: str, search_in_seller_name: Optional[bool] = False) -> RSSResponse:
+def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RSSResponse:
     auction_extractor = TweedeHands(search_term=search_term, search_in_seller_name=search_in_seller_name)
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
