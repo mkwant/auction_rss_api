@@ -35,8 +35,7 @@ class Juno(AuctionExtractor):
                 _forthcoming = False
             link = 'https://www.juno.co.uk' + item.select_one('a')['href']
             image_link = f'https://imagescdn.juno.co.uk/full/CS{item_id}-01A-BIG.jpg'
-            print([x.text for x in item.select('div.vi-text')])
-            # exit(0)
+
             _artist, _title, _label, _cat, *_ = [x.text for x in item.select('div.vi-text')]
             _cat = _cat.replace(' Add to playlist', '')
             _price = item.select_one('div.pl-big-price').text.strip()
