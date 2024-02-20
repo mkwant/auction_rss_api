@@ -10,6 +10,9 @@ from models import Auction
 
 
 class Todocoleccion(AuctionExtractor):
+    search_term: str
+    URL: str = 'https://en.todocoleccion.net/buscador'
+
     @property
     def site_desc(self) -> str:
         return 'Todocoleccion'
@@ -17,9 +20,6 @@ class Todocoleccion(AuctionExtractor):
     @property
     def search_link(self) -> str:
         return f'https://en.todocoleccion.net/buscador?from=top&bu={self.search_term}'
-
-    search_term: str
-    URL: str = 'https://en.todocoleccion.net/buscador'
 
     def _get_auctions(self, search_term: str) -> ResultSet:
         params = {'from': 'top',
