@@ -13,6 +13,13 @@ from models import Auction
 class Ebay(AuctionExtractor):
     """A wrapper class around the Ebay api."""
 
+    app_id: str
+    app_secret: str
+    ru_name: str
+    site_id: str
+    search_term: str
+    only_locally_listed_items: bool = True
+
     @property
     def site_desc(self) -> str:
         return f'Ebay: {self.site_id}'
@@ -24,13 +31,6 @@ class Ebay(AuctionExtractor):
     @search_link.setter
     def search_link(self, value):
         self._search_link = value
-
-    app_id: str
-    app_secret: str
-    ru_name: str
-    site_id: str
-    search_term: str
-    only_locally_listed_items: bool = True
 
     @property
     def token(self) -> str:

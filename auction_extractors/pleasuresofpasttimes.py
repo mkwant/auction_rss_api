@@ -10,6 +10,8 @@ from models import Auction
 
 
 class PleasuresOfPastTimes(AuctionExtractor):
+    search_term: str
+
     @property
     def site_desc(self) -> str:
         return 'Pleasures Of Past Times'
@@ -17,8 +19,6 @@ class PleasuresOfPastTimes(AuctionExtractor):
     @property
     def search_link(self) -> str:
         return f'https://pleasuresofpasttimes.com/shop/product-category/memorabilia/{self.search_term}/?orderby=date'
-
-    search_term: str
 
     def _get_auctions(self) -> ResultSet:
         self.search_term = self.search_term.replace(' ', '-')

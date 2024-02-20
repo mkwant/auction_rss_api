@@ -10,6 +10,8 @@ from models import Auction
 
 
 class Juno(AuctionExtractor):
+    search_term: str
+
     @property
     def site_desc(self) -> str:
         return 'Juno'
@@ -18,8 +20,6 @@ class Juno(AuctionExtractor):
     def search_link(self) -> str:
         return f'https://www.juno.co.uk/search/?q%5Ball%5D%5B0%5D={self.search_term}' \
                f'&hide_forthcoming=0&solrorder=date_down'
-
-    search_term: str
 
     def _get_auctions(self) -> ResultSet:
         url = 'https://www.juno.co.uk/search/'

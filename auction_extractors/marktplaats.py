@@ -8,6 +8,12 @@ from models import Auction
 
 
 class Marktplaats(AuctionExtractor):
+    search_term: str
+    search_in_seller_name: bool = False
+    CURRENT_PAGE: int = 0
+    LIMIT: int = 100
+    DOMAIN: str = 'marktplaats.nl'
+
     @property
     def site_desc(self) -> str:
         return 'Marktplaats'
@@ -15,12 +21,6 @@ class Marktplaats(AuctionExtractor):
     @property
     def search_link(self) -> str:
         return f'https://www.{self.DOMAIN}/q/{self.search_term}'
-
-    search_term: str
-    search_in_seller_name: bool = False
-    CURRENT_PAGE: int = 0
-    LIMIT: int = 100
-    DOMAIN: str = 'marktplaats.nl'
 
     @staticmethod
     def clean_control_chars(string: str) -> str:
