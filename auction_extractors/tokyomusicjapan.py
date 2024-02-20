@@ -21,7 +21,7 @@ class TokyoMusicJapan(AuctionExtractor):
         for item in self._get_auctions():
             auction_id = item['Id']
             title = f"{item['Title']} ({item['Notes']})"
-            link = 'http://tokyomusicjapan.com/new.html'
+            link = 'http://tokyomusicjapan.com/new.html' # noqa
             image_link = item['Url']
             description = '\n'.join([
                 f"Format: {item['Format']}",
@@ -40,7 +40,7 @@ class TokyoMusicJapan(AuctionExtractor):
                                     ))
 
         return AuctionSearchResponse(
-            search_link=f'http://tokyomusicjapan.com/new.html',
+            search_link=f'http://tokyomusicjapan.com/new.html', # noqa
             search_term=self.search_term,
             site_desc=f'TokyoMusicJapan',
             auctions=auctions
