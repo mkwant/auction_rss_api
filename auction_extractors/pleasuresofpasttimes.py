@@ -1,14 +1,23 @@
 from datetime import datetime
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
 from auction_extractors.base import AuctionExtractor
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 class PleasuresOfPastTimes(AuctionExtractor):
+    @property
+    def site_desc(self) -> str:
+        return 'Pleasures Of Past Times'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://pleasuresofpasttimes.com/shop/product-category/memorabilia/{self.search_term}/?orderby=date'
+
     search_term: str
 
     def _get_auctions(self) -> ResultSet:
@@ -20,7 +29,7 @@ class PleasuresOfPastTimes(AuctionExtractor):
         items = soup.select('ul.products li')
         return items
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         auctions = []
 
         for item in self._get_auctions():
@@ -43,9 +52,4 @@ class PleasuresOfPastTimes(AuctionExtractor):
                                     start_date=datetime.now()
                                     ))
 
-        return AuctionSearchResponse(
-            search_link=f'https://pleasuresofpasttimes.com/shop/product-category/memorabilia/{self.search_term}/?orderby=date',  # noqa
-            search_term=self.search_term,
-            site_desc=f'Pleasures Of Past Times',
-            auctions=auctions
-        )
+        return auctions
