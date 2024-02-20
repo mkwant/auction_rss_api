@@ -1,13 +1,22 @@
 from datetime import datetime
+from typing import List
 
 import requests
 
 from auction_extractors.base import AuctionExtractor
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 class TokyoMusicJapan(AuctionExtractor):
     search_term: str
+
+    @property
+    def site_desc(self) -> str:
+        return 'TokyoMusicJapan'
+
+    @property
+    def search_link(self) -> str:
+        return 'http://tokyomusicjapan.com/new.html'
 
     def _get_auctions(self) -> list:
         url = 'https://www.tokyomusicjapan.com/service/api/ArtistSearch?artist=new&currency=USD&isGeneral=true'
@@ -15,13 +24,13 @@ class TokyoMusicJapan(AuctionExtractor):
         items = [x for x in r.json() if self.search_term.lower() in x['Artist'].lower()]
         return items
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         auctions = []
 
         for item in self._get_auctions():
             auction_id = item['Id']
             title = f"{item['Title']} ({item['Notes']})"
-            link = 'http://tokyomusicjapan.com/new.html' # noqa
+            link = 'http://tokyomusicjapan.com/new.html'  # noqa
             image_link = item['Url']
             description = '\n'.join([
                 f"Format: {item['Format']}",
@@ -39,9 +48,4 @@ class TokyoMusicJapan(AuctionExtractor):
                                     start_date=datetime.now()
                                     ))
 
-        return AuctionSearchResponse(
-            search_link=f'http://tokyomusicjapan.com/new.html', # noqa
-            search_term=self.search_term,
-            site_desc=f'TokyoMusicJapan',
-            auctions=auctions
-        )
+        return auctions
