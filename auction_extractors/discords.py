@@ -53,8 +53,3 @@ class Discords(AuctionExtractor):
             site_desc=f'Discords',
             auctions=items
         )
-
-
-if __name__ == '__main__':
-    d = Discords(search_term='david bowie')
-    d.search()

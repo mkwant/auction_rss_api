@@ -37,7 +37,7 @@ class BuyeeMercari(AuctionExtractorAsync):
         """Parse search page."""
         soup = BeautifulSoup(page, 'html.parser')
         json_string = soup.find('script', {'type': 'application/json'}).contents[0]
-        parsed_json = json.loads(json_string)
+        parsed_json = json.loads(json_string.text)
         auction_list = parsed_json['props']['pageProps']['catalog']['entries']
 
         auctions = []
