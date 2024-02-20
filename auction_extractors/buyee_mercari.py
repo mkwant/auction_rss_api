@@ -35,11 +35,10 @@ class BuyeeMercari(AuctionExtractorAsync):
     @staticmethod
     async def _parse_page(page: str) -> List[Auction]:
         """Parse search page."""
-        soup = BeautifulSoup(page, 'html.parser')
-        json_string = soup.find('script', {'type': 'application/json'}).contents[0]
-        parsed_json = json.loads(json_string.text)
+        soup = BeautifulSoup(page, features='html.parser')
+        json_string = soup.select_one('script#__NEXT_DATA__').contents[0]
+        parsed_json = json.loads(str(json_string))
         auction_list = parsed_json['props']['pageProps']['catalog']['entries']
-
         auctions = []
 
         for auction in auction_list:
@@ -53,6 +52,7 @@ class BuyeeMercari(AuctionExtractorAsync):
                 description = f'SOLD - {_price_yen} ({_price_eur})'
             else:
                 description = f'{_price_yen} ({_price_eur})'
+            seller = auction['store']['names']['ja']
 
             auctions.append(
                 Auction(**{
@@ -61,6 +61,7 @@ class BuyeeMercari(AuctionExtractorAsync):
                     'description': description,
                     'link': link,
                     'image_link': image_link,
+                    'seller': seller,
                     'start_date': datetime.now()
                 }))
         return auctions
