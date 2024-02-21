@@ -1,11 +1,12 @@
 from datetime import datetime
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
 from auction_extractors.base import AuctionExtractor
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 # TODO Translate titles -> make async
@@ -13,11 +14,18 @@ from models import AuctionSearchResponse, Auction
 class BuyeeRakuma(AuctionExtractor):
     search_term: str
 
-    @staticmethod
-    def _get_auctions() -> ResultSet:
+    @property
+    def site_desc(self) -> str:
+        return 'Buyee (Rakuma)'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://buyee.jp/rakuma/search?keyword={self.search_term}&status=all'
+
+    def _get_auctions(self) -> ResultSet:
         url = 'https://buyee.jp/rakuma/search'
         params = {
-            'keyword': 'bowie',
+            'keyword': self.search_term,
             'status': 'all'
         }
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
@@ -27,7 +35,7 @@ class BuyeeRakuma(AuctionExtractor):
         soup = BeautifulSoup(r.content, 'html.parser')
         return soup.select('ul.item-lists > li')
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         auctions = []
 
         for item in self._get_auctions():
@@ -47,9 +55,4 @@ class BuyeeRakuma(AuctionExtractor):
                                     start_date=datetime.now()
                                     ))
 
-        return AuctionSearchResponse(
-            search_link=f'https://buyee.jp/rakuma/search?keyword={self.search_term}&status=all',
-            search_term=self.search_term,
-            site_desc=f'Buyee (Rakuma)',
-            auctions=auctions
-        )
+        return auctions

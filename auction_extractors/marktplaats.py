@@ -1,8 +1,10 @@
 import re
+from typing import List
 
 import requests
+
 from auction_extractors.base import AuctionExtractor
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 class Marktplaats(AuctionExtractor):
@@ -11,14 +13,21 @@ class Marktplaats(AuctionExtractor):
     CURRENT_PAGE: int = 0
     LIMIT: int = 100
     DOMAIN: str = 'marktplaats.nl'
-    SITE_DESC: str = 'Marktplaats'
+
+    @property
+    def site_desc(self) -> str:
+        return 'Marktplaats'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://www.{self.DOMAIN}/q/{self.search_term}'
 
     @staticmethod
     def clean_control_chars(string: str) -> str:
         """Removes certain control characters."""
         return re.sub(u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', string)
 
-    def search(self, ) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         params = {
             'limit': self.LIMIT,
             'offset': self.CURRENT_PAGE,
@@ -59,9 +68,4 @@ class Marktplaats(AuctionExtractor):
 
             auctions.append(Auction(**auction))
 
-        return AuctionSearchResponse(
-            search_link=f'https://www.{self.DOMAIN}/q/{self.search_term}',
-            search_term=self.search_term,
-            site_desc=f'{self.SITE_DESC}',
-            auctions=auctions
-        )
+        return auctions

@@ -1,16 +1,25 @@
 from datetime import datetime
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
 from auction_extractors.base import AuctionExtractor
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 class CdAndLp(AuctionExtractor):
     search_term: str
     URL: str = 'https://www.cdandlp.com/en/search/'
+
+    @property
+    def site_desc(self) -> str:
+        return 'CDandLP'
+
+    @property
+    def search_link(self) -> str:
+        return f'{self.URL}?q={self.search_term}&srt=2'
 
     @staticmethod
     def strike(text):
@@ -29,7 +38,7 @@ class CdAndLp(AuctionExtractor):
         site_auctions = soup.select('div[class*="twelve large-20 columns div_item_listing"]')
         return site_auctions
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         auctions = []
 
         for auction in self._get_auctions():
@@ -78,8 +87,4 @@ class CdAndLp(AuctionExtractor):
                                     start_date=datetime.now()
                                     ))
 
-        return AuctionSearchResponse(
-            search_link=f'{self.URL}?q={self.search_term}&srt=2',
-            search_term=self.search_term,
-            site_desc=f'CDandLP',
-            auctions=auctions)
+        return auctions

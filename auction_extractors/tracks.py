@@ -1,14 +1,23 @@
 from datetime import datetime
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
 from auction_extractors.base import AuctionExtractor
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 class Tracks(AuctionExtractor):
+    @property
+    def site_desc(self) -> str:
+        return 'Tracks.co.uk'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://www.tracks.co.uk/category/various-artists-memorabilia/{self.search_term}'
+
     search_term: str
 
     def _get_auctions(self) -> ResultSet:
@@ -20,7 +29,7 @@ class Tracks(AuctionExtractor):
         items = soup.select('ul.products li')
         return items
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         auctions = []
 
         for item in self._get_auctions():
@@ -40,14 +49,4 @@ class Tracks(AuctionExtractor):
                                     start_date=datetime.now()
                                     ))
 
-        return AuctionSearchResponse(
-            search_link=f'https://www.tracks.co.uk/category/various-artists-memorabilia/{self.search_term}',
-            search_term=self.search_term,
-            site_desc=f'Tracks.co.uk',
-            auctions=auctions
-        )
-
-
-if __name__ == '__main__':
-    t = Tracks(search_term='david bowie')
-    print(t.search())
+        return auctions

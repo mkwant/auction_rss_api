@@ -1,22 +1,36 @@
 import base64
 from datetime import datetime
 from enum import Enum
+from typing import List
 
 import httpx
 import pytz
 
 from auction_extractors.base import AuctionExtractor
-from models import Auction, AuctionSearchResponse
+from models import Auction
 
 
 class Ebay(AuctionExtractor):
     """A wrapper class around the Ebay api."""
+
     app_id: str
     app_secret: str
     ru_name: str
     site_id: str
     search_term: str
     only_locally_listed_items: bool = True
+
+    @property
+    def site_desc(self) -> str:
+        return f'Ebay: {self.site_id}'
+
+    @property
+    def search_link(self) -> str:
+        return self._search_link
+
+    @search_link.setter
+    def search_link(self, value):
+        self._search_link = value
 
     @property
     def token(self) -> str:
@@ -37,21 +51,21 @@ class Ebay(AuctionExtractor):
         r = client.post(url=url, headers=headers, data=payload)
         return r.json()['access_token']
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         auctions = []
 
         domain = site_id_meta[self.site_id]['domain']
-        search_link = f"{domain}/sch/i.html?_from=R40&_nkw={self.search_term}&_sacat=0&_sop=10"
+        self.search_link = f"{domain}/sch/i.html?_from=R40&_nkw={self.search_term}&_sacat=0&_sop=10"
 
         # Build search filter
         search_filter = 'buyingOptions:{FIXED_PRICE|AUCTION|BEST_OFFER}'
         if self.only_locally_listed_items:
             country = site_id_meta[self.site_id]['country_code']
             search_filter += f',itemLocationCountry:{country}'
-            search_link += '&LH_PrefLoc=1'
+            self.search_link += '&LH_PrefLoc=1'
         else:
             search_filter += f',itemLocationRegion:WORLDWIDE'
-            search_link += '&LH_PrefLoc=98'
+            self.search_link += '&LH_PrefLoc=98'
 
         params = {
             'q': self.search_term,
@@ -105,12 +119,7 @@ class Ebay(AuctionExtractor):
                 )
             )
 
-        return AuctionSearchResponse(
-            search_link=search_link,
-            search_term=self.search_term,
-            site_desc=f'Ebay: {self.site_id}',
-            auctions=auctions
-        )
+        return auctions
 
 
 class SiteId(Enum):

@@ -1,25 +1,34 @@
 from datetime import datetime
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
 from auction_extractors.base import AuctionExtractor
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 class Variaworld(AuctionExtractor):
     search_term: str
 
+    @property
+    def site_desc(self) -> str:
+        return 'Variaworld'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}&zoek_at=a&m_sr=lig&startpagina=1'  # noqa
+
     def _get_auctions(self) -> ResultSet:
-        URL = f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}&zoek_at=a&m_sr=lig&startpagina=1'  # noqa
-        r = requests.get(URL)
+        url = f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}&zoek_at=a&m_sr=lig&startpagina=1'  # noqa
+        r = requests.get(url)
         soup = BeautifulSoup(r.content, features='html.parser')
 
         site_auctions = soup.select('a.overzichtbox_2')
         return site_auctions
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         auctions = []
 
         for auction in self._get_auctions():
@@ -48,9 +57,4 @@ class Variaworld(AuctionExtractor):
                                     start_date=start_date
                                     ))
 
-        return AuctionSearchResponse(
-            search_link=f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}&zoek_at=a&m_sr=lig&startpagina=1',  # noqa
-            search_term=self.search_term,
-            site_desc=f'Variaworld',
-            auctions=auctions
-        )
+        return auctions

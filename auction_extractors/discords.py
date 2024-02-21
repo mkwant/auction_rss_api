@@ -1,18 +1,26 @@
-import re
 from datetime import datetime
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
 from auction_extractors.base import AuctionExtractor
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 class Discords(AuctionExtractor):
     search_term: str
     SITE: str = 'https://discords.nl'
     URL: str = f'{SITE}/collections/vendors'
+
+    @property
+    def site_desc(self) -> str:
+        return 'Discords'
+
+    @property
+    def search_link(self) -> str:
+        return f'{self.URL}?q={self.search_term}&sort_by=created-descending'
 
     def _get_items(self) -> ResultSet:
         params = {'q': self.search_term,
@@ -23,7 +31,7 @@ class Discords(AuctionExtractor):
         items = soup.select('div.product-item')
         return items
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         items = []
 
         for item in self._get_items():
@@ -47,9 +55,4 @@ class Discords(AuctionExtractor):
                                  start_date=datetime.now()
                                  ))
 
-        return AuctionSearchResponse(
-            search_link=f'{self.URL}?q={self.search_term}&sort_by=created-descending',
-            search_term=self.search_term,
-            site_desc=f'Discords',
-            auctions=items
-        )
+        return items

@@ -1,15 +1,25 @@
 from datetime import datetime
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
 from auction_extractors.base import AuctionExtractor
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 class Juno(AuctionExtractor):
     search_term: str
+
+    @property
+    def site_desc(self) -> str:
+        return 'Juno'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://www.juno.co.uk/search/?q%5Ball%5D%5B0%5D={self.search_term}' \
+               f'&hide_forthcoming=0&solrorder=date_down'
 
     def _get_auctions(self) -> ResultSet:
         url = 'https://www.juno.co.uk/search/'
@@ -24,7 +34,7 @@ class Juno(AuctionExtractor):
         items = soup.select('div.product-list>div.dv-item')
         return items
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         auctions = []
 
         for item in self._get_auctions():
@@ -52,10 +62,4 @@ class Juno(AuctionExtractor):
                                     start_date=datetime.now()
                                     ))
 
-        return AuctionSearchResponse(
-            search_link=f'https://www.juno.co.uk/search/?q%5Ball%5D%5B0%5D={self.search_term}&'
-                        f'hide_forthcoming=0&solrorder=date_down',
-            search_term=self.search_term,
-            site_desc=f'Juno',
-            auctions=auctions
-        )
+        return auctions

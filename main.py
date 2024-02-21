@@ -25,7 +25,7 @@ from auction_extractors.variaworld import Variaworld
 from config import Settings
 from rss import generate_rss_response
 
-app = FastAPI(title='Auction to RSS', version='1.3.1')
+app = FastAPI(title='Auction to RSS', version='1.4.0')
 
 
 @lru_cache
@@ -39,7 +39,7 @@ def docs_redirect():
 
 
 @app.get(path='/2dehands', response_class=RSSResponse)
-def tweedehands_rss(search_term: str, search_in_seller_name: Optional[bool] = False) -> RSSResponse:
+def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RSSResponse:
     auction_extractor = TweedeHands(search_term=search_term, search_in_seller_name=search_in_seller_name)
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
@@ -131,7 +131,7 @@ def juno_rss(search_term: str) -> RSSResponse:
 
 
 @app.get(path='/marktplaats', response_class=RSSResponse)
-def marktplaats_rss(search_term: str, search_in_seller_name: Optional[bool] = False) -> RSSResponse:
+def marktplaats_rss(search_term: str, search_in_seller_name: bool = False) -> RSSResponse:
     auction_extractor = Marktplaats(search_term=search_term, search_in_seller_name=search_in_seller_name)
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)

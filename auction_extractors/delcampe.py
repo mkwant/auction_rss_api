@@ -1,19 +1,26 @@
 import urllib.parse
 from datetime import datetime
+from typing import List
 
 import cloudscraper as cloudscraper
-from auction_extractors.base import AuctionExtractor
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
-from models import AuctionSearchResponse, Auction
 
-
-# TODO Find all auctions with sellerinfo (now isn't in the HTML from BS, maybe in cookie)
+from auction_extractors.base import AuctionExtractor
+from models import Auction
 
 
 class Delcampe(AuctionExtractor):
     search_term: str
     URL: str = 'https://www.delcampe.net/en_GB/collectables/search'
+
+    @property
+    def site_desc(self) -> str:
+        return 'Delcampe'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://www.delcampe.net/en_GB/collectables/search?term={self.search_term}'
 
     def _get_auctions(self) -> ResultSet:
         params = {'term': self.search_term}
@@ -32,7 +39,7 @@ class Delcampe(AuctionExtractor):
         site_auctions = soup.select('div.item-bloc')
         return site_auctions
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
         auctions = []
 
         for auction in self._get_auctions():
@@ -57,10 +64,4 @@ class Delcampe(AuctionExtractor):
                                     seller=seller,
                                     start_date=datetime.now()
                                     ))
-
-        return AuctionSearchResponse(
-            search_link=f'https://www.delcampe.net/en_GB/collectables/search?term={self.search_term}',
-            search_term=self.search_term,
-            site_desc=f'Delcampe',
-            auctions=auctions
-        )
+        return auctions

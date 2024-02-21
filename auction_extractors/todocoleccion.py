@@ -1,16 +1,25 @@
 from datetime import datetime
+from typing import List
 
 import cloudscraper as cloudscraper
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
 from auction_extractors.base import AuctionExtractor
-from models import AuctionSearchResponse, Auction
+from models import Auction
 
 
 class Todocoleccion(AuctionExtractor):
     search_term: str
     URL: str = 'https://en.todocoleccion.net/buscador'
+
+    @property
+    def site_desc(self) -> str:
+        return 'Todocoleccion'
+
+    @property
+    def search_link(self) -> str:
+        return f'https://en.todocoleccion.net/buscador?from=top&bu={self.search_term}'
 
     def _get_auctions(self, search_term: str) -> ResultSet:
         params = {'from': 'top',
@@ -23,7 +32,7 @@ class Todocoleccion(AuctionExtractor):
         site_auctions = soup.select('div._lote_item-image-and-content')
         return site_auctions
 
-    def search(self) -> AuctionSearchResponse:
+    def get_auctions(self) -> List[Auction]:
 
         auctions = []
 
@@ -59,9 +68,4 @@ class Todocoleccion(AuctionExtractor):
                                     start_date=datetime.now()
                                     ))
 
-        return AuctionSearchResponse(
-            search_link=f'https://en.todocoleccion.net/buscador?from=top&bu={self.search_term}',
-            search_term=self.search_term,
-            site_desc=f'Todocoleccion',
-            auctions=auctions
-        )
+        return auctions
