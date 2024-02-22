@@ -68,6 +68,7 @@ class DiscogsWantlist(AuctionExtractorAsync):
             'user': self.search_term
         }
         r = await client.get(url=url, params=params)
+        r.raise_for_status()
         soup = BeautifulSoup(r.content, 'html.parser')
         links = soup.findAll('span', {'class': 'marketplace_for_sale_count'})
         print(soup.prettify())
