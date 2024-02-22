@@ -23,8 +23,11 @@ class RecordMecca(AuctionExtractor):
     def _get_auctions(self) -> ResultSet:
         url = 'https://recordmecca.com'
         params = {'s': self.search_term}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0'}
 
-        r = requests.get(url=url, params=params)
+        r = requests.get(url=url, params=params, headers=headers)
+        r.raise_for_status()
+
         soup = BeautifulSoup(r.content, 'html.parser')
         items = soup.select('div.default_product_display')
         return items
