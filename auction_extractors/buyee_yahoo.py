@@ -73,11 +73,13 @@ class BuyeeYahoo(AuctionExtractorAsync):
 
         return auctions
 
-    async def _translate_auction(self,
-                                 client: httpx.AsyncClient,
-                                 auction: Auction,
-                                 from_lang: str,
-                                 to_lang: str = 'en') -> Auction:
+    async def _translate_auction(
+            self,
+            client: httpx.AsyncClient,
+            auction: Auction,
+            from_lang: str,
+            to_lang: str = 'en'
+    ) -> Auction:
         """Translate the auction title. Append the original title to the description."""
         original_title = auction.title
         try:
@@ -88,7 +90,8 @@ class BuyeeYahoo(AuctionExtractorAsync):
                 from_language=from_lang,
                 to_language=to_lang,
                 ms_translate_api_key=self.ms_translate_api_key,
-                ms_translate_api_location=self.ms_translate_api_location)
+                ms_translate_api_location=self.ms_translate_api_location
+            )
         except (HTTPError, ConnectionError) as e:
             auction.__dict__.update({'description': f"{auction.description}\n\nTranslate failed: '{e}'"})
             return auction
@@ -106,8 +109,10 @@ class BuyeeYahoo(AuctionExtractorAsync):
 
             if self.translate_titles:
                 auction_list = await asyncio.gather(
-                    *[self._translate_auction(client=client,
-                                              auction=auction,
-                                              from_lang='ja') for auction in auction_list])
+                    *[self._translate_auction(
+                        client=client,
+                        auction=auction,
+                        from_lang='ja'
+                    ) for auction in auction_list])
 
         return auction_list
