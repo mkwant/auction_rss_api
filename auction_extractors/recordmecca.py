@@ -28,7 +28,7 @@ class RecordMecca(AuctionExtractor):
         r = requests.get(url=url, params=params, headers=headers)
         r.raise_for_status()
 
-        soup = BeautifulSoup(r.content, 'html.parser')
+        soup = BeautifulSoup(r.content, features='html.parser')
         items = soup.select('div.default_product_display')
         return items
 
