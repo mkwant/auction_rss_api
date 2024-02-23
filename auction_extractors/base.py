@@ -27,7 +27,6 @@ class AuctionExtractor(BaseModel):
         A name for the site.
         Will be used as part of the description property of the RSS feed (followed by the search term).
         :return: A name for the site.
-
         """
         ...
 
@@ -45,12 +44,14 @@ class AuctionExtractor(BaseModel):
         :param error: The error message
         :return: A list with one Auction record
         """
-        return [Auction(auction_id='ERROR',
-                        description=error,
-                        link=self.search_link,
-                        title="ERROR: Auctions couldn't be retrieved.",
-                        start_date=datetime.now()
-                        )]
+        return [
+            Auction(auction_id='ERROR',
+                    description=error,
+                    link=self.search_link,
+                    title="ERROR: Auctions couldn't be retrieved.",
+                    start_date=datetime.now()
+                    )
+        ]
 
     def search(self) -> AuctionSearchResponse:
         """
@@ -112,12 +113,14 @@ class AuctionExtractorAsync(BaseModel):
         :param error: The error message
         :return: A list with one Auction record
         """
-        return [Auction(auction_id='ERROR',
-                        description=error,
-                        link=self.search_link,
-                        title="ERROR: Auctions couldn't be retrieved.",
-                        start_date=datetime.now()
-                        )]
+        return [
+            Auction(auction_id='ERROR',
+                    description=error,
+                    link=self.search_link,
+                    title="ERROR: Auctions couldn't be retrieved.",
+                    start_date=datetime.now()
+                    )
+        ]
 
     async def search(self) -> AuctionSearchResponse:
         """
