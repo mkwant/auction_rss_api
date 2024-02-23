@@ -12,18 +12,24 @@ def generate_rss_response(auction_search_response: AuctionSearchResponse) -> RSS
 
     for auction in auction_search_response.auctions:
 
-        item_data = {'title': auction.title,
-                     'link': auction.link,
-                     'description': auction.description,
-                     'guid': GUID(content=auction.auction_id),
-                     'author': auction.seller,
-                     'pub_date': auction.start_date
-                     }
+        item_data = {
+            'title': auction.title,
+            'link': auction.link,
+            'description': auction.description,
+            'guid': GUID(content=auction.auction_id),
+            'author': auction.seller,
+            'pub_date': auction.start_date
+        }
 
         if auction.image_link:
-            item_data['enclosure'] = Enclosure(content='',
-                                               attrs=EnclosureAttrs(url=auction.image_link, length=1000,
-                                                                    type='image/jpeg'))
+            item_data['enclosure'] = Enclosure(
+                content='',
+                attrs=EnclosureAttrs(
+                    url=auction.image_link,
+                    length=1000,
+                    type='image/jpeg'
+                )
+            )
         items.append(Item(**item_data))
 
     # Instantiate the RSSFeed class
