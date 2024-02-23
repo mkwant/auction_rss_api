@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Optional
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from fastapi.responses import PlainTextResponse, RedirectResponse
 from fastapi_rss import RSSResponse
 
@@ -25,7 +25,18 @@ from auction_extractors.variaworld import Variaworld
 from config import Settings
 from rss import generate_rss_response
 
-app = FastAPI(title='Auction to RSS', version='1.4.0')
+app = FastAPI(
+    title='Auction to RSS',
+    version='1.4.0'
+)
+
+
+@app.middleware("http")
+async def add_noindex(request: Request, call_next):
+    """Adding x-robots-tag to response headers to exclude from search engines."""
+    response = await call_next(request)
+    response.headers["x-robots-tag"] = 'noindex, nofollow'
+    return response
 
 
 @lru_cache
@@ -177,9 +188,3 @@ def variaworld_rss(search_term: str) -> RSSResponse:
     auction_extractor = Variaworld(search_term=search_term)
     auction_search_response = auction_extractor.search()
     return generate_rss_response(auction_search_response=auction_search_response)
-
-
-@app.get(path='/robots.txt', response_class=PlainTextResponse)
-def robots():
-    data = """User-agent: *\nDisallow: /"""
-    return data
