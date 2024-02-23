@@ -22,7 +22,6 @@ from auction_extractors.tracks import Tracks
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
 from config import Settings
-from rss import generate_rss_response
 
 app = FastAPI(
     title='Auction to RSS',
@@ -51,8 +50,7 @@ def docs_redirect():
 @app.get(path='/2dehands', response_class=RSSResponse)
 def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RSSResponse:
     auction_extractor = TweedeHands(search_term=search_term, search_in_seller_name=search_in_seller_name)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/buyee_mercari', response_class=RSSResponse)
@@ -63,15 +61,13 @@ async def buyee_mercari_rss(search_term: str,
                                      translate_titles=translate_titles,
                                      ms_translate_api_key=settings.ms_translate_api_key,
                                      ms_translate_api_location=settings.ms_translate_api_location)
-    auction_search_response = await auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return await auction_extractor.search()
 
 
 @app.get(path='/buyee__rakuma', response_class=RSSResponse)
 def buyee_rakuma_rss(search_term: str) -> RSSResponse:
     auction_extractor = BuyeeRakuma(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/buyee_yahoo', response_class=RSSResponse)
@@ -82,36 +78,31 @@ async def buyee_yahoo_rss(search_term: str,
                                    translate_titles=translate_titles,
                                    ms_translate_api_key=settings.ms_translate_api_key,
                                    ms_translate_api_location=settings.ms_translate_api_location)
-    auction_search_response = await auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return await auction_extractor.search()
 
 
 @app.get(path='/cdandlp', response_class=RSSResponse)
 def cdandlp_rss(search_term: str) -> RSSResponse:
     auction_extractor = CdAndLp(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/delcampe_', response_class=RSSResponse)
 def delcampe_rss(search_term: str) -> RSSResponse:
     auction_extractor = Delcampe(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/discogs_wantlist', response_class=RSSResponse)
 async def discogs_wantlist_rss(username: str) -> RSSResponse:
     auction_extractor = DiscogsWantlist(search_term=username)
-    auction_search_response = await auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return await auction_extractor.search()
 
 
 @app.get(path='/discords', response_class=RSSResponse)
 def discords_rss(search_term: str) -> RSSResponse:
     auction_extractor = Discords(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/ebay', response_class=RSSResponse)
@@ -129,61 +120,52 @@ def ebay_rss(
         site_id=site_id.value,
         only_locally_listed_items=only_locally_listed_items
     )
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/juno', response_class=RSSResponse)
 def juno_rss(search_term: str) -> RSSResponse:
     auction_extractor = Juno(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/marktplaats', response_class=RSSResponse)
 def marktplaats_rss(search_term: str, search_in_seller_name: bool = False) -> RSSResponse:
     auction_extractor = Marktplaats(search_term=search_term, search_in_seller_name=search_in_seller_name)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/pleasuresofpasttimes', response_class=RSSResponse)
 def pleasuresofpasttimes_rss(search_term: str) -> RSSResponse:
     auction_extractor = PleasuresOfPastTimes(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/recordmecca', response_class=RSSResponse)
 def recordmecca_rss(search_term: str) -> RSSResponse:
     auction_extractor = RecordMecca(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/todocoleccion', response_class=RSSResponse)
 def todocoleccion_rss(search_term: str) -> RSSResponse:
     auction_extractor = Todocoleccion(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/tokyomusicjapan', response_class=RSSResponse)
 def tokyomusicjapan_rss(search_term: str) -> RSSResponse:
     auction_extractor = TokyoMusicJapan(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/tracks', response_class=RSSResponse)
 def tracks_rss(search_term: str) -> RSSResponse:
     auction_extractor = Tracks(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()
 
 
 @app.get(path='/variaworld', response_class=RSSResponse)
 def variaworld_rss(search_term: str) -> RSSResponse:
     auction_extractor = Variaworld(search_term=search_term)
-    auction_search_response = auction_extractor.search()
-    return generate_rss_response(auction_search_response=auction_search_response)
+    return auction_extractor.search()

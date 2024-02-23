@@ -9,6 +9,7 @@ def generate_rss_response(auction_search_response: AuctionSearchResponse) -> RSS
     """From an AuctionExtractor create an RSSResponse that can be used as a FastApi response."""
 
     items = []
+
     for auction in auction_search_response.auctions:
 
         item_data = {'title': auction.title,

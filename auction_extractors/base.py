@@ -1,10 +1,12 @@
 from abc import abstractmethod
 from datetime import datetime
-
 from typing import List
 
-from models import AuctionSearchResponse, Auction
+from fastapi_rss import RSSResponse
 from pydantic import BaseModel
+
+from models import AuctionSearchResponse, Auction
+from rss import generate_rss_response
 
 
 class AuctionExtractor(BaseModel):
@@ -55,7 +57,7 @@ class AuctionExtractor(BaseModel):
             )
         ]
 
-    def search(self) -> AuctionSearchResponse:
+    def search(self) -> RSSResponse:
         """
         Creates an AuctionSearchResponse item, which contains all the information needed to build an RSS feed.
         :return: An instance of AuctionSearchResponse
@@ -69,12 +71,14 @@ class AuctionExtractor(BaseModel):
         if len(auctions) == 0:
             auctions = self.auctions_on_error(error='No auctions were retrieved from the site.')
 
-        return AuctionSearchResponse(
+        auction_search_response = AuctionSearchResponse(
             search_link=self.search_link,
             search_term=self.search_term,
             site_desc=self.site_desc,
             auctions=auctions
         )
+
+        return generate_rss_response(auction_search_response=auction_search_response)
 
 
 class AuctionExtractorAsync(BaseModel):
@@ -126,7 +130,7 @@ class AuctionExtractorAsync(BaseModel):
             )
         ]
 
-    async def search(self) -> AuctionSearchResponse:
+    async def search(self) -> RSSResponse:
         """
         Creates an AuctionSearchResponse item, which contains all the information needed to build an RSS feed.
         :return: An instance of AuctionSearchResponse
@@ -140,9 +144,11 @@ class AuctionExtractorAsync(BaseModel):
         if len(auctions) == 0:
             auctions = self.auctions_on_error(error='No auctions were retrieved from the site.')
 
-        return AuctionSearchResponse(
+        auction_search_response = AuctionSearchResponse(
             search_link=self.search_link,
             search_term=self.search_term,
             site_desc=self.site_desc,
             auctions=auctions
         )
+
+        return generate_rss_response(auction_search_response=auction_search_response)
