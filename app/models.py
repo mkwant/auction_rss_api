@@ -24,7 +24,7 @@ class AuctionSearchResponse(BaseModel):
     site_desc: str
     auctions: List[Auction]
 
-    def rss_response(self) -> RSSResponse:
+    def to_rss(self) -> RSSResponse:
         """Return an RSSResponse that can be used as a FastApi response."""
 
         items = []
@@ -138,7 +138,7 @@ class AuctionExtractor(BaseModel):
             auctions=auctions
         )
 
-        return auction_search_response.rss_response()
+        return auction_search_response.to_rss()
 
 
 class AuctionExtractorAsync(BaseModel):
@@ -211,4 +211,4 @@ class AuctionExtractorAsync(BaseModel):
             auctions=auctions
         )
 
-        return auction_search_response.rss_response()
+        return auction_search_response.to_rss()
