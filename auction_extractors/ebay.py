@@ -7,7 +7,7 @@ import httpx
 import pytz
 
 from auction_extractors.base import AuctionExtractor
-from models import Auction
+from app.models import Auction
 
 
 class Ebay(AuctionExtractor):

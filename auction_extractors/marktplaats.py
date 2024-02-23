@@ -4,7 +4,7 @@ from typing import List
 import requests
 
 from auction_extractors.base import AuctionExtractor
-from models import Auction
+from app.models import Auction
 
 
 class Marktplaats(AuctionExtractor):
@@ -72,6 +72,8 @@ class Marktplaats(AuctionExtractor):
                 'start_date': item['date']
             }
 
-            auctions.append(Auction(**auction))
+            auctions.append(
+                Auction(**auction)
+            )
 
         return auctions

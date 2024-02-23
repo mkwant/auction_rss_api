@@ -7,7 +7,7 @@ import xmltodict
 from bs4 import BeautifulSoup
 
 from auction_extractors.base import AuctionExtractorAsync
-from models import Auction
+from app.models import Auction
 
 
 # TODO Use cloudscraper to bypass Cloudflare challenge

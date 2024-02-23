@@ -9,7 +9,7 @@ from httpx import HTTPError
 
 from auction_extractors.base import AuctionExtractorAsync
 from dependencies.translate import translate_text
-from models import Auction
+from app.models import Auction
 
 
 class BuyeeMercari(AuctionExtractorAsync):

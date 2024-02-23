@@ -5,8 +5,8 @@ from typing import List
 from fastapi_rss import RSSResponse
 from pydantic import BaseModel
 
-from models import AuctionSearchResponse, Auction
-from rss import generate_rss_response
+from app.models import AuctionSearchResponse, Auction
+from app.rss import generate_rss_response
 
 
 class AuctionExtractor(BaseModel):

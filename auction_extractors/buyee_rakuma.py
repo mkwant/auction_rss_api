@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
 from auction_extractors.base import AuctionExtractor
-from models import Auction
+from app.models import Auction
 
 
 # TODO Translate titles -> make async

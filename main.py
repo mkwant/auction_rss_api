@@ -21,7 +21,7 @@ from auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_extractors.tracks import Tracks
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
-from settings import Settings
+from app.settings import Settings
 
 app = FastAPI(
     title='Auction to RSS',
