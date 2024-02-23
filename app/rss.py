@@ -2,7 +2,7 @@ from datetime import datetime
 
 from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
 
-from models import AuctionSearchResponse
+from app.models import AuctionSearchResponse
 
 
 def generate_rss_response(auction_search_response: AuctionSearchResponse) -> RSSResponse:
