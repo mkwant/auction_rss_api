@@ -49,7 +49,10 @@ def docs_redirect():
 
 @app.get(path='/2dehands', response_class=RSSResponse)
 def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RSSResponse:
-    site = TweedeHands(search_term=search_term, search_in_seller_name=search_in_seller_name)
+    site = TweedeHands(
+        search_term=search_term,
+        search_in_seller_name=search_in_seller_name
+    )
     return site.search()
 
 
@@ -135,7 +138,10 @@ def juno_rss(search_term: str) -> RSSResponse:
 
 @app.get(path='/marktplaats', response_class=RSSResponse)
 def marktplaats_rss(search_term: str, search_in_seller_name: bool = False) -> RSSResponse:
-    site = Marktplaats(search_term=search_term, search_in_seller_name=search_in_seller_name)
+    site = Marktplaats(
+        search_term=search_term,
+        search_in_seller_name=search_in_seller_name
+    )
     return site.search()
 
 
