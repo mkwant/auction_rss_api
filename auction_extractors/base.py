@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 
 class AuctionExtractor(BaseModel):
+    """A base class for an auction extractor."""
     search_term: str
 
     @property
@@ -76,6 +77,7 @@ class AuctionExtractor(BaseModel):
 
 
 class AuctionExtractorAsync(BaseModel):
+    """A base class for an async auction extractor."""
     search_term: str
 
     @property
