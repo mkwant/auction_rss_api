@@ -30,6 +30,7 @@ app = FastAPI(
 
 # TODO Move endpoints to a router
 # TODO Add function to generate random User Agent
+# TODO Move generate rss to base model
 
 
 @app.middleware("http")
