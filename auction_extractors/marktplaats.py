@@ -3,8 +3,7 @@ from typing import List
 
 import requests
 
-from auction_extractors.base import AuctionExtractor
-from app.models import Auction
+from app.models import Auction, AuctionExtractor
 
 
 class Marktplaats(AuctionExtractor):

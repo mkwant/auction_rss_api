@@ -4,9 +4,8 @@ from fastapi.responses import RedirectResponse
 from routers.rss import router
 
 
-# TODO Move endpoints to a router
 # TODO Add function to generate random User Agent
-# TODO Move generate rss to base model
+# TODO Translate as dependency Class: https://fastapi.tiangolo.com/tutorial/dependencies/classes-as-dependencies/
 
 app = FastAPI(
     title='Auction to RSS',

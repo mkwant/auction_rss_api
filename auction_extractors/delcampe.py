@@ -6,8 +6,7 @@ import cloudscraper as cloudscraper
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
-from auction_extractors.base import AuctionExtractor
-from app.models import Auction
+from app.models import Auction, AuctionExtractor
 
 
 class Delcampe(AuctionExtractor):

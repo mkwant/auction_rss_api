@@ -6,9 +6,8 @@ import httpx
 from bs4 import BeautifulSoup
 from httpx import HTTPError
 
-from auction_extractors.base import AuctionExtractorAsync
 from dependencies.translate import translate_text
-from app.models import Auction
+from app.models import Auction, AuctionExtractorAsync
 
 
 # TODO Multiple pages? / keep in db?
