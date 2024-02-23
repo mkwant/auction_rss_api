@@ -28,6 +28,9 @@ app = FastAPI(
     version='1.4.0'
 )
 
+# TODO Move endpoints to a router
+# TODO Add function to generate random User Agent
+
 
 @app.middleware("http")
 async def add_noindex(request: Request, call_next):
