@@ -3,13 +3,14 @@ import uuid
 import httpx
 
 
-async def translate_text(client: httpx.AsyncClient,
-                         text: str,
-                         from_language: str,
-                         to_language: str,
-                         ms_translate_api_key: str,
-                         ms_translate_api_location: str,
-                         api_version: float = '3.0'
+async def translate_text(
+        client: httpx.AsyncClient,
+        text: str,
+        from_language: str,
+        to_language: str,
+        ms_translate_api_key: str,
+        ms_translate_api_location: str,
+        api_version: float = '3.0'
 ) -> str:
     base_url = 'https://api.cognitive.microsofttranslator.com'
     endpoint = 'translate'
@@ -23,7 +24,11 @@ async def translate_text(client: httpx.AsyncClient,
         'X-ClientTraceId': str(uuid.uuid4())
     }
 
-    payload = [{'text': text}]
+    payload = [
+        {
+            'text': text
+        }
+    ]
 
     r = await client.post(url, headers=headers, json=payload)
     try:
