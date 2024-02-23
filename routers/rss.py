@@ -22,15 +22,16 @@ from auction_extractors.tracks import Tracks
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
 
-router = APIRouter(
-    default_response_class=RSSResponse,
-    tags=['RSS-feeds']
-)
-
 
 @lru_cache
 def get_settings():
     return Settings()
+
+
+router = APIRouter(
+    default_response_class=RSSResponse,
+    tags=['RSS-feeds']
+)
 
 
 @router.get(path='/2dehands')
