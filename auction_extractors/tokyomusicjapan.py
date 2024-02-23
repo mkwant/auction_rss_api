@@ -16,7 +16,7 @@ class TokyoMusicJapan(AuctionExtractor):
 
     @property
     def search_link(self) -> str:
-        return 'http://tokyomusicjapan.com/new.html'
+        return 'http://tokyomusicjapan.com/new.html'  # noqa
 
     def _get_auctions(self) -> list:
         url = 'https://www.tokyomusicjapan.com/service/api/ArtistSearch?artist=new&currency=USD&isGeneral=true'
@@ -32,20 +32,24 @@ class TokyoMusicJapan(AuctionExtractor):
             title = f"{item['Title']} ({item['Notes']})"
             link = 'http://tokyomusicjapan.com/new.html'  # noqa
             image_link = item['Url']
-            description = '\n'.join([
-                f"Format: {item['Format']}",
-                f"Cat no: {item['CatNb']}",
-                f"Disc: {item['Dsk']}",
-                f"Sleeve: {item['Slv']}",
-                f"Price: ${int(item['Price']):.2f}"
-            ])
+            description = '\n'.join(
+                [
+                    f"Format: {item['Format']}",
+                    f"Cat no: {item['CatNb']}",
+                    f"Disc: {item['Dsk']}",
+                    f"Sleeve: {item['Slv']}",
+                    f"Price: ${int(item['Price']):.2f}"
+                ]
+            )
 
-            auctions.append(Auction(auction_id=auction_id,
-                                    description=description,
-                                    image_link=image_link,
-                                    link=link,
-                                    title=title,
-                                    start_date=datetime.now()
-                                    ))
+            auctions.append(
+                Auction(auction_id=auction_id,
+                        description=description,
+                        image_link=image_link,
+                        link=link,
+                        title=title,
+                        start_date=datetime.now()
+                        )
+            )
 
         return auctions

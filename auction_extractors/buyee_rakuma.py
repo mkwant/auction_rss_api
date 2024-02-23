@@ -32,7 +32,7 @@ class BuyeeRakuma(AuctionExtractor):
 
         r = requests.get(url=url, params=params, headers=headers)
 
-        soup = BeautifulSoup(r.content, 'html.parser')
+        soup = BeautifulSoup(r.content, features='html.parser')
         return soup.select('ul.item-lists > li')
 
     def get_auctions(self) -> List[Auction]:
@@ -47,12 +47,15 @@ class BuyeeRakuma(AuctionExtractor):
             _image_link = item.select_one('img')['data-bind'].replace('\n', ' ').split('\'')[1].replace('/s/', '/l/')
             image_link = f"https:{_image_link.split('?')[0]}"
 
-            auctions.append(Auction(auction_id=auction_id,
-                                    description=description,
-                                    image_link=image_link,
-                                    link=link,
-                                    title=title,
-                                    start_date=datetime.now()
-                                    ))
+            auctions.append(
+                Auction(
+                    auction_id=auction_id,
+                    description=description,
+                    image_link=image_link,
+                    link=link,
+                    title=title,
+                    start_date=datetime.now()
+                )
+            )
 
         return auctions

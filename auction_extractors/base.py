@@ -46,12 +46,13 @@ class AuctionExtractor(BaseModel):
         :return: A list with one Auction record
         """
         return [
-            Auction(auction_id='ERROR',
-                    description=error,
-                    link=self.search_link,
-                    title="ERROR: Auctions couldn't be retrieved.",
-                    start_date=datetime.now()
-                    )
+            Auction(
+                auction_id='ERROR',
+                description=error,
+                link=self.search_link,
+                title="ERROR: Auctions couldn't be retrieved.",
+                start_date=datetime.now()
+            )
         ]
 
     def search(self) -> AuctionSearchResponse:
@@ -116,12 +117,13 @@ class AuctionExtractorAsync(BaseModel):
         :return: A list with one Auction record
         """
         return [
-            Auction(auction_id='ERROR',
-                    description=error,
-                    link=self.search_link,
-                    title="ERROR: Auctions couldn't be retrieved.",
-                    start_date=datetime.now()
-                    )
+            Auction(
+                auction_id='ERROR',
+                description=error,
+                link=self.search_link,
+                title="ERROR: Auctions couldn't be retrieved.",
+                start_date=datetime.now()
+            )
         ]
 
     async def search(self) -> AuctionSearchResponse:

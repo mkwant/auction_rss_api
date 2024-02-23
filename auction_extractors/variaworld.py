@@ -18,10 +18,12 @@ class Variaworld(AuctionExtractor):
 
     @property
     def search_link(self) -> str:
-        return f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}&zoek_at=a&m_sr=lig&startpagina=1'  # noqa
+        return (f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}'
+                f'&zoek_at=a&m_sr=lig&startpagina=1')
 
     def _get_auctions(self) -> ResultSet:
-        url = f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}&zoek_at=a&m_sr=lig&startpagina=1'  # noqa
+        url = (f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}'
+               f'&zoek_at=a&m_sr=lig&startpagina=1')
         r = requests.get(url)
         soup = BeautifulSoup(r.content, features='html.parser')
 
@@ -49,12 +51,15 @@ class Variaworld(AuctionExtractor):
             start_date = auction.select_one('div.overzicht_datum_ingebracht').text.strip()
             start_date = datetime.strptime(start_date, '%d-%m-%Y')
 
-            auctions.append(Auction(auction_id=auction_id,
-                                    description=description,
-                                    image_link=image_link,
-                                    link=link,
-                                    title=title,
-                                    start_date=start_date
-                                    ))
+            auctions.append(
+                Auction(
+                    auction_id=auction_id,
+                    description=description,
+                    image_link=image_link,
+                    link=link,
+                    title=title,
+                    start_date=start_date
+                )
+            )
 
         return auctions

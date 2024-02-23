@@ -23,9 +23,11 @@ class Juno(AuctionExtractor):
 
     def _get_auctions(self) -> ResultSet:
         url = 'https://www.juno.co.uk/search/'
-        params = {'q[all][0]': self.search_term,
-                  'hide_forthcoming': 0,
-                  'solrorder': 'date_down'}
+        params = {
+            'q[all][0]': self.search_term,
+            'hide_forthcoming': 0,
+            'solrorder': 'date_down'
+        }
 
         r = requests.get(url=url, params=params)
         page = r.text
@@ -54,12 +56,15 @@ class Juno(AuctionExtractor):
                 title = f'[Pre-order] {title}'
             description = f'{_price}\n{_label}\n{_cat}'
 
-            auctions.append(Auction(auction_id=item_id,
-                                    description=description,
-                                    image_link=image_link,
-                                    link=link,
-                                    title=title,
-                                    start_date=datetime.now()
-                                    ))
+            auctions.append(
+                Auction(
+                    auction_id=item_id,
+                    description=description,
+                    image_link=image_link,
+                    link=link,
+                    title=title,
+                    start_date=datetime.now()
+                )
+            )
 
         return auctions

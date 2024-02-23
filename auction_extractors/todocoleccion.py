@@ -59,13 +59,15 @@ class Todocoleccion(AuctionExtractor):
             _category = auction.select_one('p._lote_item-section').text.strip()
             desc = f'{price} | {_item_type} | {_category}'
 
-            auctions.append(Auction(auction_id=unique_id,
-                                    description=desc,
-                                    image_link=image_link,
-                                    link=link,
-                                    title=title,
-                                    seller=seller,
-                                    start_date=datetime.now()
-                                    ))
+            auctions.append(
+                Auction(auction_id=unique_id,
+                        description=desc,
+                        image_link=image_link,
+                        link=link,
+                        title=title,
+                        seller=seller,
+                        start_date=datetime.now()
+                        )
+            )
 
         return auctions

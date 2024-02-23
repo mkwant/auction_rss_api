@@ -34,7 +34,7 @@ class CdAndLp(AuctionExtractor):
 
         r = requests.get(url=self.URL, params=params)
 
-        soup = BeautifulSoup(r.content, 'html.parser')
+        soup = BeautifulSoup(r.content, features='html.parser')
         site_auctions = soup.select('div[class*="twelve large-20 columns div_item_listing"]')
         return site_auctions
 
@@ -78,13 +78,16 @@ class CdAndLp(AuctionExtractor):
                 _cat_no = ''
             desc = f'{_price} | {_condition} | {_format} | {_cat_no}'
 
-            auctions.append(Auction(auction_id=auction_id,
-                                    description=desc,
-                                    image_link=image_link,
-                                    link=link,
-                                    title=title,
-                                    seller=seller,
-                                    start_date=datetime.now()
-                                    ))
+            auctions.append(
+                Auction(
+                    auction_id=auction_id,
+                    description=desc,
+                    image_link=image_link,
+                    link=link,
+                    title=title,
+                    seller=seller,
+                    start_date=datetime.now()
+                )
+            )
 
         return auctions

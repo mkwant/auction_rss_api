@@ -24,7 +24,8 @@ class BuyeeMercari(AuctionExtractorAsync):
 
     @property
     def search_link(self) -> str:
-        return f'https://buyee.jp/mercari/search?keyword={self.search_term}&status=all&items=40&lang=en&currencyCode=EUR'  # noqa
+        return (f'https://buyee.jp/mercari/search?keyword={self.search_term}'
+                f'&status=all&items=40&lang=en&currencyCode=EUR')
 
     async def _get_page(self, client: httpx.AsyncClient) -> httpx.Response:
         """Retrieve search page."""

@@ -17,8 +17,8 @@ class DiscogsWantlist(AuctionExtractorAsync):
     headers: dict = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:111.0) Gecko/20100101 Firefox/111.0'
     }
-    discogs_logo: str = \
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Discogs_record_icon.svg/480px-Discogs_record_icon.svg.png'  # noqa
+    discogs_logo: str = ('https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Discogs_record_icon.svg/'
+                         '480px-Discogs_record_icon.svg.png')
 
     @property
     def site_desc(self) -> str:
@@ -44,20 +44,24 @@ class DiscogsWantlist(AuctionExtractorAsync):
         result = xmltodict.parse(offer_page)
         entries = result['feed'].get('entry')
         if isinstance(entries, list):
-            return [{
-                'updated': item['updated'],
-                'link': item['link']['@href'],
-                'title': item['title'],
-                'text': item['summary']['#text']
-            } for item in result['feed']['entry']]
+            return [
+                {
+                    'updated': item['updated'],
+                    'link': item['link']['@href'],
+                    'title': item['title'],
+                    'text': item['summary']['#text']
+                } for item in result['feed']['entry']
+            ]
         elif isinstance(entries, dict):
             item = entries
-            return [{
-                'updated': item['updated'],
-                'link': item['link']['@href'],
-                'title': item['title'],
-                'text': item['summary']['#text']
-            }]
+            return [
+                {
+                    'updated': item['updated'],
+                    'link': item['link']['@href'],
+                    'title': item['title'],
+                    'text': item['summary']['#text']
+                }
+            ]
 
     async def _get_wantlist(self, client: httpx.AsyncClient) -> List[int]:
         """Get a users wantlist in the form of a list of item id's."""
@@ -69,14 +73,14 @@ class DiscogsWantlist(AuctionExtractorAsync):
         }
         r = await client.get(url=url, params=params)
         r.raise_for_status()
-        soup = BeautifulSoup(r.content, 'html.parser')
-        links = soup.findAll('span', {'class': 'marketplace_for_sale_count'})
+        soup = BeautifulSoup(r.content, features='html.parser')
+        links = soup.select('span.marketplace_for_sale_count')
         print(soup.prettify())
         result = []
         for link in links:
             link = link.find('a')['href']
             item_id = link.split('?')[0].split('/')[-1]
-            result.append(item_id)
+            result.append(int(item_id))
 
         return result
 
@@ -84,8 +88,14 @@ class DiscogsWantlist(AuctionExtractorAsync):
 
         async with httpx.AsyncClient(headers=self.headers, follow_redirects=True) as client:
             wantlist = await self._get_wantlist(client)
-            offer_pages = await asyncio.gather(*[self._get_offer_page(client=client,
-                                                                      item_id=item_id) for item_id in wantlist])
+            offer_pages = await asyncio.gather(*
+                                               [
+                                                   self._get_offer_page(
+                                                       client=client,
+                                                       item_id=item_id
+                                                   ) for item_id in wantlist
+                                               ]
+                                               )
             offers = await asyncio.gather(*[self._get_offers(offer_page) for offer_page in offer_pages])
 
         offers = itertools.chain(*offers)  # flatten list of lists

@@ -47,12 +47,15 @@ class Discords(AuctionExtractor):
             description = '\n'.join([_price, _inventory])
             image_url = f"https:{item.select_one('img:last-child')['src']}"
 
-            items.append(Auction(auction_id=item_id,
-                                 description=description,
-                                 image_link=image_url,
-                                 link=item_url,
-                                 title=title,
-                                 start_date=datetime.now()
-                                 ))
+            items.append(
+                Auction(
+                    auction_id=item_id,
+                    description=description,
+                    image_link=image_url,
+                    link=item_url,
+                    title=title,
+                    start_date=datetime.now()
+                )
+            )
 
         return items

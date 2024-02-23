@@ -25,7 +25,11 @@ class Marktplaats(AuctionExtractor):
     @staticmethod
     def clean_control_chars(string: str) -> str:
         """Removes certain control characters."""
-        return re.sub(u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', string)
+        return re.sub(
+            pattern=u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+',
+            repl='',
+            string=string
+        )
 
     def get_auctions(self) -> List[Auction]:
         params = {
@@ -56,15 +60,17 @@ class Marktplaats(AuctionExtractor):
             except KeyError:
                 image_link = None
 
-            auction = {'auction_id': item['itemId'],
-                       'description': f"{item['priceInfo']['priceType']}: "
-                                      f"{item['priceInfo']['priceCents'] / 100:.2f}\n"
-                                      f"{self.clean_control_chars(item['description'])}",
-                       'link': f"https://www.{self.DOMAIN}{item['vipUrl']}",
-                       'image_link': image_link,
-                       'title': self.clean_control_chars(item['title']),
-                       'seller': item['sellerInformation']['sellerName'],
-                       'start_date': item['date']}
+            auction = {
+                'auction_id': item['itemId'],
+                'description': f"{item['priceInfo']['priceType']}: "
+                               f"{item['priceInfo']['priceCents'] / 100:.2f}\n"
+                               f"{self.clean_control_chars(item['description'])}",
+                'link': f"https://www.{self.DOMAIN}{item['vipUrl']}",
+                'image_link': image_link,
+                'title': self.clean_control_chars(item['title']),
+                'seller': item['sellerInformation']['sellerName'],
+                'start_date': item['date']
+            }
 
             auctions.append(Auction(**auction))
 

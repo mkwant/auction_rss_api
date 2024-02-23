@@ -25,7 +25,7 @@ class Tracks(AuctionExtractor):
         url = f"https://www.tracks.co.uk/category/various-artists-memorabilia/{self.search_term}"
 
         r = requests.get(url=url)
-        soup = BeautifulSoup(r.content, 'html.parser')
+        soup = BeautifulSoup(r.content, features='html.parser')
         items = soup.select('ul.products li')
         return items
 
@@ -41,12 +41,15 @@ class Tracks(AuctionExtractor):
             _price = item.select_one('span.price').get_text()
             description = '\n'.join([_price, _desc])
 
-            auctions.append(Auction(auction_id=auction_id,
-                                    description=description,
-                                    image_link=image_link,
-                                    link=link,
-                                    title=title,
-                                    start_date=datetime.now()
-                                    ))
+            auctions.append(
+                Auction(
+                    auction_id=auction_id,
+                    description=description,
+                    image_link=image_link,
+                    link=link,
+                    title=title,
+                    start_date=datetime.now()
+                )
+            )
 
         return auctions

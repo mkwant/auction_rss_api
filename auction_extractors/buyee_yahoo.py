@@ -31,18 +31,20 @@ class BuyeeYahoo(AuctionExtractorAsync):
     async def _get_page(self, client: httpx.AsyncClient) -> httpx.Response:
         """Retrieve search page."""
         url = f'https://buyee.jp/item/search/query/{self.search_term}'
-        params = {'sort': 'end',
-                  'order': 'd',
-                  'conversionType': 'top_page_search',
-                  'new': 1,
-                  'translationType': 1}
+        params = {
+            'sort': 'end',
+            'order': 'd',
+            'conversionType': 'top_page_search',
+            'new': 1,
+            'translationType': 1
+        }
 
         r = await client.get(url=url, params=params)
         return r
 
     @staticmethod
     async def _parse_page(page: str) -> List[Auction]:
-        soup = BeautifulSoup(page, 'html.parser')
+        soup = BeautifulSoup(page, features='html.parser')
 
         auctions = []
 
@@ -57,13 +59,17 @@ class BuyeeYahoo(AuctionExtractorAsync):
             description = f'<b>{_auction_price}<br><b>Time left:</b> {_auction_days_left}<br>'
             seller = auction.select_one('span.auctionSearchResult__seller>a').text.strip()
 
-            auctions.append(Auction(title=title,
-                                    auction_id=auction_id,
-                                    description=description,
-                                    link=link,
-                                    image_link=image_link,
-                                    seller=seller,
-                                    start_date=datetime.now()))
+            auctions.append(
+                Auction(
+                    title=title,
+                    auction_id=auction_id,
+                    description=description,
+                    link=link,
+                    image_link=image_link,
+                    seller=seller,
+                    start_date=datetime.now()
+                )
+            )
 
         return auctions
 

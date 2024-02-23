@@ -44,12 +44,14 @@ class RecordMecca(AuctionExtractor):
             description = '\n'.join([_price, _desc])
             auction_id = link.split('/')[-2]
 
-            auctions.append(Auction(auction_id=auction_id,
-                                    description=description,
-                                    image_link=image_link,
-                                    link=link,
-                                    title=title,
-                                    start_date=datetime.now()
-                                    ))
+            auctions.append(
+                Auction(auction_id=auction_id,
+                        description=description,
+                        image_link=image_link,
+                        link=link,
+                        title=title,
+                        start_date=datetime.now()
+                        )
+            )
 
         return auctions
