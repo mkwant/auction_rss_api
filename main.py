@@ -25,7 +25,7 @@ from app.settings import Settings
 
 app = FastAPI(
     title='Auction to RSS',
-    version='1.4.0'
+    version='1.5.0'
 )
 
 # TODO Move endpoints to a router
