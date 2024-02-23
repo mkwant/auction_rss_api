@@ -1,8 +1,7 @@
 from functools import lru_cache
-from typing import Optional
 
 from fastapi import FastAPI, Depends, Request
-from fastapi.responses import PlainTextResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi_rss import RSSResponse
 
 from auction_extractors.buyee_mercari import BuyeeMercari
