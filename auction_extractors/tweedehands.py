@@ -1,4 +1,4 @@
-from src.auction_extractors.marktplaats import Marktplaats
+from auction_extractors.marktplaats import Marktplaats
 
 
 class TweedeHands(Marktplaats):

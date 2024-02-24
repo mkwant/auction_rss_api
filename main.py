@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 
-from src.app.middleware import AddNoIndex
-from src.routers import redirect
-from src.routers import rss
+from app.middleware import AddNoIndex
+from routers import redirect, rss
 
 # TODO Add function to generate random User Agent
 # TODO Documentation

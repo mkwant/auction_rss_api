@@ -5,7 +5,7 @@ from typing import List
 import httpx
 from bs4 import BeautifulSoup
 
-from src.app.models import Auction, AuctionExtractor
+from app.models import Auction, AuctionExtractor
 
 
 class BuyeeMercari(AuctionExtractor):

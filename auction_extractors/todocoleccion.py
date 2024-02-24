@@ -5,7 +5,7 @@ import cloudscraper as cloudscraper
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
-from src.app.models import Auction, AuctionExtractor
+from app.models import Auction, AuctionExtractor
 
 
 class Todocoleccion(AuctionExtractor):
