@@ -5,7 +5,7 @@ from routers.rss import router
 
 # TODO Add function to generate random User Agent
 # TODO Move code to src subdir
-# TODO Translate as dependency Class: https://fastapi.tiangolo.com/tutorial/dependencies/classes-as-dependencies/
+# TODO Make settings subdependency
 
 app = FastAPI(
     title='Auction to RSS',

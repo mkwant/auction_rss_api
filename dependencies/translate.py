@@ -1,21 +1,32 @@
+import os
 import uuid
+from dataclasses import dataclass
+from typing import Optional
 
 import httpx
+
+from app.settings import Settings
+
+settings = Settings()
+
+
+@dataclass
+class Translate:
+    translate_titles: bool = True
 
 
 async def translate_text(
         client: httpx.AsyncClient,
         text: str,
-        from_language: str,
-        to_language: str,
-        ms_translate_api_key: str,
-        ms_translate_api_location: str,
+        translate_to: str,
+        ms_translate_api_key: str = settings.ms_translate_api_key,
+        ms_translate_api_location: str = settings.ms_translate_api_location,
         api_version: float = '3.0'
 ) -> str:
     base_url = 'https://api.cognitive.microsofttranslator.com'
     endpoint = 'translate'
 
-    url = f'{base_url}/{endpoint}?api-version={api_version}&from={from_language}&to={to_language}'
+    url = f'{base_url}/{endpoint}?api-version={api_version}&to={translate_to}'
 
     headers = {
         'Ocp-Apim-Subscription-Key': ms_translate_api_key,

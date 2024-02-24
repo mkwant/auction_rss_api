@@ -89,7 +89,7 @@ class BuyeeMercari(AuctionExtractorAsync):
                 client=client,
                 text=auction.title,
                 from_language=from_lang,
-                to_language=to_lang,
+                translate_to=to_lang,
                 ms_translate_api_key=self.ms_translate_api_key,
                 ms_translate_api_location=self.ms_translate_api_location
             )

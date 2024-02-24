@@ -21,6 +21,7 @@ from auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_extractors.tracks import Tracks
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
+from dependencies.translate import Translate
 
 
 @lru_cache
@@ -57,8 +58,8 @@ async def buyee_mercari_rss(search_term: str,
 
 
 @router.get(path='/buyee__rakuma')
-def buyee_rakuma_rss(search_term: str) -> RSSResponse:
-    site = BuyeeRakuma(search_term=search_term)
+def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
+    site = BuyeeRakuma(search_term=search_term, translate_titles=translate.translate_titles)
     return site.search()
 
 

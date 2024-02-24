@@ -1,9 +1,14 @@
+import asyncio
 from abc import abstractmethod
 from datetime import datetime
 from typing import List, Optional
 
+import httpx
 from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
+from httpx import HTTPError
 from pydantic import BaseModel
+
+from dependencies.translate import translate_text
 
 
 class Auction(BaseModel):
@@ -23,6 +28,44 @@ class AuctionSearchResponse(BaseModel):
     search_term: str
     site_desc: str
     auctions: List[Auction]
+
+    @staticmethod
+    async def _translate_auction(
+            client: httpx.AsyncClient,
+            auction: Auction,
+            translate_to: str
+    ) -> Auction:
+        """Translate the auction title. Append the original title to the description."""
+        original_title = auction.title
+        try:
+
+            translated_title = await translate_text(
+                client=client,
+                text=auction.title,
+                translate_to=translate_to,
+                # ms_translate_api_key=self.ms_translate_api_key,
+                # ms_translate_api_location=self.ms_translate_api_location
+            )
+        except (HTTPError, ConnectionError) as e:
+            auction.description = f"{auction.description}\n\nTranslate failed: '{e}'"
+            return auction
+
+        auction.title = translated_title
+        auction.description = f"{auction.description}\n\nOriginal title: '{original_title}'"
+        return auction
+
+    async def translate(self, translate_to: str = 'en'):
+        client = httpx.AsyncClient()
+        statements = []
+        for auction in self.auctions:
+            statements.append(
+                self._translate_auction(
+                    translate_to=translate_to,
+                    auction=auction,
+                    client=client
+                )
+            )
+        await asyncio.gather(*statements)
 
     def to_rss(self) -> RSSResponse:
         """Return an RSSResponse that can be used as a FastApi response."""
@@ -72,6 +115,7 @@ class AuctionSearchResponse(BaseModel):
 class AuctionExtractor(BaseModel):
     """A base class for an auction extractor."""
     search_term: str
+    translate_titles: bool = False
 
     @property
     @abstractmethod
@@ -135,8 +179,11 @@ class AuctionExtractor(BaseModel):
             search_link=self.search_link,
             search_term=self.search_term,
             site_desc=self.site_desc,
-            auctions=auctions
+            auctions=auctions,
         )
+
+        if self.translate_titles:
+            asyncio.run(auction_search_response.translate())
 
         return auction_search_response.to_rss()
 
