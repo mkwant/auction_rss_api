@@ -1,17 +1,16 @@
 from fastapi import FastAPI
 
-from app.middleware import AddNoIndex
-from routers import redirect
-from routers import rss
+from src.app.middleware import AddNoIndex
+from src.routers import redirect
+from src.routers import rss
 
 # TODO Add function to generate random User Agent
-# TODO Move code to src subdir
 # TODO Documentation
 
 # Instantiate FastApi
 app = FastAPI(
     title='Auction to RSS',
-    version='1.7.1'
+    version='1.7.2'
 )
 
 # Add routers and middleware

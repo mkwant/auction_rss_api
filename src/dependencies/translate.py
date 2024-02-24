@@ -4,7 +4,7 @@ from typing import Optional
 
 import httpx
 
-from app.settings import settings
+from src.app.settings import settings
 
 
 @dataclass

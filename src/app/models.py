@@ -8,7 +8,7 @@ from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSF
 from httpx import HTTPError
 from pydantic import BaseModel
 
-from dependencies.translate import translate_text
+from src.dependencies.translate import translate_text
 
 
 class Auction(BaseModel):
