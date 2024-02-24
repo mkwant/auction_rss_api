@@ -10,7 +10,7 @@ from src.routers import rss
 # Instantiate FastApi
 app = FastAPI(
     title='Auction to RSS',
-    version='1.7.1'
+    version='1.7.2'
 )
 
 # Add routers and middleware
