@@ -4,9 +4,7 @@ from typing import Optional
 
 import httpx
 
-from app.settings import Settings
-
-settings: Settings = Settings()
+from app.settings import settings
 
 
 @dataclass
