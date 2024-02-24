@@ -7,6 +7,7 @@ from routers.rss import router
 # TODO Move code to src subdir
 # TODO Make settings subdependency?
 # TODO Rebuild Buyee Mercari / Todocoleccion
+# TODO Documentation
 
 app = FastAPI(
     title='Auction to RSS',
