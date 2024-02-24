@@ -9,7 +9,7 @@ from routers import redirect, rss
 # Instantiate FastApi
 app = FastAPI(
     title='Auction to RSS',
-    version='1.7.2'
+    version='1.7.3'
 )
 
 # Add routers and middleware
