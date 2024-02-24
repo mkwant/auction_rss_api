@@ -33,7 +33,8 @@ class AuctionSearchResponse(BaseModel):
     async def _translate_auction(
             client: httpx.AsyncClient,
             auction: Auction,
-            translate_to: str
+            translate_to: str,
+            translate_from: Optional[str] = None
     ) -> Auction:
         """Translate the auction title. Append the original title to the description."""
         original_title = auction.title
@@ -43,6 +44,7 @@ class AuctionSearchResponse(BaseModel):
                 client=client,
                 text=auction.title,
                 translate_to=translate_to,
+                translate_from=translate_from
                 # ms_translate_api_key=self.ms_translate_api_key,
                 # ms_translate_api_location=self.ms_translate_api_location
             )
@@ -54,13 +56,14 @@ class AuctionSearchResponse(BaseModel):
         auction.description = f"{auction.description}\n\nOriginal title: '{original_title}'"
         return auction
 
-    async def translate(self, translate_to: str = 'en'):
+    async def translate(self, translate_to: str = 'en', translate_from: Optional[str] = None):
         client = httpx.AsyncClient()
         statements = []
         for auction in self.auctions:
             statements.append(
                 self._translate_auction(
                     translate_to=translate_to,
+                    translate_from=translate_from,
                     auction=auction,
                     client=client
                 )
@@ -116,6 +119,7 @@ class AuctionExtractor(BaseModel):
     """A base class for an auction extractor."""
     search_term: str
     translate_titles: bool = False
+    translate_from: Optional[str] = None
 
     @property
     @abstractmethod
@@ -183,7 +187,7 @@ class AuctionExtractor(BaseModel):
         )
 
         if self.translate_titles:
-            asyncio.run(auction_search_response.translate())
+            asyncio.run(auction_search_response.translate(translate_from=self.translate_from))
 
         return auction_search_response.to_rss()
 

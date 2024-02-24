@@ -5,7 +5,8 @@ from routers.rss import router
 
 # TODO Add function to generate random User Agent
 # TODO Move code to src subdir
-# TODO Make settings subdependency
+# TODO Make settings subdependency?
+# TODO Rebuild Buyee Mercari / Todocoleccion
 
 app = FastAPI(
     title='Auction to RSS',

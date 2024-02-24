@@ -45,15 +45,8 @@ def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RS
 
 
 @router.get(path='/buyee_mercari')
-async def buyee_mercari_rss(search_term: str,
-                            translate_titles: bool = True,
-                            settings: Settings = Depends(get_settings)) -> RSSResponse:
-    site = BuyeeMercari(
-        search_term=search_term,
-        translate_titles=translate_titles,
-        ms_translate_api_key=settings.ms_translate_api_key,
-        ms_translate_api_location=settings.ms_translate_api_location
-    )
+async def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
+    site = BuyeeMercari(search_term=search_term, translate_titles=translate.translate_titles)
     return await site.search()
 
 
@@ -64,16 +57,9 @@ def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)
 
 
 @router.get(path='/buyee_yahoo')
-async def buyee_yahoo_rss(search_term: str,
-                          translate_titles: bool = True,
-                          settings: Settings = Depends(get_settings)) -> RSSResponse:
-    site = BuyeeYahoo(
-        search_term=search_term,
-        translate_titles=translate_titles,
-        ms_translate_api_key=settings.ms_translate_api_key,
-        ms_translate_api_location=settings.ms_translate_api_location
-    )
-    return await site.search()
+def buyee_yahoo_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
+    site = BuyeeYahoo(search_term=search_term, translate_titles=translate.translate_titles, translate_from='ja')
+    return site.search()
 
 
 @router.get(path='/cdandlp')
