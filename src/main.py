@@ -5,7 +5,6 @@ from src.routers import redirect
 from src.routers import rss
 
 # TODO Add function to generate random User Agent
-# TODO Move code to src subdir
 # TODO Documentation
 
 # Instantiate FastApi
