@@ -10,7 +10,7 @@ from routers.rss import router
 
 app = FastAPI(
     title='Auction to RSS',
-    version='1.6.0'
+    version='1.7.0'
 )
 
 
