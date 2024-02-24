@@ -1,26 +1,20 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 
+from app.middleware import AddNoIndex
 from routers import redirect
 from routers import rss
 
 # TODO Add function to generate random User Agent
 # TODO Move code to src subdir
-# TODO Import middleware and redirect
 # TODO Documentation
 
+# Instantiate FastApi
 app = FastAPI(
     title='Auction to RSS',
     version='1.7.0'
 )
 
-
-@app.middleware("http")
-async def add_noindex(request: Request, call_next):
-    """Adding x-robots-tag to response headers to exclude from search engines."""
-    response = await call_next(request)
-    response.headers["x-robots-tag"] = 'noindex, nofollow'
-    return response
-
-
+# Add routers and middleware
 app.include_router(rss.router)
 app.include_router(redirect.router)
+app.add_middleware(middleware_class=AddNoIndex)
