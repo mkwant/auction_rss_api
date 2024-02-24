@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import RedirectResponse
 
-from routers.rss import router
+from routers import redirect
+from routers import rss
 
 # TODO Add function to generate random User Agent
 # TODO Move code to src subdir
@@ -22,9 +22,5 @@ async def add_noindex(request: Request, call_next):
     return response
 
 
-@app.get(path='/', include_in_schema=False)
-def docs_redirect():
-    return RedirectResponse(url='/docs')
-
-
-app.include_router(router)
+app.include_router(rss.router)
+app.include_router(redirect.router)
