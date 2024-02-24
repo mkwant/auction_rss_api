@@ -45,14 +45,14 @@ def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RS
 
 
 @router.get(path='/buyee_mercari')
-async def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    site = BuyeeMercari(search_term=search_term, translate_titles=translate.translate_titles)
-    return await site.search()
+def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
+    site = BuyeeMercari(search_term=search_term, translate_titles=translate.translate_titles, translate_from='ja')
+    return site.search()
 
 
 @router.get(path='/buyee__rakuma')
 def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    site = BuyeeRakuma(search_term=search_term, translate_titles=translate.translate_titles)
+    site = BuyeeRakuma(search_term=search_term, translate_titles=translate.translate_titles, translate_from='ja')
     return site.search()
 
 
@@ -132,8 +132,8 @@ def recordmecca_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/todocoleccion')
-def todocoleccion_rss(search_term: str) -> RSSResponse:
-    site = Todocoleccion(search_term=search_term)
+def todocoleccion_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
+    site = Todocoleccion(search_term=search_term, translate_titles=translate.translate_titles)
     return site.search()
 
 
