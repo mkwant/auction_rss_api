@@ -6,7 +6,7 @@ from typing import List
 import httpx
 import pytz
 
-from app.models import Auction, AuctionExtractor
+from src.app.models import Auction, AuctionExtractor
 
 
 class Ebay(AuctionExtractor):

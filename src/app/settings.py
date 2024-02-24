@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     ms_translate_api_location: str
 
     class Config:
-        env_file = ".env"
+        env_file = "../.env"
 
 
 settings = Settings()

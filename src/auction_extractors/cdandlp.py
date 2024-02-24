@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
-from app.models import Auction, AuctionExtractor
+from src.app.models import Auction, AuctionExtractor
 
 
 class CdAndLp(AuctionExtractor):

@@ -2,7 +2,7 @@
 v: 0
 micros:
   - name: auction_rss_api
-    src: .
+    src: src
     engine: python3.9
     presets:
       env:
