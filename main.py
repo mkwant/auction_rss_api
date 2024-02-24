@@ -5,8 +5,7 @@ from routers.rss import router
 
 # TODO Add function to generate random User Agent
 # TODO Move code to src subdir
-# TODO Make settings subdependency?
-# TODO Rebuild Buyee Mercari / Todocoleccion
+# TODO Import middleware and redirect
 # TODO Documentation
 
 app = FastAPI(
