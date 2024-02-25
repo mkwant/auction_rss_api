@@ -5,6 +5,7 @@ from routers import redirect, rss
 
 # TODO Add function to generate random User Agent
 # TODO Documentation
+# TODO Don't translate error item
 
 # Instantiate FastApi
 app = FastAPI(

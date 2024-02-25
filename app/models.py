@@ -45,8 +45,6 @@ class AuctionSearchResponse(BaseModel):
                 text=auction.title,
                 translate_to=translate_to,
                 translate_from=translate_from
-                # ms_translate_api_key=self.ms_translate_api_key,
-                # ms_translate_api_location=self.ms_translate_api_location
             )
         except (HTTPError, ConnectionError) as e:
             auction.description = f"{auction.description}\n\nTranslate failed: '{e}'"
