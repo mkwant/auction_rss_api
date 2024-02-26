@@ -133,7 +133,7 @@ def recordmecca_rss(search_term: str) -> RSSResponse:
 
 @router.get(path='/todocoleccion')
 def todocoleccion_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    site = Todocoleccion(search_term=search_term, translate_titles=translate.translate_titles)
+    site = Todocoleccion(search_term=search_term, translate_titles=translate.translate_titles, translate_from='es')
     return site.search()
 
 
