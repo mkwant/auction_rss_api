@@ -58,6 +58,9 @@ class AuctionSearchResponse(BaseModel):
         client = httpx.AsyncClient()
         statements = []
         for auction in self.auctions:
+            # Don't translate error items
+            if auction.auction_id == 'ERROR':
+                continue
             statements.append(
                 self._translate_auction(
                     translate_to=translate_to,
