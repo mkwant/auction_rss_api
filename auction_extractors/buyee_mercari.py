@@ -20,7 +20,7 @@ class BuyeeMercari(AuctionExtractor):
         return (f'https://buyee.jp/mercari/search?keyword={self.search_term}'
                 f'&status=all&items=40&lang=en&currencyCode=EUR')
 
-    def _get_page(self) -> httpx.Response:
+    def _get_page(self) -> str:
         """Retrieve search page."""
         url = 'https://asf.myeeglobal.com/mercari'
         params = {'keyword': self.search_term,
@@ -37,7 +37,7 @@ class BuyeeMercari(AuctionExtractor):
         client = httpx.Client(headers=headers)
         r = client.get(url=url, params=params)
         r.raise_for_status()
-        return r
+        return r.text
 
     def get_auctions(self) -> List[Auction]:
         """Parse search page."""

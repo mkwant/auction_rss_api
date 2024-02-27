@@ -21,7 +21,7 @@ class BuyeeYahoo(AuctionExtractor):
     def search_link(self) -> str:
         return f'https://buyee.jp/item/search/query/{self.search_term}?sort=end&order=d&new=1&translationType=1'
 
-    def _get_page(self) -> httpx.Response:
+    def _get_page(self) -> str:
         """Retrieve search page."""
         url = f'https://buyee.jp/item/search/query/{self.search_term}'
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
@@ -35,7 +35,7 @@ class BuyeeYahoo(AuctionExtractor):
 
         client = httpx.Client(headers=headers)
         r = client.get(url=url, params=params)
-        return r
+        return r.text
 
     def get_auctions(self) -> List[Auction]:
         soup = BeautifulSoup(self._get_page(), features='html.parser')
