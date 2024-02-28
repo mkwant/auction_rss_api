@@ -72,12 +72,12 @@ class Delcampe(AuctionExtractor):
             try:
                 _seller_percentage = auction.select_one('span.percentage').text
             except AttributeError:
-                _seller_percentage = '?'
+                _seller_percentage = '?%'
 
             try:
                 _seller_number = auction.select_one('span.number').text.replace('(', '').replace(')', '')
             except AttributeError:
-                _seller_number = '?'
+                _seller_number = '?x'
 
             seller = f"{_seller_name} ({_seller_percentage} / {_seller_number})"
 
