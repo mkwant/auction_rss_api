@@ -150,9 +150,10 @@ class AuctionExtractor(BaseModel):
         """
         ...
 
-    def auctions_on_error(self, error: str) -> List[Auction]:
+    def auctions_on_error(self, error_text: str, error: str) -> List[Auction]:
         """
         This will be returned when there is an error retrieving the auctions.
+        :param error_text: The error text you want to display
         :param error: The error message
         :return: A list with one Auction record
         """
@@ -161,7 +162,7 @@ class AuctionExtractor(BaseModel):
                 auction_id='ERROR',
                 description=error,
                 link=self.search_link,
-                title="ERROR: Auctions couldn't be retrieved.",
+                title=error_text,
                 start_date=datetime.now()
             )
         ]
@@ -175,10 +176,15 @@ class AuctionExtractor(BaseModel):
             auctions = self.get_auctions()
         except Exception as e:
             auctions = self.auctions_on_error(
-                error=f'Received this error when trying to retrieve the feed items: \n{e}')
+                error_text="ERROR: Auctions couldn't be retrieved.",
+                error=f'Received this error when trying to retrieve the feed items: \n{e}'
+            )
 
         if len(auctions) == 0:
-            auctions = self.auctions_on_error(error='No auctions were retrieved from the site.')
+            auctions = self.auctions_on_error(
+                error_text="WARNING: No auctions were found.",
+                error='No auctions were found when trying to retrieve the feed items.'
+            )
 
         auction_search_response = AuctionSearchResponse(
             search_link=self.search_link,
