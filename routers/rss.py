@@ -56,6 +56,7 @@ def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)
     return site.search()
 
 
+@router.get(path='/buyee__yahoo', include_in_schema=False)  # For backwards compatibility
 @router.get(path='/buyee_yahoo')
 def buyee_yahoo_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
     site = BuyeeYahoo(search_term=search_term, translate_titles=translate.translate_titles, translate_from='ja')
