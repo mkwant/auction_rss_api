@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Optional
 
 from fastapi import APIRouter, Depends
 from fastapi_rss import RSSResponse
@@ -21,6 +22,7 @@ from auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_extractors.tracks import Tracks
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
+from auction_extractors.vinted import Vinted
 from dependencies.translate import Translate
 
 
@@ -153,4 +155,10 @@ def tracks_rss(search_term: str) -> RSSResponse:
 @router.get(path='/variaworld')
 def variaworld_rss(search_term: str) -> RSSResponse:
     site = Variaworld(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/vinted.nl')
+def vinted_rss(search_term: str, catalog_id: Optional[int] = None) -> RSSResponse:
+    site = Vinted(search_term=search_term, catalog_id=catalog_id)
     return site.search()
