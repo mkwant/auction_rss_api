@@ -7,14 +7,12 @@ import httpx
 import pytz
 
 from app.models import Auction, AuctionExtractor
+from app.settings import settings
 
 
 class Ebay(AuctionExtractor):
     """A wrapper class around the Ebay api."""
 
-    app_id: str
-    app_secret: str
-    ru_name: str
     site_id: str
     search_term: str
     only_locally_listed_items: bool = True
@@ -35,7 +33,7 @@ class Ebay(AuctionExtractor):
     def token(self) -> str:
         client = httpx.Client()
 
-        oauth_creds = base64.b64encode(f'{self.app_id}:{self.app_secret}'.encode())
+        oauth_creds = base64.b64encode(f'{settings.ebay_app_id}:{settings.ebay_app_secret}'.encode())
 
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -43,7 +41,7 @@ class Ebay(AuctionExtractor):
         }
         payload = {
             'grant_type': 'client_credentials',
-            'redirect_uri': self.ru_name,
+            'redirect_uri': settings.ebay_ru_name,
             'scope': 'https://api.ebay.com/oauth/api_scope'
         }
         url = 'https://api.ebay.com/identity/v1/oauth2/token'

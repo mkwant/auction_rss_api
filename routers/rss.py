@@ -1,10 +1,8 @@
-from functools import lru_cache
 from typing import Optional
 
 from fastapi import APIRouter, Depends
 from fastapi_rss import RSSResponse
 
-from app.settings import Settings
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
 from auction_extractors.buyee_yahoo import BuyeeYahoo
@@ -24,12 +22,6 @@ from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
 from auction_extractors.vinted import Vinted
 from dependencies.translate import Translate
-
-
-@lru_cache
-def get_settings():
-    return Settings()
-
 
 router = APIRouter(
     default_response_class=RSSResponse,
@@ -93,14 +85,10 @@ def discords_rss(search_term: str) -> RSSResponse:
 def ebay_rss(
         search_term: str,
         site_id: SiteId = SiteId.EBAY_US,
-        only_locally_listed_items: bool = True,
-        settings: Settings = Depends(get_settings)
+        only_locally_listed_items: bool = True
 ) -> RSSResponse:
     site = Ebay(
         search_term=search_term,
-        app_id=settings.ebay_app_id,
-        app_secret=settings.ebay_app_secret,
-        ru_name=settings.ebay_ru_name,
         site_id=site_id.value,
         only_locally_listed_items=only_locally_listed_items
     )
