@@ -6,6 +6,7 @@ from fastapi_rss import RSSResponse
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
 from auction_extractors.buyee_yahoo import BuyeeYahoo
+from auction_extractors.catawiki import CataWiki
 from auction_extractors.cdandlp import CdAndLp
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.discogs_wantlist import DiscogsWantlist
@@ -54,6 +55,12 @@ def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)
 @router.get(path='/buyee_yahoo')
 def buyee_yahoo_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
     site = BuyeeYahoo(search_term=search_term, translate_titles=translate.translate_titles, translate_from='ja')
+    return site.search()
+
+
+@router.get(path='/catawiki')
+def catawiki_rss(search_term: str) -> RSSResponse:
+    site = CataWiki(search_term=search_term)
     return site.search()
 
 
