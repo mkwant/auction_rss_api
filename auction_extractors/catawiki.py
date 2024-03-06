@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 import requests
@@ -34,7 +35,7 @@ class CataWiki(AuctionExtractor):
                     title=auction['title'],
                     link=auction['url'],
                     image_link=auction['originalImageUrl'],
-                    start_date=auction['biddingStartTime'],
+                    start_date=datetime.fromisoformat(auction['biddingStartTime']),
                     description=auction['subtitle']
                 )
             )
