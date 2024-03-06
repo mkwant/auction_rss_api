@@ -30,8 +30,12 @@ class CdAndLp(AuctionExtractor):
     def _get_auctions(self) -> ResultSet:
         params = {'q': self.search_term,
                   'srt': 2}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
+        s = requests.Session()
 
-        r = requests.get(url=self.URL, params=params)
+        # Retrieve cookies
+        s.get(url='https://www.cdandlp.com')
+        r = s.get(url=self.URL, params=params, headers=headers)
 
         soup = BeautifulSoup(r.content, features='html.parser')
         site_auctions = soup.select('div[class*="twelve large-20 columns div_item_listing"]')
