@@ -45,7 +45,8 @@ def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate
     return site.search()
 
 
-@router.get(path='/buyee__rakuma')
+@router.get(path='/buyee__rakuma', include_in_schema=False)  # For backwards compatibility
+@router.get(path='/buyee_rakuma')
 def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
     site = BuyeeRakuma(search_term=search_term, translate_titles=translate.translate_titles, translate_from='ja')
     return site.search()
@@ -70,7 +71,8 @@ def cdandlp_rss(search_term: str) -> RSSResponse:
     return site.search()
 
 
-@router.get(path='/delcampe_')
+@router.get(path='/delcampe_', include_in_schema=False)  # For backwards compatibility
+@router.get(path='/delcampe')
 def delcampe_rss(search_term: str) -> RSSResponse:
     site = Delcampe(search_term=search_term)
     return site.search()
