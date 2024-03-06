@@ -21,7 +21,7 @@ class Vinted(AuctionExtractor):
             url += '&catalog[]={self.catalog_id}'
         return url
 
-    def _get_page(self) -> list[dict]:
+    def _get_page(self) -> List[dict]:
         url = 'https://www.vinted.nl/api/v2/catalog/items?'
         params = {
             'page': 1,
