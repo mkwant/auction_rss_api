@@ -47,7 +47,6 @@ class Vinted(AuctionExtractor):
         for item in self._get_page():
             description = (f"{item['currency'].capitalize()} {float(item['price']):.2f}"
                            f" (+{float(item['service_fee']):.2f} service)")
-            print(description)
 
             auctions.append(
                 Auction(
