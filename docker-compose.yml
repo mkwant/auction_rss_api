@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  app:
+    container_name: auction_rss_api
+    restart: unless-stopped
+    env_file: .env
+    build: ./
+    ports:
+      - '8000:8000'
