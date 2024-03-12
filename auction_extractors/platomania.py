@@ -16,7 +16,7 @@ class PlatoMania(AuctionExtractor):
 
     @property
     def site_desc(self) -> str:
-        return "PlatoMania"
+        return "Platomania"
 
     def get_auctions(self) -> List[Auction]:
         r = requests.get(url=self.search_link)
