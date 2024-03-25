@@ -1,0 +1,14 @@
+FROM python:3.12
+
+# Update apt-get
+RUN apt-get update
+
+# Upgrade pip3
+RUN pip3 install --upgrade pip
+
+# Deploy code
+WORKDIR /app
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80", "--no-access-log"]

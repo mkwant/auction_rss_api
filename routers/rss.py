@@ -14,6 +14,7 @@ from auction_extractors.discords import Discords
 from auction_extractors.ebay import SiteId, Ebay
 from auction_extractors.juno import Juno
 from auction_extractors.marktplaats import Marktplaats
+from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_extractors.recordmecca import RecordMecca
 from auction_extractors.todocoleccion import Todocoleccion
@@ -116,6 +117,12 @@ def marktplaats_rss(search_term: str, search_in_seller_name: bool = False) -> RS
         search_term=search_term,
         search_in_seller_name=search_in_seller_name
     )
+    return site.search()
+
+
+@router.get(path='/platomania')
+def platomania_rss(search_term: str) -> RSSResponse:
+    site = PlatoMania(search_term=search_term)
     return site.search()
 
 
