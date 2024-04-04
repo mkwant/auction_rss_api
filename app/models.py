@@ -102,7 +102,7 @@ class AuctionSearchResponse(BaseModel):
         feed_data = {
             'title': f"{self.site_desc} ('{self.search_term}')",
             'link': self.search_link,
-            'description': f"{self.site_desc} ('{self.search_term}')",
+            'description': f"Search results for query '{self.search_term}' on {self.site_desc}",
             'language': 'en-us',
             'generator': 'Auction RSS api',
             'ttl': 40,
