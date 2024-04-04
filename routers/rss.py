@@ -13,6 +13,7 @@ from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.discords import Discords
 from auction_extractors.ebay import SiteId, Ebay
 from auction_extractors.juno import Juno
+from auction_extractors.kontaktaudio import KontaktAudio
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
@@ -108,6 +109,12 @@ def ebay_rss(
 @router.get(path='/juno')
 def juno_rss(search_term: str) -> RSSResponse:
     site = Juno(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/kontaktaudio')
+def kontaktaudio_rss(search_term: str) -> RSSResponse:
+    site = KontaktAudio(search_term=search_term)
     return site.search()
 
 
