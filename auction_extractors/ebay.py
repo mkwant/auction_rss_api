@@ -72,6 +72,7 @@ class Ebay(AuctionExtractor):
         }
 
         headers = {
+            'Accept-Language': 'en-US',
             'Authorization': f'Bearer {self.token}',
             'X-EBAY-C-MARKETPLACE-ID': self.site_id
         }
