@@ -107,6 +107,7 @@ def ebay_rss(
     return site.search()
 
 
+@router.get(path='/japanrecords_', include_in_schema=False)  # For backwards compatibility
 @router.get(path='/japanrecords')
 def japanrecords_rss(search_term: str) -> RSSResponse:
     site = JapanRecords(search_term=search_term)
