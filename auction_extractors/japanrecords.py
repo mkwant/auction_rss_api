@@ -26,8 +26,8 @@ class JapanRecords(AuctionExtractor):
         for item in items:
             title = item.select_one('h2.product-title').text
             _price = item.select_one('span.price').text.strip()
-            _desc = item.select_one('div.product-detail').text.strip()
-            description = '\n'.join((_price, _desc))
+            _desc = item.select_one('div.product-detail').text.strip().replace('\n', '<br>')
+            description = '<br>'.join((_price, _desc))
             auction_id = item['data-id-product']
             link = item.select_one('h2.product-title>a')['href']
             image_link = item.select_one('img')['data-full-size-image-url']
