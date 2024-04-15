@@ -186,9 +186,6 @@ class AuctionExtractor(BaseModel):
                 error='No items were found when trying to retrieve the feed items.'
             )
 
-        # Replace line breaks in description for HTML breaks
-        auctions = [auction.description.replace('\n', '<br>') for auction in auctions]
-
         auction_search_response = AuctionSearchResponse(
             search_link=self.search_link,
             search_term=self.search_term,
@@ -198,6 +195,10 @@ class AuctionExtractor(BaseModel):
 
         if self.translate_titles:
             asyncio.run(auction_search_response.translate(translate_from=self.translate_from))
+
+        # Replace line breaks in description for HTML breaks
+        for auction in auctions:
+            auction.description.replace('\n', '<br>')
 
         return auction_search_response.to_rss()
 
