@@ -56,7 +56,7 @@ class MusicStack(AuctionExtractor):
             _condition = cells[7].text.strip()
             _price = cells[10].text.strip()
             description = '\n'.join((_price, _format, _condition, _description))
-            author = cells[8].get_text(separator=', ')
+            seller = cells[8].get_text(separator=', ')
             link = cells[12].select_one('a.t')['href']
             days_ago = cells[9].text.split()[0]
             start_date = datetime.date.today() - datetime.timedelta(days=int(days_ago))
@@ -68,7 +68,7 @@ class MusicStack(AuctionExtractor):
                     description=description,
                     link=link,
                     image_link=image_link,
-                    author=author,
+                    seller=seller,
                     start_date=start_date
                 )
             )
