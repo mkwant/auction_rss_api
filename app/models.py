@@ -198,7 +198,7 @@ class AuctionExtractor(BaseModel):
 
         # Replace line breaks in description for HTML breaks
         for auction in auctions:
-            auction.description = auction.description.replace('\n', '\n<br>')
+            auction.description = auction.description.replace('\n', '<br>\n')
 
         return auction_search_response.to_rss()
 
