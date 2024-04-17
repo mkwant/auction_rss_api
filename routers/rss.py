@@ -23,6 +23,7 @@ from auction_extractors.recordmecca import RecordMecca
 from auction_extractors.todocoleccion import Todocoleccion
 from auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_extractors.tracks import Tracks
+from auction_extractors.tradera import Tradera
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
 from auction_extractors.vinted import Vinted
@@ -175,6 +176,12 @@ def tokyomusicjapan_rss(search_term: str) -> RSSResponse:
 @router.get(path='/tracks')
 def tracks_rss(search_term: str) -> RSSResponse:
     site = Tracks(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/tradera')
+def tradera_rss(search_term: str) -> RSSResponse:
+    site = Tradera(search_term=search_term)
     return site.search()
 
 
