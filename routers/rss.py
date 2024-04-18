@@ -12,6 +12,7 @@ from auction_extractors.delcampe import Delcampe
 from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.discords import Discords
 from auction_extractors.ebay import SiteId, Ebay
+from auction_extractors.eil import EIL
 from auction_extractors.japanrecords import JapanRecords
 from auction_extractors.juno import Juno
 from auction_extractors.kontaktaudio import KontaktAudio
@@ -106,6 +107,12 @@ def ebay_rss(
         site_id=site_id.value,
         only_locally_listed_items=only_locally_listed_items
     )
+    return site.search()
+
+
+@router.get(path='/eil')
+def eil_rss(search_term: str) -> RSSResponse:
+    site = EIL(search_term=search_term)
     return site.search()
 
 
