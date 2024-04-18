@@ -39,7 +39,7 @@ class EIL(AuctionExtractor):
             _desc = item.select_one('font').getText(strip=True, separator='\n')
             _long_desc = ' '.join(item.select_one('a')['title'].split())
             description = f'{_desc}\n\n{_long_desc}'
-            title = _desc.split('\n')[0]
+            title = _desc.replace('\n', ' ').split('In Stock')[0]
 
             auctions.append(
                 Auction(
