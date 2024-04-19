@@ -37,6 +37,9 @@ class AuctionSearchResponse(BaseModel):
     auctions: List[Auction]
 
     async def transform(self, transformers: list[Transformer]):
+        if not transformers:
+            return
+
         for transformer_f in transformers:
             statements = []
             for auction in self.auctions:
