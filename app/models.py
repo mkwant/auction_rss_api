@@ -91,7 +91,7 @@ class AuctionSearchResponse(BaseModel):
 class AuctionExtractor(BaseModel):
     """A base class for an auction extractor."""
     search_term: str
-    transformers: list[Transformer]
+    transformers: Optional[list[Transformer]] = None
 
     @property
     @abstractmethod
