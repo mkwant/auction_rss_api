@@ -48,30 +48,30 @@ def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RS
 
 @router.get(path='/buyee_mercari')
 def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    transformers = []
     if translate.translate_titles:
-        transformers.append(translate_from_jp)
-    site = BuyeeMercari(search_term=search_term, transformers=transformers)
+        site = BuyeeMercari(search_term=search_term, transformers=[translate_from_jp])
+    else:
+        site = BuyeeMercari(search_term=search_term)
     return site.search()
 
 
 @router.get(path='/buyee__rakuma', include_in_schema=False)  # For backwards compatibility
 @router.get(path='/buyee_rakuma')
 def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    transformers = []
     if translate.translate_titles:
-        transformers.append(translate_from_jp)
-    site = BuyeeRakuma(search_term=search_term, transformers=transformers)
+        site = BuyeeRakuma(search_term=search_term, transformers=[translate_from_jp])
+    else:
+        site = BuyeeRakuma(search_term=search_term)
     return site.search()
 
 
 @router.get(path='/buyee__yahoo', include_in_schema=False)  # For backwards compatibility
 @router.get(path='/buyee_yahoo')
 def buyee_yahoo_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    transformers = []
     if translate.translate_titles:
-        transformers.append(translate_from_jp)
-    site = BuyeeYahoo(search_term=search_term, transformers=transformers)
+        site = BuyeeYahoo(search_term=search_term, transformers=[translate_from_jp])
+    else:
+        site = BuyeeYahoo(search_term=search_term)
     return site.search()
 
 
@@ -180,10 +180,10 @@ def recordmecca_rss(search_term: str) -> RSSResponse:
 
 @router.get(path='/todocoleccion')
 def todocoleccion_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    transformers = []
     if translate.translate_titles:
-        transformers.append(translate_from_es)
-    site = Todocoleccion(search_term=search_term, transformers=transformers)
+        site = Todocoleccion(search_term=search_term, transformers=[translate_from_es])
+    else:
+        site = Todocoleccion(search_term=search_term)
     return site.search()
 
 
