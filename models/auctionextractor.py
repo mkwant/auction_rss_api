@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import List, Callable, Awaitable
 
 from fastapi_rss import RSSResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from auction_transformers.html_linebreaks_in_desc import html_linebreaks_in_desc
 from models.auction import Auction
@@ -18,7 +18,7 @@ Transformer = Callable[[Auction], Awaitable[Auction]]
 class AuctionExtractor(BaseModel):
     """A base class for an auction extractor."""
     search_term: str
-    transformers: list[Transformer] = []
+    transformers: List[Transformer] = []
 
     @property
     @abstractmethod
@@ -96,7 +96,6 @@ class AuctionExtractor(BaseModel):
 
         # Apply the transformers to the auction search response
         async def transform():
-            print(self.transformers)
             for transformer in self.transformers:
                 statements = [transformer(x) for x in auctions]
                 await asyncio.gather(*statements)
