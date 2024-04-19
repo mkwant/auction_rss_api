@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from fastapi_rss import RSSResponse
 
-from app.models import translate_from_jp
+from auction_transformers.translator import translate_from_jp
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
 from auction_extractors.buyee_yahoo import BuyeeYahoo
