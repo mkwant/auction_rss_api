@@ -37,9 +37,6 @@ class AuctionSearchResponse(BaseModel):
     auctions: List[Auction]
 
     async def transform(self, transformers: list[Transformer]):
-        if not transformers:
-            return
-
         for transformer_f in transformers:
             statements = []
             for auction in self.auctions:
@@ -168,7 +165,8 @@ class AuctionExtractor(BaseModel):
         )
 
         # Apply the transformers to the auction search response
-        asyncio.run(auction_search_response.transform(transformers=self.transformers))
+        if self.transformers:
+            asyncio.run(auction_search_response.transform(transformers=self.transformers))
 
         # Replace line breaks in description for HTML breaks
         for auction in auctions:
