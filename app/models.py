@@ -1,10 +1,10 @@
 import asyncio
 from abc import abstractmethod
 from datetime import datetime
-from typing import List, Optional, Callable, Protocol, Self, Any
+from typing import List, Optional, Protocol, Any
 
 from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
-from pydantic import BaseModel, ConfigDict, GetCoreSchemaHandler
+from pydantic import BaseModel, GetCoreSchemaHandler
 from pydantic_core import core_schema
 
 
