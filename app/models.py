@@ -2,14 +2,14 @@ import asyncio
 from abc import abstractmethod
 from datetime import datetime
 from functools import partial
-from typing import List, Optional, Callable, Self
+from typing import List, Optional, Callable
 
 import httpx
 from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
 from httpx import HTTPError
 from pydantic import BaseModel
 
-from dependencies.translate import azure_translate_text
+from dependencies.translate import Translator, AzureTranslator
 
 
 class Auction(BaseModel):
@@ -28,7 +28,7 @@ transformer: Callable[[Auction], Auction]
 
 async def translate_auction(
         auction: Auction,
-        client: httpx.AsyncClient,
+        translator: Translator,
         translate_to: str,
         translate_from: Optional[str] = None
 ) -> Auction:
@@ -41,8 +41,7 @@ async def translate_auction(
     original_title = auction.title
     try:
 
-        translated_title = await azure_translate_text(
-            client=client,
+        translated_title = await translator.translate(
             text=auction.title,
             translate_to=translate_to,
             translate_from=translate_from
@@ -55,8 +54,8 @@ async def translate_auction(
     auction.description = f"{auction.description}\n\nOriginal title: '{original_title}'"
     return auction
 
-
-translate_from_jp = partial(translate_auction, client=httpx.AsyncClient(), translate_to='en', translate_from='ja')
+azure_translator = AzureTranslator(client=httpx.AsyncClient())
+translate_from_jp = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='ja')
 
 
 class AuctionSearchResponse(BaseModel):
