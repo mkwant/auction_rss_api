@@ -6,7 +6,8 @@ from typing import List
 import httpx
 import pytz
 
-from app.models import Auction, AuctionExtractor
+from models.auctionextractor import AuctionExtractor
+from models.auction import Auction
 from app.settings import settings
 
 

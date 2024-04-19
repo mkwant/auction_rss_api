@@ -3,7 +3,8 @@ from typing import List, Optional
 
 import requests
 
-from app.models import AuctionExtractor, Auction
+from models.auctionextractor import AuctionExtractor
+from models.auction import Auction
 
 
 class Vinted(AuctionExtractor):

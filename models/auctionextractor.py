@@ -1,93 +1,24 @@
 import asyncio
 from abc import abstractmethod
 from datetime import datetime
-from typing import List, Optional, Protocol, Any
+from typing import List, Callable, Awaitable
 
-from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
-from pydantic import BaseModel, GetCoreSchemaHandler
-from pydantic_core import core_schema
+from fastapi_rss import RSSResponse
+from pydantic import BaseModel, Field
 
+from auction_transformers.html_linebreaks_in_desc import html_linebreaks_in_desc
+from models.auction import Auction
+from models.auctionsearchresponse import AuctionSearchResponse
 
-class Auction(BaseModel):
-    """An auction model."""
-    title: str
-    auction_id: str
-    description: str
-    link: str
-    image_link: Optional[str] = None
-    seller: Optional[str] = None
-    start_date: datetime
+Transformer = Callable[[Auction], Awaitable[Auction]]
 
 
-class Transformer(Protocol):
-    def __call__(self, auction: Auction) -> Auction:
-        ...
-
-    @classmethod
-    def __get_pydantic_core_schema__(cls, source_type: Any, handler: GetCoreSchemaHandler):
-        """False validator to get Pydantic to accept the protocol."""
-        return core_schema.no_info_plain_validator_function(function=lambda x: x)
-
-
-class AuctionSearchResponse(BaseModel):
-    """The result from an auction search."""
-    search_link: str
-    search_term: str
-    site_desc: str
-    auctions: List[Auction]
-
-    def to_rss(self) -> RSSResponse:
-        """Return an RSSResponse that can be used as a FastApi response."""
-
-        items = []
-
-        for auction in self.auctions:
-
-            item_data = {
-                'title': auction.title,
-                'link': auction.link,
-                'description': auction.description,
-                'guid': GUID(content=auction.auction_id),
-                'author': auction.seller,
-                'pub_date': auction.start_date
-            }
-
-            if auction.image_link:
-                item_data['enclosure'] = Enclosure(
-                    content='',
-                    attrs=EnclosureAttrs(
-                        url=auction.image_link,
-                        length=1000,
-                        type='image/jpeg'
-                    )
-                )
-            items.append(Item(**item_data))
-
-        # Instantiate the RSSFeed class
-        feed_data = {
-            'title': f"{self.site_desc} ('{self.search_term}')",
-            'link': self.search_link,
-            'description': f"Search results for query '{self.search_term}' on {self.site_desc}",
-            'language': 'en-us',
-            'generator': 'Auction RSS api',
-            'ttl': 40,
-            'item': items,
-            'pub_date': datetime.now(),
-            'last_build_date': datetime.now()
-        }
-        feed = RSSFeed(**feed_data)
-
-        # Return the RSSResponse
-        return RSSResponse(content=feed)
-
+# TODO Better location for default transformers, have pre- and post-transformers?
 
 class AuctionExtractor(BaseModel):
     """A base class for an auction extractor."""
     search_term: str
-    transformers: list[Transformer] = None
-
-    if transformers is None:
-        transformers = []
+    transformers: list[Transformer] = []
 
     @property
     @abstractmethod
@@ -160,17 +91,17 @@ class AuctionExtractor(BaseModel):
             auctions=auctions,
         )
 
+        # Add default transformer
+        self.transformers.append(html_linebreaks_in_desc)
+
         # Apply the transformers to the auction search response
         async def transform():
+            print(self.transformers)
             for transformer in self.transformers:
                 statements = [transformer(x) for x in auctions]
                 await asyncio.gather(*statements)
 
         asyncio.run(transform())
-
-        # Replace line breaks in description for HTML breaks
-        for auction in auctions:
-            auction.description = auction.description.replace('\n', '<br>\n')
 
         return auction_search_response.to_rss()
 

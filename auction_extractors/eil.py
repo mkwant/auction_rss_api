@@ -4,7 +4,8 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 
-from app.models import AuctionExtractor, Auction
+from models.auctionextractor import AuctionExtractor
+from models.auction import Auction
 
 
 class EIL(AuctionExtractor):
@@ -28,7 +29,7 @@ class EIL(AuctionExtractor):
 
         r = requests.get(url=url, params=params)
         soup = BeautifulSoup(r.text, features='html.parser')
-        print(r.url)
+
         auctions = []
 
         items = soup.find_all(name='table', attrs={'width': 180})

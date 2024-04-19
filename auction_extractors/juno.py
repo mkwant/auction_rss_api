@@ -5,7 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
-from app.models import Auction, AuctionExtractor
+from models.auctionextractor import AuctionExtractor
+from models.auction import Auction
 
 
 class Juno(AuctionExtractor):

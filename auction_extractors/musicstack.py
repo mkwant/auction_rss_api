@@ -4,7 +4,8 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 
-from app.models import AuctionExtractor, Auction
+from models.auctionextractor import AuctionExtractor
+from models.auction import Auction
 
 
 class MusicStack(AuctionExtractor):

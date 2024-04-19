@@ -3,7 +3,8 @@ from typing import List
 
 import requests
 
-from app.models import Auction, AuctionExtractor
+from models.auctionextractor import AuctionExtractor
+from models.auction import Auction
 
 
 class TokyoMusicJapan(AuctionExtractor):

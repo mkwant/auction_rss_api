@@ -3,7 +3,8 @@ from typing import List
 
 import requests
 
-from app.models import AuctionExtractor, Auction
+from models.auctionextractor import AuctionExtractor
+from models.auction import Auction
 
 
 class CataWiki(AuctionExtractor):

@@ -5,7 +5,7 @@ from typing import Optional
 
 import httpx
 
-from app.models import Auction
+from models.auction import Auction
 from app.settings import settings
 
 

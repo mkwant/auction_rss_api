@@ -4,7 +4,8 @@ from typing import List
 import httpx
 from bs4 import BeautifulSoup
 
-from app.models import Auction, AuctionExtractor
+from models.auctionextractor import AuctionExtractor
+from models.auction import Auction
 
 
 # TODO Multiple pages? / keep in db?
