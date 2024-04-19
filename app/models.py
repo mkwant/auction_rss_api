@@ -36,13 +36,6 @@ class AuctionSearchResponse(BaseModel):
     site_desc: str
     auctions: List[Auction]
 
-    async def transform(self, transformers: list[Transformer]):
-        for transformer_f in transformers:
-            statements = []
-            for auction in self.auctions:
-                statements.append(transformer_f(auction))
-            await asyncio.gather(*statements)
-
     def to_rss(self) -> RSSResponse:
         """Return an RSSResponse that can be used as a FastApi response."""
 
@@ -91,7 +84,10 @@ class AuctionSearchResponse(BaseModel):
 class AuctionExtractor(BaseModel):
     """A base class for an auction extractor."""
     search_term: str
-    transformers: Optional[list[Transformer]] = None
+    transformers: list[Transformer] = None
+
+    if transformers is None:
+        transformers = []
 
     @property
     @abstractmethod
@@ -165,8 +161,12 @@ class AuctionExtractor(BaseModel):
         )
 
         # Apply the transformers to the auction search response
-        if self.transformers:
-            asyncio.run(auction_search_response.transform(transformers=self.transformers))
+        async def transform():
+            for transformer in self.transformers:
+                statements = [transformer(x) for x in auctions]
+                await asyncio.gather(*statements)
+
+        asyncio.run(transform())
 
         # Replace line breaks in description for HTML breaks
         for auction in auctions:
