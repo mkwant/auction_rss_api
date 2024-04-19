@@ -1,14 +1,15 @@
 import asyncio
 from abc import abstractmethod
 from datetime import datetime
-from typing import List, Optional
+from functools import partial
+from typing import List, Optional, Callable, Self
 
 import httpx
 from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
 from httpx import HTTPError
 from pydantic import BaseModel
 
-from dependencies.translate import translate_text
+from dependencies.translate import azure_translate_text
 
 
 class Auction(BaseModel):
@@ -22,6 +23,42 @@ class Auction(BaseModel):
     start_date: datetime
 
 
+transformer: Callable[[Auction], Auction]
+
+
+async def translate_auction(
+        auction: Auction,
+        client: httpx.AsyncClient,
+        translate_to: str,
+        translate_from: Optional[str] = None
+) -> Auction:
+    """Translate the auction title. Append the original title to the description."""
+
+    # Don't translate error items
+    if auction.auction_id == 'ERROR':
+        return auction
+
+    original_title = auction.title
+    try:
+
+        translated_title = await azure_translate_text(
+            client=client,
+            text=auction.title,
+            translate_to=translate_to,
+            translate_from=translate_from
+        )
+    except (HTTPError, ConnectionError) as e:
+        auction.description = f"{auction.description}\n\nTranslate failed: '{e}'"
+        return auction
+
+    auction.title = translated_title
+    auction.description = f"{auction.description}\n\nOriginal title: '{original_title}'"
+    return auction
+
+
+translate_from_jp = partial(translate_auction, client=httpx.AsyncClient(), translate_to='en', translate_from='ja')
+
+
 class AuctionSearchResponse(BaseModel):
     """The result from an auction search."""
     search_link: str
@@ -29,47 +66,29 @@ class AuctionSearchResponse(BaseModel):
     site_desc: str
     auctions: List[Auction]
 
-    @staticmethod
-    async def _translate_auction(
-            client: httpx.AsyncClient,
-            auction: Auction,
-            translate_to: str,
-            translate_from: Optional[str] = None
-    ) -> Auction:
-        """Translate the auction title. Append the original title to the description."""
-        original_title = auction.title
-        try:
+    # async def translate(self, translate_to: str = 'en', translate_from: Optional[str] = None):
+    #     client = httpx.AsyncClient()
+    #     statements = []
+    #     for auction in self.auctions:
+    #         # Don't translate error items
+    #         if auction.auction_id == 'ERROR':
+    #             continue
+    #         statements.append(
+    #             self._translate_auction(
+    #                 translate_to=translate_to,
+    #                 translate_from=translate_from,
+    #                 auction=auction,
+    #                 client=client
+    #             )
+    #         )
+    #     await asyncio.gather(*statements)
 
-            translated_title = await translate_text(
-                client=client,
-                text=auction.title,
-                translate_to=translate_to,
-                translate_from=translate_from
-            )
-        except (HTTPError, ConnectionError) as e:
-            auction.description = f"{auction.description}\n\nTranslate failed: '{e}'"
-            return auction
-
-        auction.title = translated_title
-        auction.description = f"{auction.description}\n\nOriginal title: '{original_title}'"
-        return auction
-
-    async def translate(self, translate_to: str = 'en', translate_from: Optional[str] = None):
-        client = httpx.AsyncClient()
-        statements = []
-        for auction in self.auctions:
-            # Don't translate error items
-            if auction.auction_id == 'ERROR':
-                continue
-            statements.append(
-                self._translate_auction(
-                    translate_to=translate_to,
-                    translate_from=translate_from,
-                    auction=auction,
-                    client=client
-                )
-            )
-        await asyncio.gather(*statements)
+    async def transform(self, transformers: list[Callable[[Auction], Auction]]):
+        for transformer_f in transformers:
+            statements = []
+            for auction in self.auctions:
+                statements.append(transformer_f(auction))
+            await asyncio.gather(*statements)
 
     def to_rss(self) -> RSSResponse:
         """Return an RSSResponse that can be used as a FastApi response."""
@@ -119,8 +138,7 @@ class AuctionSearchResponse(BaseModel):
 class AuctionExtractor(BaseModel):
     """A base class for an auction extractor."""
     search_term: str
-    translate_titles: bool = False
-    translate_from: Optional[str] = None
+    transformers: list[Callable[[Auction], Auction]]
 
     @property
     @abstractmethod
@@ -193,8 +211,10 @@ class AuctionExtractor(BaseModel):
             auctions=auctions,
         )
 
-        if self.translate_titles:
-            asyncio.run(auction_search_response.translate(translate_from=self.translate_from))
+        asyncio.run(auction_search_response.transform(transformers=self.transformers))
+
+        # if self.translate_titles:
+        #     asyncio.run(auction_search_response.translate(translate_from=self.translate_from))
 
         # Replace line breaks in description for HTML breaks
         for auction in auctions:

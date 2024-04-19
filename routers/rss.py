@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from fastapi_rss import RSSResponse
 
+from app.models import translate_from_jp
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
 from auction_extractors.buyee_yahoo import BuyeeYahoo
@@ -54,7 +55,10 @@ def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate
 @router.get(path='/buyee__rakuma', include_in_schema=False)  # For backwards compatibility
 @router.get(path='/buyee_rakuma')
 def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    site = BuyeeRakuma(search_term=search_term, translate_titles=translate.translate_titles, translate_from='ja')
+    transformers = []
+    if translate.translate_titles:
+        transformers.append(translate_from_jp)
+    site = BuyeeRakuma(search_term=search_term, transformers=transformers)
     return site.search()
 
 

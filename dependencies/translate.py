@@ -12,7 +12,7 @@ class Translate:
     translate_titles: bool = True
 
 
-async def translate_text(
+async def azure_translate_text(
         client: httpx.AsyncClient,
         text: str,
         translate_to: str,
