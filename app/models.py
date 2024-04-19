@@ -1,10 +1,11 @@
 import asyncio
 from abc import abstractmethod
 from datetime import datetime
-from typing import List, Optional, Callable
+from typing import List, Optional, Callable, Protocol, Self, Any
 
 from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, GetCoreSchemaHandler
+from pydantic_core import core_schema
 
 
 class Auction(BaseModel):
@@ -18,6 +19,16 @@ class Auction(BaseModel):
     start_date: datetime
 
 
+class Transformer(Protocol):
+    def __call__(self, auction: Auction) -> Auction:
+        ...
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source_type: Any, handler: GetCoreSchemaHandler):
+        """False validator to get Pydantic to accept the protocol."""
+        return core_schema.no_info_plain_validator_function(function=lambda x: x)
+
+
 class AuctionSearchResponse(BaseModel):
     """The result from an auction search."""
     search_link: str
@@ -25,7 +36,7 @@ class AuctionSearchResponse(BaseModel):
     site_desc: str
     auctions: List[Auction]
 
-    async def transform(self, transformers: list[Callable[[Auction], Auction]]):
+    async def transform(self, transformers: list[Transformer]):
         for transformer_f in transformers:
             statements = []
             for auction in self.auctions:
@@ -80,7 +91,7 @@ class AuctionSearchResponse(BaseModel):
 class AuctionExtractor(BaseModel):
     """A base class for an auction extractor."""
     search_term: str
-    transformers: list[Callable[[Auction], Auction]]
+    transformers: list[Transformer]
 
     @property
     @abstractmethod

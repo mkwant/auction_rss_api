@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from fastapi_rss import RSSResponse
 
-from auction_transformers.translator import translate_from_jp
+from auction_transformers.translator import translate_from_jp, translate_from_es
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
 from auction_extractors.buyee_yahoo import BuyeeYahoo
@@ -29,7 +29,7 @@ from auction_extractors.tradera import Tradera
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
 from auction_extractors.vinted import Vinted
-from dependencies.translate import Translate
+from app.dependencies import Translate
 
 router = APIRouter(
     default_response_class=RSSResponse,
@@ -48,7 +48,10 @@ def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RS
 
 @router.get(path='/buyee_mercari')
 def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    site = BuyeeMercari(search_term=search_term, translate_titles=translate.translate_titles, translate_from='ja')
+    transformers = []
+    if translate.translate_titles:
+        transformers.append(translate_from_jp)
+    site = BuyeeMercari(search_term=search_term, transformers=transformers)
     return site.search()
 
 
@@ -65,7 +68,10 @@ def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)
 @router.get(path='/buyee__yahoo', include_in_schema=False)  # For backwards compatibility
 @router.get(path='/buyee_yahoo')
 def buyee_yahoo_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    site = BuyeeYahoo(search_term=search_term, translate_titles=translate.translate_titles, translate_from='ja')
+    transformers = []
+    if translate.translate_titles:
+        transformers.append(translate_from_jp)
+    site = BuyeeYahoo(search_term=search_term, transformers=transformers)
     return site.search()
 
 
@@ -174,7 +180,10 @@ def recordmecca_rss(search_term: str) -> RSSResponse:
 
 @router.get(path='/todocoleccion')
 def todocoleccion_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    site = Todocoleccion(search_term=search_term, translate_titles=translate.translate_titles, translate_from='es')
+    transformers = []
+    if translate.translate_titles:
+        transformers.append(translate_from_es)
+    site = Todocoleccion(search_term=search_term, transformers=transformers)
     return site.search()
 
 

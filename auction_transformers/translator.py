@@ -101,3 +101,4 @@ async def translate_auction(
 
 azure_translator = AzureTranslator(client=httpx.AsyncClient())
 translate_from_jp = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='ja')
+translate_from_es = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='es')
