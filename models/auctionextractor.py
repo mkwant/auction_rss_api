@@ -13,12 +13,18 @@ from models.auctionsearchresponse import AuctionSearchResponse
 Transformer = Callable[[Auction], Awaitable[Auction]]
 
 
-# TODO Better location for default transformers, have pre- and post-transformers?
-
 class AuctionExtractor(BaseModel):
-    """A base class for an auction extractor."""
+    """
+    A base class for an auction extractor.
+    :param search_term: What to search for
+    :param transformers: A list of transformers. A transformer is an Awaitable that takes and returns an Auction object.
+                         Will be prepended to the default_transformers
+    :param default_transformers: A list of transformers.
+
+    """
     search_term: str
     transformers: List[Transformer] = []
+    default_transformers: List[Transformer] = [html_linebreaks_in_desc]
 
     @property
     @abstractmethod
@@ -91,12 +97,9 @@ class AuctionExtractor(BaseModel):
             auctions=auctions,
         )
 
-        # Add default transformer
-        self.transformers.append(html_linebreaks_in_desc)
-
         # Apply the transformers to the auction search response
         async def transform():
-            for transformer in self.transformers:
+            for transformer in self.transformers + self.default_transformers:
                 statements = [transformer(x) for x in auctions]
                 await asyncio.gather(*statements)
 
