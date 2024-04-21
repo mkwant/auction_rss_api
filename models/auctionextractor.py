@@ -13,8 +13,9 @@ from models.auctionsearchresponse import AuctionSearchResponse
 Transformer = Callable[[Auction], Awaitable[Auction]]
 
 
-# TODO Create AuctionResponseTransformer ABC that can take an awaitable (or a func and use asyncio.to_thread?) to
-#  transform Auction objects.
+# TODO Create AuctionResponseTransformer ABC that can take an awaitable (or a func and use asyncio.to_thread?)
+# TODO Add functionality to AuctionResponseTransformer ABC for running auction_transformers
+# TODO Build AuctionResponseTransformer implementations
 
 class AuctionExtractor(BaseModel):
     """
