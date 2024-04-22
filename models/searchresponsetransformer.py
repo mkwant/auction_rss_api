@@ -1,8 +1,9 @@
 import logging
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import List, Optional, Callable, Awaitable
 
-from pydantic.dataclasses import dataclass
+# from pydantic.dataclasses import dataclass
 
 # from models.auctionextractor import Transformer
 from models.auction import Auction
@@ -29,10 +30,10 @@ class ExcludeSellerName(SearchResponseTransformer):
     def transform(self) -> AuctionSearchResponse:
         new_auction_list = []
         for auction in self.search_response.auctions:
-            if search_term.lower() in auction.seller.lower() and \
+            if self.search_response.search_term.lower() in auction.seller.lower() and \
                     self.search_response.search_term.lower() not in auction.title.lower:
-                logger.debug(f"Discarded auction '{auction.title}' as {search_term=} in {auction.seller=} "
-                             f"but not in {auction.title=}")
+                logger.debug(f"Discarded auction '{auction.title}' as search_term={self.search_response.search_term} "
+                             f"in {auction.seller=} but not in {auction.title=}")
                 continue
             else:
                 new_auction_list.append(auction)
