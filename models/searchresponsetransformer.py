@@ -1,8 +1,11 @@
+import asyncio
 import logging
+import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List, Optional, Callable, Awaitable
 
+from auction_transformers.translator import translate_from_jp
 # from pydantic.dataclasses import dataclass
 
 # from models.auctionextractor import Transformer
@@ -17,7 +20,18 @@ logger = logging.getLogger(__name__)
 @dataclass
 class SearchResponseTransformer(ABC):
     search_response: AuctionSearchResponse
+
     auction_transformers: Optional[List[Transformer]] = None
+
+    # @abstractmethod
+    # def auction_transformers(self) -> Optional[List[Transformer]]:
+    #     pass
+
+    async def __post_init__(self):
+        if self.auction_transformers:
+            for transformer in self.auction_transformers:
+                statements = [transformer(x) for x in self.search_response.auctions]
+                await asyncio.gather(*statements)
 
     @abstractmethod
     def transform(self) -> AuctionSearchResponse:
@@ -39,3 +53,24 @@ class ExcludeSellerName(SearchResponseTransformer):
                 new_auction_list.append(auction)
         self.search_response.auctions = new_auction_list
         return self.search_response
+
+
+class CleanControlCharacters(SearchResponseTransformer):
+    """Clean control characters from auction title."""
+
+    def transform(self) -> AuctionSearchResponse:
+        for auction in self.search_response.auctions:
+            auction.title = re.sub(
+                pattern=u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+',
+                repl='',
+                string=auction.title
+            )
+            return self.search_response
+
+
+class TranslateFromJp(SearchResponseTransformer):
+    def auction_transformers(self) -> Optional[List[Transformer]]:
+        return [translate_from_jp]
+
+    def transform(self) -> AuctionSearchResponse:
+        pass
