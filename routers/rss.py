@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from fastapi_rss import RSSResponse
 
+from auction_extractors.hhv import HHV
 from auction_transformers.translator import translate_from_jp, translate_from_es
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
@@ -123,6 +124,12 @@ def ebay_rss(
 @router.get(path='/eil')
 def eil_rss(search_term: str) -> RSSResponse:
     site = EIL(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/hhv')
+def hhv_rss(search_term: str) -> RSSResponse:
+    site = HHV(search_term=search_term)
     return site.search()
 
 
