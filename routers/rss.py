@@ -219,6 +219,6 @@ def variaworld_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/vinted.nl')
-def vinted_rss(search_term: str, catalog_id: Optional[int] = None) -> RSSResponse:
-    site = Vinted(search_term=search_term, catalog_id=catalog_id)
+def vinted_rss(search_term: str, catalog_id: Optional[int] = None, search_title_only: bool = True) -> RSSResponse:
+    site = Vinted(search_term=search_term, catalog_id=catalog_id, search_title_only=search_title_only)
     return site.search()
