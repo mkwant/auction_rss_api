@@ -44,7 +44,6 @@ class Vinted(AuctionExtractor):
 
         # Retrieving items
         r = s.get(url=url, params=params)
-        print(r.url)
         return r.json()['items']
 
     def get_auctions(self) -> List[Auction]:
@@ -55,7 +54,7 @@ class Vinted(AuctionExtractor):
                            f" (+{float(item['service_fee']):.2f} service)")
 
             # Skip items if search term not in title
-            if self.exact_search:
+            if self.search_title_only:
                 if self.search_term.lower() not in item['title'].lower():
                     continue
 
