@@ -19,7 +19,7 @@ class Vinted(AuctionExtractor):
     def search_link(self) -> str:
         url = f'https://www.vinted.nl/catalog?search_text={self.search_term}'
         if self.catalog_id is not None:
-            url += '&catalog[]={self.catalog_id}'
+            url += f'&catalog[]={self.catalog_id}'
         return url
 
     def _get_page(self) -> List[dict]:
