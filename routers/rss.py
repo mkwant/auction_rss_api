@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
 from auction_extractors.hhv import HHV
@@ -207,8 +207,10 @@ def tracks_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/tradera')
-def tradera_rss(search_term: str) -> RSSResponse:
-    site = Tradera(search_term=search_term)
+def tradera_rss(search_term: str, currency: str = Query(
+    default="EUR", enum=['DKK', 'EUR', 'GBP', 'JPY', 'NOK', 'SEK', 'USD']
+)) -> RSSResponse:
+    site = Tradera(search_term=search_term, currency=currency)
     return site.search()
 
 
