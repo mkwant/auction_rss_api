@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
 from auction_extractors.hhv import HHV
@@ -207,8 +207,10 @@ def tracks_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/tradera')
-def tradera_rss(search_term: str) -> RSSResponse:
-    site = Tradera(search_term=search_term)
+def tradera_rss(search_term: str, currency: str = Query(
+    default="EUR", enum=['DKK', 'EUR', 'GBP', 'JPY', 'NOK', 'SEK', 'USD']
+)) -> RSSResponse:
+    site = Tradera(search_term=search_term, currency=currency)
     return site.search()
 
 
@@ -219,6 +221,6 @@ def variaworld_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/vinted.nl')
-def vinted_rss(search_term: str, catalog_id: Optional[int] = None) -> RSSResponse:
-    site = Vinted(search_term=search_term, catalog_id=catalog_id)
+def vinted_rss(search_term: str, catalog_id: Optional[int] = None, search_title_only: bool = True) -> RSSResponse:
+    site = Vinted(search_term=search_term, catalog_id=catalog_id, search_title_only=search_title_only)
     return site.search()

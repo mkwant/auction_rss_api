@@ -10,6 +10,7 @@ from models.auction import Auction
 class Vinted(AuctionExtractor):
     search_term: str
     catalog_id: Optional[int] = None
+    search_title_only: bool = True
 
     @property
     def site_desc(self) -> str:
@@ -17,9 +18,9 @@ class Vinted(AuctionExtractor):
 
     @property
     def search_link(self) -> str:
-        url = f'https://www.vinted.nl/catalog?search_text={self.search_term}'
+        url = f'https://www.vinted.nl/catalog?search_text={self.search_term}&order=newest_first'
         if self.catalog_id is not None:
-            url += '&catalog[]={self.catalog_id}'
+            url += f'&catalog[]={self.catalog_id}'
         return url
 
     def _get_page(self) -> List[dict]:
@@ -27,7 +28,8 @@ class Vinted(AuctionExtractor):
         params = {
             'page': 1,
             'per_page': 96,
-            'search_text': self.search_term
+            'search_text': self.search_term,
+            'order': 'newest_first'
         }
         if self.catalog_id is not None:
             params['catalog_ids'] = self.catalog_id
@@ -36,9 +38,11 @@ class Vinted(AuctionExtractor):
 
         s = requests.Session()
         s.headers.update(headers)
+
         # Retrieving cookie
         s.get(url='https://www.vinted.nl')
 
+        # Retrieving items
         r = s.get(url=url, params=params)
         return r.json()['items']
 
@@ -48,6 +52,11 @@ class Vinted(AuctionExtractor):
         for item in self._get_page():
             description = (f"{item['currency'].capitalize()} {float(item['price']):.2f}"
                            f" (+{float(item['service_fee']):.2f} service)")
+
+            # Skip items if search term not in title
+            if self.search_title_only:
+                if self.search_term.lower() not in item['title'].lower():
+                    continue
 
             auctions.append(
                 Auction(
