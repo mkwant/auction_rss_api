@@ -54,7 +54,7 @@ class Tradera(AuctionExtractor):
             auction_id = str(item['itemId'])
             title = item['shortDescription']
             image_link = item['imageUrlTemplate'].replace('{format}', 'large-fit')
-            link = item['itemUrl']
+            link = item['itemUrl'].replace('tradera.com/', 'tradera.com/en/')
             start_date = dateutil.parser.isoparse(item['startDate'])
             seller = item['sellerAlias']
 
@@ -67,10 +67,11 @@ class Tradera(AuctionExtractor):
 
             # Build description from pricing info
             _price_auction = (f"{currency['symbolPrefix'] or currency['symbolSuffix']}"
-                              f"{item['price'] * currency['rate']:.2f} ({item['totalBids']} bids)")
+                              f"{item['price'] * currency['rate']:.2f} ({item['totalBids']} bids, ending "
+                              f"{dateutil.parser.isoparse(item['endDate']):%d-%m-%Y %H:%M})")
             _price_bin = (f"{currency['symbolPrefix'] or currency['symbolSuffix']}"
                           f"{item['buyNowPrice'] * currency['rate']:.2f} Buy It Now")
-            _shipping_options = '\n'.join([(f"{x['type']}: {currency['symbolPrefix'] or currency['symbolSuffix']}"
+            _shipping_options = '\n'.join([(f"- {x['type']}: {currency['symbolPrefix'] or currency['symbolSuffix']}"
                                             f"{x['cost'] * currency['rate']:.2f}")
                                            for x in item['shippingOptions']])
             _price_shipping = f"\nShipping options:\n{_shipping_options}"
