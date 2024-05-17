@@ -70,10 +70,10 @@ class Tradera(AuctionExtractor):
                               f"{item['price'] * currency['rate']:.2f} ({item['totalBids']} bids)")
             _price_bin = (f"{currency['symbolPrefix'] or currency['symbolSuffix']}"
                           f"{item['buyNowPrice'] * currency['rate']:.2f} Buy It Now")
-            _shipping_options = [(f"{x['type']}: {currency['symbolPrefix'] or currency['symbolSuffix']}"
-                                  f"{x['cost'] * currency['rate']:.2f}")
-                                 for x in item['shippingOptions']]
-            _price_shipping = f"\nShipping options:\n{'\n'.join(_shipping_options)}"
+            _shipping_options = '\n'.join([(f"{x['type']}: {currency['symbolPrefix'] or currency['symbolSuffix']}"
+                                            f"{x['cost'] * currency['rate']:.2f}")
+                                           for x in item['shippingOptions']])
+            _price_shipping = f"\nShipping options:\n{_shipping_options}"
 
             type_desc_mapping = {
                 'Auction': [_price_auction, _price_shipping],
