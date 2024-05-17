@@ -1,7 +1,7 @@
-import datetime
 import json
 from typing import List, Literal
 
+import dateutil
 import requests
 from bs4 import BeautifulSoup
 
@@ -55,7 +55,7 @@ class Tradera(AuctionExtractor):
             title = item['shortDescription']
             image_link = item['imageUrlTemplate'].replace('{format}', 'large-fit')
             link = item['itemUrl']
-            start_date = datetime.datetime.fromisoformat(item['startDate'])
+            start_date = dateutil.parser.isoparse(item['startDate'])
             seller = item['sellerAlias']
 
             # Add seller rating to seller if it exists
