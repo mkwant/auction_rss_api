@@ -30,8 +30,8 @@ class Tradera(AuctionExtractor):
         }
         cookies = {
             'preferred_currency': self.currency,
-            'shipping_country': 'NL',
-            'Srp_Item_Layout': 'layout-list'
+            'shipping_country': 'NL',  # Doesn't work, always shows shipping to Sweden...
+            'gdpr_consent_v1': '1:1,2:1,3:1,4:1',
         }
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'
