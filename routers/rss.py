@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
 from auction_extractors.hhv import HHV
+from auction_extractors.slcd import SLCD
 from auction_transformers.translator import translate_from_jp, translate_from_es
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
@@ -182,6 +183,12 @@ def pleasuresofpasttimes_rss(search_term: str) -> RSSResponse:
 @router.get(path='/recordmecca')
 def recordmecca_rss(search_term: str) -> RSSResponse:
     site = RecordMecca(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/slcd')
+def slcd_rss(search_term: str) -> RSSResponse:
+    site = SLCD(search_term=search_term)
     return site.search()
 
 
