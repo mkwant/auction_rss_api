@@ -27,7 +27,7 @@ class HouseOfMythology(AuctionExtractor):
         json_str = soup.select_one('default-products')[':products'].split('\'')[1]
 
         # Escaping unicode characters
-        json_str = json_str.encode().decode('unicode_escape')
+        json_str = bytes(json_str, 'utf-8').decode('unicode_escape')
 
         items = json.loads(json_str)
         auctions = []
@@ -36,8 +36,8 @@ class HouseOfMythology(AuctionExtractor):
 
             auction_id = str(item['id'])
             title = f"{item['artist']} - {item['title']}"
-            description = f"{item['standardPriceWithSymbol']}\n\n{item['description']}"
-            image_link = item['image']
+            description = f"{item['standardPriceWithSymbol']}\n\n{item['description']}".replace('\\', '')
+            image_link = item['image'].replace('\\', '')
             link = f"https://store.houseofmythology.com/product/{item['linkId']}"
             start_date = date_parse(item['location_info']['created_at'])
 
