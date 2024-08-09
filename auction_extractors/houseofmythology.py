@@ -1,9 +1,9 @@
 import json
-from datetime import datetime
 from typing import List
 
 import requests
 from bs4 import BeautifulSoup
+from dateutil.parser import parse as date_parse
 
 from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
@@ -39,7 +39,7 @@ class HouseOfMythology(AuctionExtractor):
             description = f"{item['standardPriceWithSymbol']}\n\n{item['description']}"
             image_link = item['image']
             link = f"https://store.houseofmythology.com/product/{item['linkId']}"
-            start_date = datetime.fromisoformat(item['location_info']['created_at'])
+            start_date = date_parse(item['location_info']['created_at'])
 
             if self.search_term.lower() not in title.lower():
                 continue
