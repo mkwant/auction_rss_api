@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
 from auction_extractors.hhv import HHV
+from auction_extractors.houseofmythology import HouseOfMythology
 from auction_extractors.slcd import SLCD
 from auction_transformers.translator import translate_from_jp, translate_from_es
 from auction_extractors.buyee_mercari import BuyeeMercari
@@ -131,6 +132,12 @@ def eil_rss(search_term: str) -> RSSResponse:
 @router.get(path='/hhv')
 def hhv_rss(search_term: str) -> RSSResponse:
     site = HHV(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/houseofmythology')
+def houseofmythology_rss(search_term: str) -> RSSResponse:
+    site = HouseOfMythology(search_term=search_term)
     return site.search()
 
 
