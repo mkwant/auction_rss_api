@@ -3,7 +3,7 @@ v: 0
 micros:
   - name: auction_rss_api
     src: .
-    engine: python3.12
+    engine: python3.9
     presets:
       env:
         - name: ebay_app_id
