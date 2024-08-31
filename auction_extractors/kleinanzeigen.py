@@ -1,0 +1,55 @@
+from datetime import datetime
+from typing import List
+
+import requests
+from bs4 import BeautifulSoup
+
+from models.auction import Auction
+from models.auctionextractor import AuctionExtractor
+
+
+class Kleinanzeigen(AuctionExtractor):
+    @property
+    def search_link(self) -> str:
+        return f'https://www.kleinanzeigen.de/s-{self.search_term}/k0'
+
+    @property
+    def site_desc(self) -> str:
+        return 'Kleinanzeigen'
+
+    def get_auctions(self) -> List[Auction]:
+        r = requests.get(url=self.search_link)
+        soup = BeautifulSoup(r.content, 'html.parser')
+        items = soup.select('ul.itemlist>li.ad-listitem')
+
+        auctions = []
+
+        for item in items:
+
+            try:
+                auction_id = item.select_one('article')['data-adid']
+            except TypeError:
+                continue
+
+            link = 'https://www.kleinanzeigen.de' + item.select_one('article')['data-href']
+            image_link = item.select_one('img')['srcset'].replace('$_35', '$_59')
+            title = item.select_one('a.ellipsis').text
+            _description_text = item.select_one('p.aditem-main--middle--description').text.strip()
+            _price = item.select_one('p.aditem-main--middle--price-shipping--price').text.strip()
+            description = f'{_description_text}\n\n{_price}'
+            seller = item.select_one('div.aditem-main--top--left').text.strip()
+            start_date = item.select_one('div.aditem-main--top--right').text.strip()
+            # TODO parse start_date
+
+            auctions.append(
+                Auction(**{
+                    'title': title,
+                    'auction_id': auction_id,
+                    'description': description,
+                    'link': link,
+                    'image_link': image_link,
+                    'seller': seller,
+                    'start_date': datetime.now()
+                }))
+
+        return auctions

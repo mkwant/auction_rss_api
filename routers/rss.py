@@ -5,6 +5,7 @@ from fastapi_rss import RSSResponse
 
 from auction_extractors.hhv import HHV
 from auction_extractors.houseofmythology import HouseOfMythology
+from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.slcd import SLCD
 from auction_transformers.translator import translate_from_jp, translate_from_es
 from auction_extractors.buyee_mercari import BuyeeMercari
@@ -151,6 +152,12 @@ def japanrecords_rss(search_term: str) -> RSSResponse:
 @router.get(path='/juno')
 def juno_rss(search_term: str) -> RSSResponse:
     site = Juno(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/kleinanzeigen')
+def kleinanzeigen_rss(search_term: str) -> RSSResponse:
+    site = Kleinanzeigen(search_term=search_term)
     return site.search()
 
 
