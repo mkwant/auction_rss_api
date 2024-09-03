@@ -33,7 +33,7 @@ class Dais(AuctionExtractor):
             if not self.search_term.lower() in product['vendor'].lower():
                 continue
             title = f"{product['vendor']} - {product['title']}"
-            auction_id = product['id']
+            auction_id = str(product['id'])
             link = 'https://www.daisrecords.com/products/' + product['handle']
             image_link = product['images'][0]['src']
             start_date = dateparser.parse(product['created_at'])
