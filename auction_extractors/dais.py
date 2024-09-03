@@ -34,11 +34,11 @@ class Dais(AuctionExtractor):
 
             # If search_in_desc, search in description as well
             if self.search_in_desc:
-                if (not self.search_term.lower() in product['vendor'].lower() or
-                        not self.search_term.lower() in product['body_html'].lower()):
+                if (self.search_term.lower() not in product['vendor'].lower() or
+                        self.search_term.lower() not in product['body_html'].lower()):
                     continue
             if not self.search_in_desc:
-                if not self.search_term.lower() in product['vendor'].lower():
+                if self.search_term.lower() not in product['vendor'].lower():
                     continue
 
             title = f"{product['vendor']} - {product['title']}"
