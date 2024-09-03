@@ -47,7 +47,7 @@ class Dais(AuctionExtractor):
             image_link = product['images'][0]['src']
             start_date = dateparser.parse(product['created_at'])
 
-            _variants = '\n'.join([f"{x['title']} - ${x['price']}" for x in product['variants']])
+            _variants = '\n'.join([f"${x['price']} - {x['title']}" for x in product['variants']])
             description = f"{_variants}\n\n{product['body_html']}"
 
             auctions.append(
