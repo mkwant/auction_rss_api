@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
+from auction_extractors.dais import Dais
 from auction_extractors.hhv import HHV
 from auction_extractors.houseofmythology import HouseOfMythology
 from auction_extractors.kleinanzeigen import Kleinanzeigen
@@ -88,6 +89,12 @@ def catawiki_rss(search_term: str) -> RSSResponse:
 @router.get(path='/cdandlp')
 def cdandlp_rss(search_term: str) -> RSSResponse:
     site = CdAndLp(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/dais')
+def dais_rss(search_term: str) -> RSSResponse:
+    site = Dais(search_term=search_term)
     return site.search()
 
 
