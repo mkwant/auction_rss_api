@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import List
 
+import dateparser
 import requests
 from bs4 import BeautifulSoup
 
@@ -38,8 +38,7 @@ class Kleinanzeigen(AuctionExtractor):
             _price = item.select_one('p.aditem-main--middle--price-shipping--price').text.strip()
             description = f'{_description_text}\n\n{_price}'
             seller = item.select_one('div.aditem-main--top--left').text.strip()
-            start_date = item.select_one('div.aditem-main--top--right').text.strip()
-            # TODO parse start_date
+            start_date = dateparser.parse(item.select_one('div.aditem-main--top--right').text.strip(), languages=['de'])
 
             auctions.append(
                 Auction(**{
@@ -49,7 +48,7 @@ class Kleinanzeigen(AuctionExtractor):
                     'link': link,
                     'image_link': image_link,
                     'seller': seller,
-                    'start_date': datetime.now()
+                    'start_date': start_date
                 }))
 
         return auctions
