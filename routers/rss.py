@@ -93,8 +93,8 @@ def cdandlp_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/dais')
-def dais_rss(search_term: str) -> RSSResponse:
-    site = Dais(search_term=search_term)
+def dais_rss(search_term: str, search_in_desc: bool = False) -> RSSResponse:
+    site = Dais(search_term=search_term, search_in_desc=search_in_desc)
     return site.search()
 
 

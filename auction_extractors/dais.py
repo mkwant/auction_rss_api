@@ -9,6 +9,8 @@ from models.auctionextractor import AuctionExtractor
 
 
 class Dais(AuctionExtractor):
+    search_in_desc: bool = False
+
     @property
     def search_link(self) -> str:
         return f"https://www.daisrecords.com/search?q={self.search_term}"
@@ -29,9 +31,16 @@ class Dais(AuctionExtractor):
 
         products = json.loads(r.text)['products']
         for product in products:
-            # if search_term.lower() in product['vendor'].lower() or search_term.lower() in product['body_html'].lower():
-            if not self.search_term.lower() in product['vendor'].lower():
-                continue
+
+            # If search_in_desc, search in description as well
+            if self.search_in_desc:
+                if (not self.search_term.lower() in product['vendor'].lower() or
+                        self.search_term.lower() in product['body_html'].lower()):
+                    continue
+            if not self.search_in_desc:
+                if not self.search_term.lower() in product['vendor'].lower():
+                    continue
+
             title = f"{product['vendor']} - {product['title']}"
             auction_id = str(product['id'])
             link = 'https://www.daisrecords.com/products/' + product['handle']
