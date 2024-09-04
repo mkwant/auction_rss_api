@@ -5,6 +5,7 @@ from fastapi_rss import RSSResponse
 
 from auction_extractors.dais import Dais
 from auction_extractors.hhv import HHV
+from auction_extractors.hmv_jp import HMVJapan
 from auction_extractors.houseofmythology import HouseOfMythology
 from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.slcd import SLCD
@@ -140,6 +141,12 @@ def eil_rss(search_term: str) -> RSSResponse:
 @router.get(path='/hhv')
 def hhv_rss(search_term: str) -> RSSResponse:
     site = HHV(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/hmvjapan')
+def hmvjapan_rss(search_term: str) -> RSSResponse:
+    site = HMVJapan(search_term=search_term)
     return site.search()
 
 
