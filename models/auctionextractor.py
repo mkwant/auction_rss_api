@@ -84,7 +84,7 @@ class AuctionExtractor(BaseModel):
         except Exception as e:
             auctions = self.auctions_on_error(
                 error_text="ERROR: Feed items couldn't be retrieved.",
-                error=f'Received this error when trying to retrieve the feed items: \n{e}'
+                error=f'Received an error of type {type(e).__name__} when trying to retrieve the feed items: \n{e}'
             )
 
         if len(auctions) == 0:
@@ -169,7 +169,7 @@ class AuctionExtractorAsync(BaseModel):
             auctions = await self.get_auctions()
         except Exception as e:
             auctions = self.auctions_on_error(
-                error=f'Received this error when trying to retrieve the feed items: \n{e}'
+                error=f'Received an error of type {type(e).__name__} when trying to retrieve the feed items: \n{e}'
             )
 
         if len(auctions) == 0:
