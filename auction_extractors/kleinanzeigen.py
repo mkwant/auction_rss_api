@@ -32,7 +32,12 @@ class Kleinanzeigen(AuctionExtractor):
                 continue
 
             link = 'https://www.kleinanzeigen.de' + item.select_one('article')['data-href']
-            image_link = item.select_one('img')['srcset'].replace('$_35', '$_59')
+
+            try:
+                image_link = item.select_one('img')['srcset'].replace('$_35', '$_59')
+            except TypeError:
+                image_link = 'https://www.kleinanzeigen.de/liberty/liberty-js/placeholder-logo.svg'
+
             title = item.select_one('a.ellipsis').text
             _description_text = item.select_one('p.aditem-main--middle--description').text.strip()
             _price = item.select_one('p.aditem-main--middle--price-shipping--price').text.strip()
