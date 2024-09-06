@@ -8,6 +8,7 @@ from auction_extractors.hhv import HHV
 from auction_extractors.hmv_jp import HMVJapan
 from auction_extractors.houseofmythology import HouseOfMythology
 from auction_extractors.kleinanzeigen import Kleinanzeigen
+from auction_extractors.omega import Omega
 from auction_extractors.slcd import SLCD
 from auction_transformers.translator import translate_from_jp, translate_from_es
 from auction_extractors.buyee_mercari import BuyeeMercari
@@ -193,6 +194,12 @@ def marktplaats_rss(search_term: str, search_in_seller_name: bool = False) -> RS
 @router.get(path='/musicstack')
 def musicstack_rss(search_term: str) -> RSSResponse:
     site = MusicStack(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/omega')
+def omega_rss(search_term: str) -> RSSResponse:
+    site = Omega(search_term=search_term)
     return site.search()
 
 
