@@ -21,7 +21,7 @@ class InfiniteFog(AuctionExtractor):
         auctions = []
 
         page = 1
-        while page < 11:
+        while page < 6:
 
             url = f'https://infinitefog.ru/shop/new'
             params = {
