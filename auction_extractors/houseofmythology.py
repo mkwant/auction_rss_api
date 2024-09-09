@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-import requests
+import cloudscraper
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as date_parse
 
@@ -21,13 +21,16 @@ class HouseOfMythology(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0'}
 
-        r = requests.get(url=self.search_link, headers=headers)
+        scraper = cloudscraper.create_scraper()
+
+        r = scraper.get(url=self.search_link, headers=headers)
         soup = BeautifulSoup(r.text, features='html.parser')
 
         json_str = soup.select_one('default-products')[':products'].split('\'')[1]
 
         # Escaping unicode characters
         json_str = bytes(json_str, 'utf-8').decode('unicode_escape')
+        print(json_str)
 
         items = json.loads(json_str)
         auctions = []
