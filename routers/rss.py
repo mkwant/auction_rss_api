@@ -7,6 +7,7 @@ from auction_extractors.dais import Dais
 from auction_extractors.hhv import HHV
 from auction_extractors.hmv_jp import HMVJapan
 from auction_extractors.houseofmythology import HouseOfMythology
+from auction_extractors.infinitefog import InfiniteFog
 from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.omega import Omega
 from auction_extractors.slcd import SLCD
@@ -154,6 +155,12 @@ def hmvjapan_rss(search_term: str) -> RSSResponse:
 @router.get(path='/houseofmythology')
 def houseofmythology_rss(search_term: str) -> RSSResponse:
     site = HouseOfMythology(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/infinitefog')
+def infinitefog_rss(search_term: str) -> RSSResponse:
+    site = InfiniteFog(search_term=search_term)
     return site.search()
 
 
