@@ -1,4 +1,4 @@
-FROM python:3.12
+FROM python:3.9-slim
 
 # Update apt-get
 RUN apt-get update
