@@ -89,8 +89,7 @@ class Delcampe(AuctionExtractor):
                     image_link=image_link,
                     link=link,
                     title=title,
-                    seller=seller,
-                    start_date=datetime.now()
+                    seller=seller
                 )
             )
 

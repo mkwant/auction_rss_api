@@ -43,8 +43,7 @@ class PlatoMania(AuctionExtractor):
                     title=title,
                     link=link,
                     image_link=image_link,
-                    description=description,
-                    start_date=datetime.now()
+                    description=description
                 )
             )
 

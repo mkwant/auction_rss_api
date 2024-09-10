@@ -53,8 +53,7 @@ class Discords(AuctionExtractor):
                     description=description,
                     image_link=image_url,
                     link=item_url,
-                    title=title,
-                    start_date=datetime.now()
+                    title=title
                 )
             )
 

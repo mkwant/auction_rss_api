@@ -48,8 +48,7 @@ class EIL(AuctionExtractor):
                     auction_id=auction_id,
                     description=description,
                     link=link,
-                    image_link=image_link,
-                    start_date=datetime.datetime.now()
+                    image_link=image_link
                 )
             )
 

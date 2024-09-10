@@ -56,8 +56,7 @@ class HMVJapan(AuctionExtractor):
                     'auction_id': auction_id,
                     'description': description,
                     'link': link,
-                    'image_link': image_link,
-                    'start_date': datetime.now()
+                    'image_link': image_link
                 }))
 
         return auctions

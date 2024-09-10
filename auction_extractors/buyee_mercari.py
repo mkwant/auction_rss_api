@@ -68,7 +68,6 @@ class BuyeeMercari(AuctionExtractor):
                     'description': description,
                     'link': link,
                     'image_link': image_link,
-                    'seller': seller,
-                    'start_date': datetime.now()
+                    'seller': seller
                 }))
         return auctions

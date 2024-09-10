@@ -65,8 +65,7 @@ class Vinted(AuctionExtractor):
                     description=description,
                     link=item['url'],
                     image_link=item['photo']['full_size_url'],
-                    seller=item['user']['login'],
-                    start_date=datetime.now()
+                    seller=item['user']['login']
                 )
             )
 
