@@ -11,6 +11,7 @@ from auction_extractors.infinitefog import InfiniteFog
 from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.omega import Omega
 from auction_extractors.slcd import SLCD
+from auction_extractors.younggod import YoungGod
 from auction_transformers.translator import translate_from_jp, translate_from_es
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
@@ -272,4 +273,10 @@ def variaworld_rss(search_term: str) -> RSSResponse:
 @router.get(path='/vinted.nl')
 def vinted_rss(search_term: str, catalog_id: Optional[int] = None, search_title_only: bool = True) -> RSSResponse:
     site = Vinted(search_term=search_term, catalog_id=catalog_id, search_title_only=search_title_only)
+    return site.search()
+
+
+@router.get(path='/younggod')
+def younggod_rss(search_term: str, search_in_desc: bool = False) -> RSSResponse:
+    site = YoungGod(search_term=search_term, search_in_desc=search_in_desc)
     return site.search()
