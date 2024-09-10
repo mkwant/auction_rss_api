@@ -12,4 +12,4 @@ class Auction(BaseModel):
     link: str
     image_link: Optional[str] = None
     seller: Optional[str] = None
-    start_date: datetime
+    start_date: datetime = datetime.now()
