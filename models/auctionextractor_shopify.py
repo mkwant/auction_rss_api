@@ -15,7 +15,7 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
     @property
     @abstractmethod
-    def domain(self):
+    def domain(self) -> str:
         """The domain of the Shopify site, i.e 'mysite.com'."""
         ...
 
