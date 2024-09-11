@@ -1,11 +1,11 @@
 from models.auctionextractor_shopify import ShopifyExtractor
 
 
-class Dais(ShopifyExtractor):
+class YoungGod(ShopifyExtractor):
     @property
     def site_desc(self) -> str:
-        return "Dais"
+        return "Young God Records"
 
     @property
     def domain(self):
-        return 'daisrecords.com'
+        return 'younggodrecords.com'

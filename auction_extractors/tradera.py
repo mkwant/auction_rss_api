@@ -5,8 +5,8 @@ import dateutil
 import requests
 from bs4 import BeautifulSoup
 
-from models.auctionextractor import AuctionExtractor
 from models.auction import Auction
+from models.auctionextractor import AuctionExtractor
 
 
 class Tradera(AuctionExtractor):

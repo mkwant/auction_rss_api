@@ -1,11 +1,10 @@
-from datetime import datetime
 from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 
-from models.auctionextractor import AuctionExtractor
 from models.auction import Auction
+from models.auctionextractor import AuctionExtractor
 
 
 class JapanRecords(AuctionExtractor):
@@ -39,8 +38,7 @@ class JapanRecords(AuctionExtractor):
                     auction_id=auction_id,
                     description=description,
                     link=link,
-                    image_link=image_link,
-                    start_date=datetime.now()
+                    image_link=image_link
                 )
             )
 

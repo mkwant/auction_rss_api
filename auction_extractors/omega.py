@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List
 
 import requests
@@ -30,7 +29,11 @@ class Omega(AuctionExtractor):
             auction_id = item.select_one('a.anchor-offset')['name']
             link = 'https://bid.omegaauctions.co.uk' + item.select_one('div.auction-lot')['data-detailsurl']
             image_link = item.select_one('img')['src'].replace('-small.', '-medium.')
-            title = item.select_one('span.lot-title').text.strip()
+
+            try:
+                title = item.select_one('span.lot-title').text.strip()
+            except AttributeError:
+                continue
 
             _estimate = item.select_one('div.estimate').text.strip()
             try:
@@ -56,8 +59,7 @@ class Omega(AuctionExtractor):
                         description=description,
                         image_link=image_link,
                         link=link,
-                        title=title,
-                        start_date=datetime.now()
+                        title=title
                         )
             )
 

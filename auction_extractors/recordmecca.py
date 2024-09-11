@@ -1,12 +1,11 @@
-from datetime import datetime
 from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
-from models.auctionextractor import AuctionExtractor
 from models.auction import Auction
+from models.auctionextractor import AuctionExtractor
 
 
 class RecordMecca(AuctionExtractor):
@@ -49,8 +48,7 @@ class RecordMecca(AuctionExtractor):
                         description=description,
                         image_link=image_link,
                         link=link,
-                        title=title,
-                        start_date=datetime.now()
+                        title=title
                         )
             )
 

@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List
 
 import requests
@@ -49,8 +48,7 @@ class InfiniteFog(AuctionExtractor):
                                 description=description,
                                 image_link=image_link,
                                 link=link,
-                                title=title,
-                                start_date=datetime.now()
+                                title=title
                                 )
                     )
 

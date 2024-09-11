@@ -1,12 +1,11 @@
 import json
-from datetime import datetime
 from typing import List
 
 import httpx
 from bs4 import BeautifulSoup
 
-from models.auctionextractor import AuctionExtractor
 from models.auction import Auction
+from models.auctionextractor import AuctionExtractor
 
 
 class BuyeeMercari(AuctionExtractor):
@@ -68,7 +67,6 @@ class BuyeeMercari(AuctionExtractor):
                     'description': description,
                     'link': link,
                     'image_link': image_link,
-                    'seller': seller,
-                    'start_date': datetime.now()
+                    'seller': seller
                 }))
         return auctions

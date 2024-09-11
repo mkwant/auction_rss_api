@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 from typing import List
 
 import requests
@@ -55,8 +54,7 @@ class HHV(AuctionExtractor):
                     description=description,
                     image_link=image_link,
                     link=link,
-                    title=title,
-                    start_date=datetime.now()
+                    title=title
                 )
             )
 
