@@ -1,11 +1,10 @@
-from datetime import datetime
 from typing import List
 
 import httpx
 from bs4 import BeautifulSoup
 
-from models.auctionextractor import AuctionExtractor
 from models.auction import Auction
+from models.auctionextractor import AuctionExtractor
 
 
 # TODO Multiple pages? / keep in db?

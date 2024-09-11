@@ -1,12 +1,11 @@
-from datetime import datetime
 from typing import List
 
 import cloudscraper as cloudscraper
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
-from models.auctionextractor import AuctionExtractor
 from models.auction import Auction
+from models.auctionextractor import AuctionExtractor
 
 
 class Todocoleccion(AuctionExtractor):

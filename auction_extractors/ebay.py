@@ -6,9 +6,9 @@ from typing import List
 import httpx
 import pytz
 
-from models.auctionextractor import AuctionExtractor
-from models.auction import Auction
 from app.settings import settings
+from models.auction import Auction
+from models.auctionextractor import AuctionExtractor
 
 
 class Ebay(AuctionExtractor):
