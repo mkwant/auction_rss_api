@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 from abc import abstractmethod
 from datetime import datetime
 from typing import List, Callable, Awaitable
@@ -84,7 +85,8 @@ class AuctionExtractor(BaseModel):
         except Exception as e:
             auctions = self.auctions_on_error(
                 error_text="ERROR: Feed items couldn't be retrieved.",
-                error=f'Received an error of type {type(e).__name__} when trying to retrieve the feed items: \n{e}'
+                error=f'Received an error of type {type(e).__name__} when trying to retrieve the feed items: \n\n'
+                      f'{traceback.format_exc()}'
             )
 
         if len(auctions) == 0:
