@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
 from auction_extractors.dais import Dais
+from auction_extractors.davidtibet import DavidTibet
 from auction_extractors.hhv import HHV
 from auction_extractors.hmv_jp import HMVJapan
 from auction_extractors.houseofmythology import HouseOfMythology
@@ -99,6 +100,12 @@ def cdandlp_rss(search_term: str) -> RSSResponse:
 @router.get(path='/dais')
 def dais_rss(search_term: str, search_in_desc: bool = False) -> RSSResponse:
     site = Dais(search_term=search_term, search_in_desc=search_in_desc)
+    return site.search()
+
+
+@router.get(path='/davidtibet')
+def davidtibet_rss(search_term: str) -> RSSResponse:
+    site = DavidTibet(search_term=search_term)
     return site.search()
 
 
