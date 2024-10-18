@@ -1,6 +1,7 @@
 import re
 from typing import List
 
+import dateparser
 import requests
 
 from models.auctionextractor import AuctionExtractor
@@ -69,7 +70,7 @@ class Marktplaats(AuctionExtractor):
                 'image_link': image_link,
                 'title': self.clean_control_chars(item['title']),
                 'seller': item['sellerInformation']['sellerName'],
-                'start_date': item['date']
+                'start_date': dateparser.parse(date_string=item['date'], languages=['nl'])
             }
 
             auctions.append(
