@@ -1,4 +1,10 @@
-FROM python:3.9-slim
+FROM python:3.12-slim
+
+# Set timezone
+ENV TZ=Europe/Amsterdam
+
+# Ignore pip root error warnings
+ENV PIP_ROOT_USER_ACTION=ignore
 
 # Update apt-get
 RUN apt-get update
