@@ -9,7 +9,7 @@ services:
     labels:
       # Enable Traefik for this specific "backend" service
       - traefik.enable=true
-      # Define the port inside of the Docker service to use
+      # Define the port inside the Docker service to use
       - traefik.http.services.app.loadbalancer.server.port=80
       # Make Traefik use this domain in HTTP
       - traefik.http.routers.app-http.entrypoints=http
@@ -27,7 +27,6 @@ services:
       - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
       # Middleware to redirect HTTP to HTTPS
       - traefik.http.routers.app-http.middlewares=https-redirect
-      - traefik.http.routers.app-https.middlewares=admin-auth
     networks:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS
