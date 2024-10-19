@@ -12,6 +12,8 @@ services:
       - '443:443'
     restart: always
     env_file: .env
+    environment:
+      - TZ=Europe/Amsterdam
     labels:
       # Enable Traefik for this service, to make it available in the public network
       - traefik.enable=true
@@ -65,6 +67,7 @@ services:
       # Enable the access log, with HTTP requests
       - --accesslog
       - --accesslog.filePath=/logs/access.log
+      - --accesslog.fields.names.StartUTC=drop
       # Enable the Traefik log, for configurations and errors
       - --log
       # Enable the Dashboard and API
