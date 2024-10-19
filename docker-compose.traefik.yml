@@ -68,8 +68,12 @@ services:
       - --accesslog
       - --accesslog.filePath=/logs/access.log
       - --accesslog.fields.names.StartUTC=drop
+      - --accesslog.fields.headers.defaultmode=keep
       # Enable the Traefik log, for configurations and errors
       - --log
+      - --log.filePath=/logs/traefik.log
+      - --log.level=INFO
+      - --log.compress=true
       # Enable the Dashboard and API
       - --api
     networks:
