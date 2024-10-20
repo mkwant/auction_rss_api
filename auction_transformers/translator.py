@@ -90,7 +90,7 @@ async def translate_auction(
             translate_to=translate_to,
             translate_from=translate_from
         )
-    except (httpx.HTTPError, ConnectionError) as e:
+    except Exception as e:
         auction.description = f"{auction.description}\n\nTranslate failed: '{e}'"
         return auction
 
