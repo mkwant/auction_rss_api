@@ -5,7 +5,7 @@ services:
   backend:
     image: ghcr.io/mkwant/auction_rss_api:latest
     restart: always
-    env_file: .env
+    env_file: .env.app
     labels:
       # Enable Traefik for this specific "backend" service
       - traefik.enable=true
