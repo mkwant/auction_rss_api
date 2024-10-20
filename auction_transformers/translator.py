@@ -29,8 +29,8 @@ class AzureTranslator(Translator):
     def __init__(
             self,
             client: httpx.AsyncClient,
-            ms_translate_api_key: str = settings.ms_translate_api_key,
-            ms_translate_api_location: str = settings.ms_translate_api_location
+            ms_translate_api_key: str = settings.MS_TRANSLATE_API_KEY,
+            ms_translate_api_location: str = settings.MS_TRANSLATE_API_KEY
     ):
         """Initialize the AzureTranslator."""
         self.client = client

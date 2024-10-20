@@ -4,14 +4,14 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    ebay_app_id: str
-    ebay_app_secret: str
-    ebay_ru_name: str
-    ms_translate_api_key: str
-    ms_translate_api_location: str
+    EBAY_APP_ID: str
+    EBAY_APP_SECRET: str
+    EBAY_RU_NAME: str
+    MS_TRANSLATE_API_KEY: str
+    MS_TRANSLATE_API_LOCATION: str
 
     class Config:
-        env_file = ".env"
+        env_file = ".env.app"
 
 
 @lru_cache

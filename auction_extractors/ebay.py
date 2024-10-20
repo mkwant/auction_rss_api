@@ -34,7 +34,7 @@ class Ebay(AuctionExtractor):
     def token(self) -> str:
         client = httpx.Client()
 
-        oauth_creds = base64.b64encode(f'{settings.ebay_app_id}:{settings.ebay_app_secret}'.encode())
+        oauth_creds = base64.b64encode(f'{settings.EBAY_APP_ID}:{settings.EBAY_APP_SECRET}'.encode())
 
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -42,7 +42,7 @@ class Ebay(AuctionExtractor):
         }
         payload = {
             'grant_type': 'client_credentials',
-            'redirect_uri': settings.ebay_ru_name,
+            'redirect_uri': settings.EBAY_RU_NAME,
             'scope': 'https://api.ebay.com/oauth/api_scope'
         }
         url = 'https://api.ebay.com/identity/v1/oauth2/token'
