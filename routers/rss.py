@@ -40,8 +40,10 @@ from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
 from auction_extractors.vinted import Vinted
 from app.dependencies import Translate
+from routers.logger import LoggedRoute
 
 router = APIRouter(
+    route_class=LoggedRoute,
     default_response_class=RSSResponse,
     tags=['RSS-feeds']
 )

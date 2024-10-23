@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 
+from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 
 from app.logs import setup_logging
@@ -31,3 +32,4 @@ logger.info('Starting application...')
 app.include_router(rss.router)
 app.include_router(redirect.router)
 app.add_middleware(middleware_class=AddNoIndex)
+app.add_middleware(middleware_class=CorrelationIdMiddleware)
