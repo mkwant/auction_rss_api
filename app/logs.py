@@ -26,7 +26,7 @@ def setup_logging(
     cid_filter = CorrelationIdFilter(uuid_length=8)
 
     # Setup FileHandler
-    file_handler = logging.handlers.TimedRotatingFileHandler(filename=log_location, when='W0')
+    file_handler = logging.handlers.TimedRotatingFileHandler(filename=log_location, encoding='utf-8', when='W0')
     file_handler.addFilter(cid_filter)
     file_handler.setLevel(settings.LOG_LEVEL)
 
