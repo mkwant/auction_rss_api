@@ -30,8 +30,7 @@ class HouseOfMythology(AuctionExtractor):
 
         # Escaping unicode characters
         json_str = bytes(json_str, 'utf-8').decode('unicode_escape')
-        print(json_str)
-
+        
         items = json.loads(json_str)
         auctions = []
 
