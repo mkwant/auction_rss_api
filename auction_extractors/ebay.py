@@ -69,7 +69,8 @@ class Ebay(AuctionExtractor):
             'q': self.search_term,
             'sort': 'newlyListed',
             'limit': 200,
-            'filter': search_filter
+            'filter': search_filter,
+            'fieldgroups': 'EXTENDED'
         }
 
         headers = {
@@ -94,6 +95,7 @@ class Ebay(AuctionExtractor):
             seller = f"{item['seller']['username']} ({item['seller']['feedbackScore']} / " \
                      f"{item['seller']['feedbackPercentage']}%)"
 
+            short_desc = item.get('shortDescription', '').strip()
             description = ''
             if 'AUCTION' in item['buyingOptions']:
                 auction_price = f"{item['currentBidPrice']['currency']} {item['currentBidPrice']['value']} " \
@@ -104,6 +106,8 @@ class Ebay(AuctionExtractor):
             if 'FIXED_PRICE' in item['buyingOptions']:
                 bin_price = f"{item['price']['currency']} {item['price']['value']}"
                 description += f'Buy It Now for: {bin_price}\n'
+
+            description += f"\n{short_desc}"
             description = description.strip()
 
             auctions.append(
