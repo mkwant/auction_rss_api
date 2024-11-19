@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import List, Callable, Awaitable
 
 from fastapi_rss import RSSResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from auction_transformers.html_linebreaks_in_desc import html_linebreaks_in_desc
 from models.auction import Auction
@@ -30,8 +30,8 @@ class AuctionExtractor(BaseModel):
 
     """
     search_term: str
-    transformers: List[Transformer] = []
-    default_transformers: List[Transformer] = [html_linebreaks_in_desc]
+    transformers: List[Transformer] = Field(default_factory=list)
+    default_transformers: List[Transformer] = Field(default_factory=lambda: [html_linebreaks_in_desc])
 
     @property
     @abstractmethod
