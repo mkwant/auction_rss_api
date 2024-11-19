@@ -5,6 +5,7 @@ from functools import partial
 from typing import Optional
 
 import httpx
+from asgi_correlation_id import correlation_id
 
 from models.auction import Auction
 from app.settings import settings
@@ -46,7 +47,7 @@ class AzureTranslator(Translator):
             'Ocp-Apim-Subscription-Key': self.ms_translate_api_key,
             'Ocp-Apim-Subscription-Region': self.ms_translate_api_location,
             'Content-type': 'application/json',
-            'X-ClientTraceId': str(uuid.uuid4())
+            'X-ClientTraceId': correlation_id.get()
         }
         params = {
             'api-version': self.api_version,
