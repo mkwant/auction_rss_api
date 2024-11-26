@@ -35,8 +35,6 @@ class BandcampFaves(AuctionExtractor):
             return auctions
 
         for item in items:
-            auction_id = item["data-item-id"]
-
             _title = ' '.join(
                 ' '.join([x.strip() for x in item.select_one('p.title') if isinstance(x, str)]).strip().split())
             try:
@@ -52,6 +50,8 @@ class BandcampFaves(AuctionExtractor):
             except KeyError:
                 image_link = item.select_one('img')['src']
             image_link = image_link.replace('_37', '_10')
+
+            auction_id = image_link.split('/')[-1].split('_')[0]
 
             _item_type = item.select_one('div.merchtype').text.strip()
             _price = item.select_one('p.price').text.strip()
@@ -93,4 +93,5 @@ class BandcampFaves(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
         auctions = asyncio.run(self.get_faves_merch())
+        auctions.sort(key=lambda x: x.auction_id, reverse=True)
         return auctions
