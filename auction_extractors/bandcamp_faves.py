@@ -63,7 +63,8 @@ class BandcampFaves(AuctionExtractor):
                     'auction_id': auction_id,
                     'description': description,
                     'link': link,
-                    'image_link': image_link
+                    'image_link': image_link,
+                    'seller': subdomain
                 }))
 
         return auctions
