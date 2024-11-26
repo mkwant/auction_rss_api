@@ -9,7 +9,7 @@ from routers import redirect, rss
 # Instantiate FastApi
 app = FastAPI(
     title='AuctionRSS',
-    version='1.14.4',
+    version='1.14.5',
     description='This API returns RSS feeds for the search results of (mostly) auction sites.'
 )
 

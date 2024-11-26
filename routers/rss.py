@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
+from auction_extractors.bandcamp import Bandcamp
 from auction_extractors.dais import Dais
 from auction_extractors.davidtibet import DavidTibet
 from auction_extractors.hhv import HHV
@@ -55,6 +56,10 @@ def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RS
     )
     return site.search()
 
+@router.get(path='/bandcamp')
+def bandcamp_rss(artist: str) -> RSSResponse:
+    site = Bandcamp(search_term=artist)
+    return site.search()
 
 @router.get(path='/buyee_mercari')
 def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
