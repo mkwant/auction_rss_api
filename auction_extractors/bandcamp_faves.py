@@ -1,12 +1,13 @@
+import asyncio
 import json
+from typing import List
 
-import requests
+import httpx
 from bs4 import BeautifulSoup
 
 from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
 
-# TODO make async
 
 class BandcampFaves(AuctionExtractor):
     @property
@@ -18,13 +19,13 @@ class BandcampFaves(AuctionExtractor):
         return f'Bandcamp faves'
 
     @staticmethod
-    def get_bandcamp_merch(subdomain: str) -> list[Auction]:
+    async def get_bandcamp_merch(subdomain: str, client: httpx.AsyncClient) -> list[Auction]:
         """Given a subdomain, scrape the merch items."""
         auctions = []
 
         base_url = f"https://{subdomain}.bandcamp.com"
 
-        r = requests.get(f'{base_url}/merch')
+        r = await client.get(f'{base_url}/merch')
         soup = BeautifulSoup(r.text, features='html.parser')
         item_list = soup.select_one('ol.merch-grid')
 
@@ -69,7 +70,7 @@ class BandcampFaves(AuctionExtractor):
 
     def get_followed_subdomains(self) -> list[str]:
         """Get the subdomains of the artist the user is following."""
-        r = requests.get(self.search_link)
+        r = httpx.get(self.search_link)
         soup = BeautifulSoup(r.content, features='html.parser')
         pagedata = soup.select_one('div#pagedata')['data-blob']
         json_data = json.loads(pagedata)
@@ -77,10 +78,18 @@ class BandcampFaves(AuctionExtractor):
         following_subdomains = [following[x]['url_hints']['subdomain'] for x in following]
         return following_subdomains
 
-    def get_auctions(self) -> list[Auction]:
-        auctions = []
+    async def get_faves_merch(self) -> list[Auction]:
+        tasks = []
+        client = httpx.AsyncClient(follow_redirects=True)
 
         for subdomain in self.get_followed_subdomains():
-            auctions.extend(self.get_bandcamp_merch(subdomain=subdomain))
+            tasks.append(asyncio.create_task(self.get_bandcamp_merch(subdomain=subdomain, client=client)))
+        faves_merch = await asyncio.gather(*tasks)
 
+        await client.aclose()
+
+        return [items for fave in faves_merch for items in fave]
+
+    def get_auctions(self) -> List[Auction]:
+        auctions = asyncio.run(self.get_faves_merch())
         return auctions
