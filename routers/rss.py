@@ -3,36 +3,36 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
+from app.dependencies import Translate
 from auction_extractors.bandcamp import Bandcamp
-from auction_extractors.dais import Dais
-from auction_extractors.davidtibet import DavidTibet
-from auction_extractors.hhv import HHV
-from auction_extractors.hmv_jp import HMVJapan
-from auction_extractors.houseofmythology import HouseOfMythology
-from auction_extractors.infinitefog import InfiniteFog
-from auction_extractors.kleinanzeigen import Kleinanzeigen
-from auction_extractors.omega import Omega
-from auction_extractors.slcd import SLCD
-from auction_extractors.younggod import YoungGod
-from auction_transformers.translator import translate_from_jp, translate_from_es
+from auction_extractors.bandcamp_faves import BandcampFaves
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
 from auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_extractors.catawiki import CataWiki
 from auction_extractors.cdandlp import CdAndLp
+from auction_extractors.dais import Dais
+from auction_extractors.davidtibet import DavidTibet
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.discords import Discords
 from auction_extractors.ebay import SiteId, Ebay
 from auction_extractors.eil import EIL
+from auction_extractors.hhv import HHV
+from auction_extractors.hmv_jp import HMVJapan
+from auction_extractors.houseofmythology import HouseOfMythology
+from auction_extractors.infinitefog import InfiniteFog
 from auction_extractors.japanrecords import JapanRecords
 from auction_extractors.juno import Juno
+from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.kontaktaudio import KontaktAudio
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.musicstack import MusicStack
+from auction_extractors.omega import Omega
 from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_extractors.recordmecca import RecordMecca
+from auction_extractors.slcd import SLCD
 from auction_extractors.todocoleccion import Todocoleccion
 from auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_extractors.tracks import Tracks
@@ -40,7 +40,8 @@ from auction_extractors.tradera import Tradera
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.variaworld import Variaworld
 from auction_extractors.vinted import Vinted
-from app.dependencies import Translate
+from auction_extractors.younggod import YoungGod
+from auction_transformers.translator import translate_from_jp, translate_from_es
 
 router = APIRouter(
     default_response_class=RSSResponse,
@@ -56,10 +57,18 @@ def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RS
     )
     return site.search()
 
+
 @router.get(path='/bandcamp')
 def bandcamp_rss(artist: str) -> RSSResponse:
     site = Bandcamp(search_term=artist)
     return site.search()
+
+
+@router.get(path='/bandcamp_faves')
+def bandcamp_faves_rss(username: str) -> RSSResponse:
+    site = BandcampFaves(search_term=username)
+    return site.search()
+
 
 @router.get(path='/buyee_mercari')
 def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
