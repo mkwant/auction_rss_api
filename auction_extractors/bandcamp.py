@@ -26,7 +26,11 @@ class Bandcamp(AuctionExtractor):
         r = requests.get(self.search_link)
         soup = BeautifulSoup(r.text, features='html.parser')
         item_list = soup.select_one('ol.merch-grid')
-        items = item_list.select('li.merch-grid-item')
+
+        try:
+            items = item_list.select('li.merch-grid-item')
+        except AttributeError:
+            return auctions
 
         for item in items:
             auction_id = item["data-item-id"]
