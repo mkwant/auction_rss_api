@@ -24,7 +24,7 @@ class Doornroosje(AuctionExtractor):
         data = {
             'action': 'filter_taxonomy',
             'data[event-genre]': '',
-            'data[event-location]': '',
+            'data[event-location]': self.search_term,
             'data[month]': '',
             'data[hide-cancelled]': 'false',
             'data[confirmed-only]': 'true',

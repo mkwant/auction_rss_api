@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Literal
 
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
@@ -144,8 +144,8 @@ def discords_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/doornroosje')
-def doornroosje_rss() -> RSSResponse:
-    site = Doornroosje(search_term='')
+def doornroosje_rss(location: str = '') -> RSSResponse:
+    site = Doornroosje(search_term=location)
     return site.search()
 
 
