@@ -16,6 +16,7 @@ from auction_extractors.davidtibet import DavidTibet
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.discords import Discords
+from auction_extractors.doornroosje import Doornroosje
 from auction_extractors.ebay import SiteId, Ebay
 from auction_extractors.eil import EIL
 from auction_extractors.hhv import HHV
@@ -139,6 +140,12 @@ async def discogs_wantlist_rss(username: str) -> RSSResponse:
 @router.get(path='/discords')
 def discords_rss(search_term: str) -> RSSResponse:
     site = Discords(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/doornroosje')
+def doornroosje_rss() -> RSSResponse:
+    site = Doornroosje(search_term='')
     return site.search()
 
 
