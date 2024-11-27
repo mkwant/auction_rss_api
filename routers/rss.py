@@ -30,6 +30,7 @@ from auction_extractors.kontaktaudio import KontaktAudio
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.musicstack import MusicStack
 from auction_extractors.omega import Omega
+from auction_extractors.paradiso import Paradiso
 from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_extractors.recordmecca import RecordMecca
@@ -236,6 +237,12 @@ def musicstack_rss(search_term: str) -> RSSResponse:
 @router.get(path='/omega')
 def omega_rss(search_term: str) -> RSSResponse:
     site = Omega(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/paradiso')
+def paradiso_rss() -> RSSResponse:
+    site = Paradiso(search_term='')
     return site.search()
 
 
