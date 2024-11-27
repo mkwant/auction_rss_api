@@ -1,4 +1,4 @@
-from typing import Optional, Literal
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
@@ -28,6 +28,7 @@ from auction_extractors.juno import Juno
 from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.kontaktaudio import KontaktAudio
 from auction_extractors.marktplaats import Marktplaats
+from auction_extractors.melkweg import Melkweg
 from auction_extractors.musicstack import MusicStack
 from auction_extractors.omega import Omega
 from auction_extractors.paradiso import Paradiso
@@ -225,6 +226,12 @@ def marktplaats_rss(search_term: str, search_in_seller_name: bool = False) -> RS
         search_term=search_term,
         search_in_seller_name=search_in_seller_name
     )
+    return site.search()
+
+
+@router.get(path='/melkweg')
+def melkweg_rss() -> RSSResponse:
+    site = Melkweg(search_term='')
     return site.search()
 
 
