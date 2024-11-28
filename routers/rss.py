@@ -36,6 +36,7 @@ from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_extractors.recordmecca import RecordMecca
 from auction_extractors.slcd import SLCD
+from auction_extractors.tivolivredenburg import TivoliVredenburg
 from auction_extractors.todocoleccion import Todocoleccion
 from auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_extractors.tracks import Tracks
@@ -274,6 +275,12 @@ def recordmecca_rss(search_term: str) -> RSSResponse:
 @router.get(path='/slcd')
 def slcd_rss(search_term: str) -> RSSResponse:
     site = SLCD(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/tivolivredenburg')
+def tivolivredenburg_rss() -> RSSResponse:
+    site = TivoliVredenburg(search_term='')
     return site.search()
 
 
