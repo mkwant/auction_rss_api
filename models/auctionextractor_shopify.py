@@ -33,7 +33,11 @@ class ShopifyExtractor(AuctionExtractor, ABC):
         url = f'https://www.{self.domain}/products.json?limit=250'
         r = requests.get(url=url, headers=headers)
 
-        products = json.loads(r.text)['products']
+        try:
+            products = json.loads(r.text)['products']
+        except json.decoder.JSONDecodeError:
+            return auctions
+
         for product in products:
 
             # If search_in_desc, search in description as well
