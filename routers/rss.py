@@ -18,6 +18,7 @@ from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.discords import Discords
 from auction_extractors.doornroosje import Doornroosje
 from auction_extractors.ebay import SiteId, Ebay
+from auction_extractors.effenaar import Effenaar
 from auction_extractors.eil import EIL
 from auction_extractors.hhv import HHV
 from auction_extractors.hmv_jp import HMVJapan
@@ -163,6 +164,12 @@ def ebay_rss(
         site_id=site_id.value,
         only_locally_listed_items=only_locally_listed_items
     )
+    return site.search()
+
+
+@router.get(path='/effenaar')
+def effenaar_rss() -> RSSResponse:
+    site = Effenaar(search_term='')
     return site.search()
 
 
