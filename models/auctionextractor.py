@@ -1,11 +1,12 @@
 import asyncio
+import logging
 import traceback
 from abc import abstractmethod
 from datetime import datetime
 from typing import List, Callable, Awaitable
 
 from fastapi_rss import RSSResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from auction_transformers.html_linebreaks_in_desc import html_linebreaks_in_desc
 from models.auction import Auction
@@ -13,6 +14,8 @@ from models.auctionsearchresponse import AuctionSearchResponse
 
 Transformer = Callable[[Auction], Awaitable[Auction]]
 
+# Setting up logging
+logger = logging.getLogger(__name__)
 
 # TODO Create AuctionResponseTransformer ABC that can take an awaitable (or a func and use asyncio.to_thread?) to
 #  transform Auction objects.
@@ -27,8 +30,8 @@ class AuctionExtractor(BaseModel):
 
     """
     search_term: str
-    transformers: List[Transformer] = []
-    default_transformers: List[Transformer] = [html_linebreaks_in_desc]
+    transformers: List[Transformer] = Field(default_factory=list)
+    default_transformers: List[Transformer] = Field(default_factory=lambda: [html_linebreaks_in_desc])
 
     @property
     @abstractmethod
@@ -65,6 +68,7 @@ class AuctionExtractor(BaseModel):
         :param error: The error message
         :return: A list with one Auction record
         """
+        logger.error(f"[{self.site_desc} ('{self.search_term}')] {error}: {error_text}")
         return [
             Auction(
                 auction_id='ERROR',
@@ -89,6 +93,7 @@ class AuctionExtractor(BaseModel):
                       f'<pre>{traceback.format_exc()}</pre>'
             )
 
+        logger.info(f"[{self.site_desc} ('{self.search_term}')] Retrieved {len(auctions)} entries.")
         if len(auctions) == 0:
             auctions = self.auctions_on_error(
                 error_text="WARNING: No items were found.",

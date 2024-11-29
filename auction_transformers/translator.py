@@ -1,12 +1,17 @@
+import logging
 import uuid
 from abc import ABC, abstractmethod
 from functools import partial
 from typing import Optional
 
 import httpx
+from asgi_correlation_id import correlation_id
 
 from models.auction import Auction
 from app.settings import settings
+
+# Setting up logging
+logger = logging.getLogger(__name__)
 
 
 class Translator(ABC):
@@ -42,7 +47,7 @@ class AzureTranslator(Translator):
             'Ocp-Apim-Subscription-Key': self.ms_translate_api_key,
             'Ocp-Apim-Subscription-Region': self.ms_translate_api_location,
             'Content-type': 'application/json',
-            'X-ClientTraceId': str(uuid.uuid4())
+            'X-ClientTraceId': correlation_id.get()
         }
         params = {
             'api-version': self.api_version,
@@ -90,7 +95,9 @@ async def translate_auction(
             translate_to=translate_to,
             translate_from=translate_from
         )
+        logger.debug(f"Translated '{auction.title}' to '{translated_title}' ({translate_from=}, {translate_to=})")
     except Exception as e:
+        logger.error(f"Error translating {auction.title} ({translate_from=}, {translate_to=}): {e}")
         auction.description = f"{auction.description}\n\nTranslate failed: '{e}'"
         return auction
 
