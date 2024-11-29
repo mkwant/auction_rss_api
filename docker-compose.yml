@@ -31,6 +31,8 @@ services:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS
       - traefik-public
+    volumes:
+      - /var/log/auction_rss_api:/logs
 
 networks:
   traefik-public:
