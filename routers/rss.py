@@ -47,8 +47,10 @@ from auction_extractors.variaworld import Variaworld
 from auction_extractors.vinted import Vinted
 from auction_extractors.younggod import YoungGod
 from auction_transformers.translator import translate_from_jp, translate_from_es
+from routers.logger import LoggedRoute
 
 router = APIRouter(
+    route_class=LoggedRoute,
     default_response_class=RSSResponse,
     tags=['RSS-feeds']
 )
