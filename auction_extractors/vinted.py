@@ -49,8 +49,15 @@ class Vinted(AuctionExtractor):
         auctions = []
 
         for item in self._get_page():
-            description = (f"{item['currency'].capitalize()} {float(item['price']):.2f}"
-                           f" (+{float(item['service_fee']):.2f} service)")
+            from rich import print
+            print(item)
+            _currency = item['price']['currency_code'].capitalize()
+            _amount = float(item['price']['amount'])
+            _service_fee_currency = item['service_fee']['currency_code'].capitalize()
+            _service_fee_amount = float(item['service_fee']['amount'])
+
+            description = f"{_currency} {_amount:.2f} (+ {_service_fee_currency} {_service_fee_amount:.2f})"
+
 
             # Skip items if search term not in title
             if self.search_title_only:
