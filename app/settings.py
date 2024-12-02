@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: Literal['NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'] = 'INFO'
 
     class Config:
-        env_file = ".env.app"
+        env_file = ".env"
 
 
 @lru_cache
