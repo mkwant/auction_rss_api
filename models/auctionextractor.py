@@ -2,7 +2,7 @@ import asyncio
 import logging
 import traceback
 from abc import abstractmethod
-from datetime import datetime
+from datetime import datetime, date
 from typing import List, Callable, Awaitable
 
 from fastapi_rss import RSSResponse
@@ -71,7 +71,7 @@ class AuctionExtractor(BaseModel):
         logger.error(f"[{self.site_desc} ('{self.search_term}')] {error}: {error_text}")
         return [
             Auction(
-                auction_id='ERROR',
+                auction_id=f'ERROR_{date.today():%Y%m%d}',
                 description=error,
                 link=self.search_link,
                 title=error_text,
