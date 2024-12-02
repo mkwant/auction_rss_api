@@ -26,7 +26,7 @@ class Vinted(AuctionExtractor):
         url = 'https://www.vinted.nl/api/v2/catalog/items?'
         params = {
             'page': 1,
-            'per_page': 96,
+            'per_page': 48,
             'search_text': self.search_term,
             'order': 'newest_first'
         }
