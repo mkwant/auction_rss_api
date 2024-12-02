@@ -16,9 +16,7 @@ from auction_extractors.davidtibet import DavidTibet
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.discords import Discords
-from auction_extractors.doornroosje import Doornroosje
 from auction_extractors.ebay import SiteId, Ebay
-from auction_extractors.effenaar import Effenaar
 from auction_extractors.eil import EIL
 from auction_extractors.hhv import HHV
 from auction_extractors.hmv_jp import HMVJapan
@@ -29,15 +27,12 @@ from auction_extractors.juno import Juno
 from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.kontaktaudio import KontaktAudio
 from auction_extractors.marktplaats import Marktplaats
-from auction_extractors.melkweg import Melkweg
 from auction_extractors.musicstack import MusicStack
 from auction_extractors.omega import Omega
-from auction_extractors.paradiso import Paradiso
 from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_extractors.recordmecca import RecordMecca
 from auction_extractors.slcd import SLCD
-from auction_extractors.tivolivredenburg import TivoliVredenburg
 from auction_extractors.todocoleccion import Todocoleccion
 from auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_extractors.tracks import Tracks
@@ -52,7 +47,7 @@ from routers.logger import LoggedRoute
 router = APIRouter(
     route_class=LoggedRoute,
     default_response_class=RSSResponse,
-    tags=['RSS-feeds']
+    tags=['Auction sites']
 )
 
 
@@ -149,12 +144,6 @@ def discords_rss(search_term: str) -> RSSResponse:
     return site.search()
 
 
-@router.get(path='/doornroosje')
-def doornroosje_rss(location: str | None = None) -> RSSResponse:
-    site = Doornroosje(search_term=location)
-    return site.search()
-
-
 @router.get(path='/ebay')
 def ebay_rss(
         search_term: str,
@@ -166,12 +155,6 @@ def ebay_rss(
         site_id=site_id.value,
         only_locally_listed_items=only_locally_listed_items
     )
-    return site.search()
-
-
-@router.get(path='/effenaar')
-def effenaar_rss() -> RSSResponse:
-    site = Effenaar()
     return site.search()
 
 
@@ -239,12 +222,6 @@ def marktplaats_rss(search_term: str, search_in_seller_name: bool = False) -> RS
     return site.search()
 
 
-@router.get(path='/melkweg')
-def melkweg_rss() -> RSSResponse:
-    site = Melkweg()
-    return site.search()
-
-
 @router.get(path='/musicstack')
 def musicstack_rss(search_term: str) -> RSSResponse:
     site = MusicStack(search_term=search_term)
@@ -254,12 +231,6 @@ def musicstack_rss(search_term: str) -> RSSResponse:
 @router.get(path='/omega')
 def omega_rss(search_term: str) -> RSSResponse:
     site = Omega(search_term=search_term)
-    return site.search()
-
-
-@router.get(path='/paradiso')
-def paradiso_rss() -> RSSResponse:
-    site = Paradiso()
     return site.search()
 
 
@@ -284,12 +255,6 @@ def recordmecca_rss(search_term: str) -> RSSResponse:
 @router.get(path='/slcd')
 def slcd_rss(search_term: str) -> RSSResponse:
     site = SLCD(search_term=search_term)
-    return site.search()
-
-
-@router.get(path='/tivolivredenburg')
-def tivolivredenburg_rss() -> RSSResponse:
-    site = TivoliVredenburg()
     return site.search()
 
 
