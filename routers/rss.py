@@ -150,7 +150,7 @@ def discords_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/doornroosje')
-def doornroosje_rss(location: str = '') -> RSSResponse:
+def doornroosje_rss(location: str | None = None) -> RSSResponse:
     site = Doornroosje(search_term=location)
     return site.search()
 
@@ -171,7 +171,7 @@ def ebay_rss(
 
 @router.get(path='/effenaar')
 def effenaar_rss() -> RSSResponse:
-    site = Effenaar(search_term='')
+    site = Effenaar()
     return site.search()
 
 
@@ -241,7 +241,7 @@ def marktplaats_rss(search_term: str, search_in_seller_name: bool = False) -> RS
 
 @router.get(path='/melkweg')
 def melkweg_rss() -> RSSResponse:
-    site = Melkweg(search_term='')
+    site = Melkweg()
     return site.search()
 
 
@@ -259,7 +259,7 @@ def omega_rss(search_term: str) -> RSSResponse:
 
 @router.get(path='/paradiso')
 def paradiso_rss() -> RSSResponse:
-    site = Paradiso(search_term='')
+    site = Paradiso()
     return site.search()
 
 
@@ -289,7 +289,7 @@ def slcd_rss(search_term: str) -> RSSResponse:
 
 @router.get(path='/tivolivredenburg')
 def tivolivredenburg_rss() -> RSSResponse:
-    site = TivoliVredenburg(search_term='')
+    site = TivoliVredenburg()
     return site.search()
 
 

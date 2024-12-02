@@ -29,7 +29,7 @@ class AuctionExtractor(BaseModel):
     :param default_transformers: A list of transformers.
 
     """
-    search_term: str
+    search_term: str | None = None
     transformers: List[Transformer] = Field(default_factory=list)
     default_transformers: List[Transformer] = Field(default_factory=lambda: [html_linebreaks_in_desc])
 
