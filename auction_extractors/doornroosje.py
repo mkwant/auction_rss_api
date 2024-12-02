@@ -51,7 +51,10 @@ class Doornroosje(AuctionExtractor):
                 title = f'{_event_date} [{_event_location_name}]: {_event_name}'
             else:
                 title = f'{_event_date}: {_event_name}'
-            description = event.select_one('div.c-program__info--subtitle').text.strip()
+            try:
+                description = event.select_one('div.c-program__info--subtitle').text.strip()
+            except AttributeError:
+                description = ''
 
             auctions.append(
                 Auction(**{
