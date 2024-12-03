@@ -80,7 +80,7 @@ services:
       # any other service that needs to be publicly available with HTTPS
       - traefik-public
 
-  fastapi:
+  backend:
     image: ghcr.io/mkwant/auction_rss_api:latest
     restart: always
     env_file: .env
