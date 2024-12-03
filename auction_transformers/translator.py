@@ -84,7 +84,7 @@ async def translate_auction(
     """Translate the auction title using a translator. Append the original title to the description."""
 
     # Don't translate error items
-    if auction.auction_id == 'ERROR':
+    if auction.auction_id.startswith('ERROR_'):
         return auction
 
     original_title = auction.title
