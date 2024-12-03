@@ -1,4 +1,4 @@
-name: fastapi
+name: auctionrss
 
 services:
   traefik:
@@ -80,7 +80,7 @@ services:
       # any other service that needs to be publicly available with HTTPS
       - traefik-public
 
-  backend:
+  fastapi:
     image: ghcr.io/mkwant/auction_rss_api:latest
     restart: always
     env_file: .env
@@ -113,6 +113,16 @@ services:
       - traefik-public
     volumes:
       - /var/log/auction_rss_api:/logs
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    environment:
+      - TZ=Europe/Amsterdam
+      - WATCHTOWER_CLEANUP=True
+      - WATCHTOWER_POLL_INTERVAL=60
 
 volumes:
   # Create a volume to store the certificates, there is a constraint to make sure
