@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # Instantiate FastApi
 app = FastAPI(
     title='AuctionRSS',
-    version='1.15.7',
+    version='1.15.8',
     description='This API returns RSS feeds for the search results of auction sites, '
                 'online record stores and concert venues.'
 )
@@ -34,5 +34,8 @@ app.include_router(auctions.router)
 app.include_router(recordshops.router)
 app.include_router(venues.router)
 app.include_router(redirect.router)
-app.add_middleware(middleware_class=AddNoIndex)
-app.add_middleware(middleware_class=CorrelationIdMiddleware)
+app.add_middleware(middleware_class=AddNoIndex) # noqa
+app.add_middleware(middleware_class=CorrelationIdMiddleware) # noqa
+
+routes = {x.name for x in app.routes if x.name.endswith('_rss')} # noqa
+logger.info(f'Total feeds: {len(routes)}')
