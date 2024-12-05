@@ -51,6 +51,10 @@ class Marktplaats(AuctionExtractor):
         auctions = []
 
         for item in mp_items:
+            # Skip sponsored items
+            if item['searchType'] == 'kNN':
+                continue
+
             if not self.search_in_seller_name:
                 if self.search_term.lower() in item['sellerInformation']['sellerName'].lower() \
                         and self.search_term not in item['title']:
