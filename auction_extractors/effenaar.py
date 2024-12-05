@@ -21,34 +21,21 @@ class Effenaar(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         auctions = []
 
-        params = {
-            'state': 'new',
-        }
+        r = requests.get(self.search_link)
 
-        r = requests.get(url='https://www.effenaar.nl/agenda', params=params)
         soup = BeautifulSoup(r.content, features='html.parser')
-
-        json_str = soup.select_one('script#__NEXT_DATA__').text
-        queries = json.loads(json_str)['props']['pageProps']['dehydrated']['queries']
-        events = \
-            queries[8]['state']['data']['pageData']['algolia']['serverState']['initialResults']['production_events'][
-                'results'][0]['hits']
+        events = soup.select('a.agenda-card')
         for event in events:
-            event_id = event['objectID'].split('/')[1].split(':')[0]
+            print(event.prettify())
 
-            _date = datetime.fromtimestamp(event['date']).date()
-            _location = event['locations'][0]['title']
-            _title = event['title']
-            title = f'{_date}: [{_location}] {_title}'
-            link = 'https://www.effenaar.nl' + event['slug']
-            image_link = event['thumbnail_image']['image']['sizes']['2510s']
-
-            publish_date = datetime.fromtimestamp(event['publish_date'])
-
-            _subtitle = event['subtitle']
-            _introduction = event['introduction'].strip()
-
-            description = f'{_subtitle}\n\n{_introduction}'
+            event_id = str(hash(event['href']))
+            link = 'https://effenaar.nl' + event['href']
+            image_link = event.select_one('img')['data-srcset'].split(',')[-1].split()[0]
+            _title = event.select_one('h3.card-title').text.strip()
+            _date = event.select_one('div.card-info-date').text.strip()
+            _location = event.select_one('div.card-info-location').text.strip()
+            title = f"{_date}: [{_location}] {_title}"
+            description = event.select_one('p.card-subtitle').text.strip()
 
             auctions.append(
                 Auction(**{
@@ -57,9 +44,6 @@ class Effenaar(AuctionExtractor):
                     'description': description,
                     'image_link': image_link,
                     'link': link,
-                    'start_date': publish_date,
                 }))
-
-            auctions.sort(key=lambda a: a.start_date, reverse=True)
 
         return auctions
