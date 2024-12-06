@@ -6,6 +6,7 @@ from auction_extractors.bandcamp_faves import BandcampFaves
 from auction_extractors.cdandlp import CdAndLp
 from auction_extractors.dais import Dais
 from auction_extractors.davidtibet import DavidTibet
+from auction_extractors.deezer import Deezer
 from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.discords import Discords
 from auction_extractors.eil import EIL
@@ -61,6 +62,12 @@ def dais_rss(search_term: str, search_in_desc: bool = False) -> RSSResponse:
 @router.get(path='/davidtibet')
 def davidtibet_rss(search_term: str) -> RSSResponse:
     site = DavidTibet(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/deezer')
+def deezer_rss(search_term: str) -> RSSResponse:
+    site = Deezer(search_term=search_term)
     return site.search()
 
 
