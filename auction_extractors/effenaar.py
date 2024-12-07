@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from typing import List
 
+import dateparser
 import requests
 from bs4 import BeautifulSoup
 
@@ -26,15 +27,14 @@ class Effenaar(AuctionExtractor):
         soup = BeautifulSoup(r.content, features='html.parser')
         events = soup.select('a.agenda-card')
         for event in events:
-            print(event.prettify())
-
             event_id = str(hash(event['href']))
             link = 'https://effenaar.nl' + event['href']
             image_link = event.select_one('img')['data-srcset'].split(',')[-1].split()[0]
             _title = event.select_one('h3.card-title').text.strip()
             _date = event.select_one('div.card-info-date').text.strip()
+            _date = dateparser.parse(_date)
             _location = event.select_one('div.card-info-location').text.strip()
-            title = f"{_date}: [{_location}] {_title}"
+            title = f"{_date:%a %Y-%m-%d}: [{_location}] {_title}"
             description = event.select_one('p.card-subtitle').text.strip()
 
             auctions.append(

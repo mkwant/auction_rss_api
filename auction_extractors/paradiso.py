@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List
 
+import dateparser
 import requests
 
 from models.auction import Auction
@@ -43,7 +44,7 @@ class Paradiso(AuctionExtractor):
         for event in events:
             auction_id = event['id']
             _event_title = event['title']
-            _event_date = event['date']
+            _event_date = dateparser.parse(event['date'])
             _support = event['supportAct']
             _sold_out = event['soldOut']
             if not _sold_out == 'no':
@@ -58,7 +59,7 @@ class Paradiso(AuctionExtractor):
             except IndexError:
                 _location = 'Afgelast'
 
-            title = f'{_event_date} [{_location}]: {_event_title}'
+            title = f'{_event_date:%a %Y-%m-%d} [{_location}]: {_event_title}'
             if _support:
                 title += f' + {_support}'
 

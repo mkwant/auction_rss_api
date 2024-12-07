@@ -45,7 +45,7 @@ class Melkweg(AuctionExtractor):
             _date_time = datetime.fromisoformat(event['attributes']['startDate']).astimezone(tz=timezone)
             _status = event['attributes']['status']
 
-            title = f'{_date_time:%Y-%m-%d}: {_event_title}'
+            title = f'{_date_time:%a %Y-%m-%d}: {_event_title}'
 
             if _status != 'Gepubliceerd':
                 title = f'[{_status.upper()}] {title}'

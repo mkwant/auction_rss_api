@@ -1,5 +1,6 @@
 from typing import List
 
+import dateparser
 import requests
 from bs4 import BeautifulSoup
 
@@ -38,7 +39,8 @@ class Doornroosje(AuctionExtractor):
         for event in events:
             link = event['href']
             _event_name = event.select_one('span.c-program__title--main').text.strip()
-            _event_date = ' '.join(event.select_one('div.c-program__date').get_text(separator='').strip().split())
+            _event_date = ' '.join(event.select_one('div.c-program__date').get_text().strip().split())
+            _event_date = dateparser.parse(_event_date)
             _event_info = event.select('div.c-program__info')
             _event_location = [
                 info for info in _event_info if
@@ -48,9 +50,9 @@ class Doornroosje(AuctionExtractor):
 
             if _event_location:
                 _event_location_name = _event_location[0].text.strip()
-                title = f'{_event_date} [{_event_location_name}]: {_event_name}'
+                title = f'{_event_date:%a %Y-%m-%d} [{_event_location_name}]: {_event_name}'
             else:
-                title = f'{_event_date}: {_event_name}'
+                title = f'{_event_date:%a %Y-%m-%d}: {_event_name}'
             try:
                 description = event.select_one('div.c-program__info--subtitle').text.strip()
             except AttributeError:

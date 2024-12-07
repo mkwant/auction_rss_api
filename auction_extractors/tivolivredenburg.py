@@ -1,5 +1,6 @@
 from typing import List
 
+import dateparser
 import requests
 from bs4 import BeautifulSoup
 
@@ -33,7 +34,8 @@ class TivoliVredenburg(AuctionExtractor):
 
             _event_name = event.select_one('.agenda-list-item__title').text.strip()
             _event_date = event.select_one('.agenda-list-item__time').text.strip()
-            title = f'{_event_date}: {_event_name}'
+            _event_date = dateparser.parse(_event_date)
+            title = f'{_event_date:%a %Y-%m-%d}: {_event_name}'
             description = event.select_one('.agenda-list-item__text').text.strip()
 
             auctions.append(
