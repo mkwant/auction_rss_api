@@ -39,9 +39,14 @@ class Doornroosje(AuctionExtractor):
         for event in events:
             link = event['href']
             _event_name = event.select_one('span.c-program__title--main').text.strip()
+
+            # Get event date and the year from a few levels up, parse and combine the two
             _event_date = ' '.join(event.select_one('div.c-program__date').get_text().strip().split())
+            _event_year = dateparser.parse(event.parent.parent.select_one('h2.c-program__month').text).year
             _event_date = dateparser.parse(_event_date)
+            _event_date = _event_date.replace(year=_event_year)
             _event_info = event.select('div.c-program__info')
+
             _event_location = [
                 info for info in _event_info if
                 "c-program__info--subtitle" not in info['class'] and
