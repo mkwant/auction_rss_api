@@ -5,6 +5,7 @@ from auction_extractors.doornroosje import Doornroosje
 from auction_extractors.effenaar import Effenaar
 from auction_extractors.melkweg import Melkweg
 from auction_extractors.paradiso import Paradiso
+from auction_extractors.tilburg013 import Tilburg013
 from auction_extractors.tivolivredenburg import TivoliVredenburg
 from routers.logger import LoggedRoute
 
@@ -13,6 +14,12 @@ router = APIRouter(
     default_response_class=RSSResponse,
     tags=['Concert venues']
 )
+
+
+@router.get(path='/013')
+def tilburg013_rss() -> RSSResponse:
+    site = Tilburg013()
+    return site.search()
 
 
 @router.get(path='/doornroosje')
