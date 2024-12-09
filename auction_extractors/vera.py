@@ -60,13 +60,27 @@ class Vera(AuctionExtractor):
             link = event.select_one('a.event-link')['href']
             image_link = event.select_one('div.artist-image')['style'].split('\'')[-2].replace('-360x250', '')
             description = event.select_one('div.schedule').text.strip()
-            _venue = description.split('|')[0].strip()
-            title = f'{_event_date:%a %Y-%m-%d}: [{_venue}] {_title}'
+            title = f'{_event_date:%a %Y-%m-%d}: {_title}'
+
+            # Extracting support act, replacing sup_tag by brackets
+            try:
+                _support = event.select_one('h4.extra')
+                origins = _support.find_all('sup')
+                for origin in origins:
+                    if origin.text:
+                        origin.replace_with(soup.new_string(f' ({origin.text.strip()}) '))
+            except AttributeError:
+                _support = None
+
+            if _support:
+                _support = ' '.join([x.strip() for x in _support.get_text().split('\n') if x])
+                title += f' | {_support}'
 
             if _subtitle:
                 description = f'{_subtitle}\n\n{description}'
 
             event_id = parse_qs(urlparse(link).query)['p'][0]
+            print(title)
 
             auctions.append(
                 Auction(**{
