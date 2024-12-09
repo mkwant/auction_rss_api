@@ -7,6 +7,7 @@ from auction_extractors.melkweg import Melkweg
 from auction_extractors.paradiso import Paradiso
 from auction_extractors.tilburg013 import Tilburg013
 from auction_extractors.tivolivredenburg import TivoliVredenburg
+from auction_extractors.vera import Vera
 from routers.logger import LoggedRoute
 
 router = APIRouter(
@@ -49,4 +50,10 @@ def paradiso_rss() -> RSSResponse:
 @router.get(path='/tivolivredenburg')
 def tivolivredenburg_rss() -> RSSResponse:
     site = TivoliVredenburg()
+    return site.search()
+
+
+@router.get(path='/vera')
+def vera_rss() -> RSSResponse:
+    site = Vera()
     return site.search()
