@@ -53,7 +53,7 @@ class Tilburg013(AuctionExtractor):
             if _flash:
                 title = f'{event_date:%a %Y-%m-%d}: [{_flash}] {_title}'
             else:
-                title = f'{event_date:%a %Y-%m-%d}: [{_title}]'
+                title = f'{event_date:%a %Y-%m-%d}: {_title}'
 
             description = f'{_subtitle}\n{desc}'.strip()
 
