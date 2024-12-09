@@ -35,7 +35,7 @@ class Tilburg013(AuctionExtractor):
             try:
                 _flash = item.select_one('div.ribbon_basic').text.strip()
             except AttributeError:
-                _flash = ''
+                _flash = None
 
             try:
                 desc = item.select_one('p.leading-snug').text.strip()
@@ -50,7 +50,11 @@ class Tilburg013(AuctionExtractor):
 
             event_date = dateparser.parse(item.select_one('time')['datetime'])
 
-            title = f'{event_date:%a %Y-%m-%d}: [{_flash}] {_title}'
+            if _flash:
+                title = f'{event_date:%a %Y-%m-%d}: [{_flash}] {_title}'
+            else:
+                title = f'{event_date:%a %Y-%m-%d}: [{_title}]'
+
             description = f'{_subtitle}\n{desc}'.strip()
 
             auctions.append(
