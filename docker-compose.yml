@@ -119,10 +119,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json
-    environment:
-      - TZ=Europe/Amsterdam
-      - WATCHTOWER_CLEANUP=True
-      - WATCHTOWER_POLL_INTERVAL=60
+    env_file: .env
 
 volumes:
   # Create a volume to store the certificates, there is a constraint to make sure
