@@ -40,7 +40,7 @@ class TivoliVredenburg(AuctionExtractor):
             try:
                 description = event.select_one('.agenda-list-item__text').text.strip()
             except AttributeError:
-                description = event.select_one('.agenda-list-item__link-text').text.strip()
+                description = ''
 
             auctions.append(
                 Auction(**{
