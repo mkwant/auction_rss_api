@@ -36,7 +36,11 @@ class TivoliVredenburg(AuctionExtractor):
             _event_date = event.select_one('.agenda-list-item__time').text.strip()
             _event_date = dateparser.parse(_event_date)
             title = f'{_event_date:%a %Y-%m-%d}: {_event_name}'
-            description = event.select_one('.agenda-list-item__text').text.strip()
+
+            try:
+                description = event.select_one('.agenda-list-item__text').text.strip()
+            except AttributeError:
+                description = event.select_one('.agenda-list-item__link-text').text.strip()
 
             auctions.append(
                 Auction(**{
