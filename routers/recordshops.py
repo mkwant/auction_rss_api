@@ -17,6 +17,7 @@ from auction_extractors.infinitefog import InfiniteFog
 from auction_extractors.japanrecords import JapanRecords
 from auction_extractors.juno import Juno
 from auction_extractors.kontaktaudio import KontaktAudio
+from auction_extractors.kroese import Kroese
 from auction_extractors.musicstack import MusicStack
 from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
@@ -129,6 +130,12 @@ def juno_rss(search_term: str) -> RSSResponse:
 @router.get(path='/kontaktaudio')
 def kontaktaudio_rss(search_term: str) -> RSSResponse:
     site = KontaktAudio(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/kroese')
+def kroese_rss(search_term: str) -> RSSResponse:
+    site = Kroese(search_term=search_term)
     return site.search()
 
 
