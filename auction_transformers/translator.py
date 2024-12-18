@@ -1,18 +1,24 @@
 import logging
-import uuid
 from abc import ABC, abstractmethod
+from datetime import timedelta
 from functools import partial
 from typing import Optional
 
 import httpx
 from asgi_correlation_id import correlation_id
+from cashews import cache, noself
 
-from models.auction import Auction
 from app.settings import settings
+from models.auction import Auction
 
 # Setting up logging
 logger = logging.getLogger(__name__)
 
+# TODO Shards or not?
+# TODO Logging?
+# TODO Cache folder location (+ volume)
+
+cache.setup("disk://?directory=.cache&shards=0")
 
 class Translator(ABC):
     """An abstract class that defines the interface for translating strings."""
@@ -42,6 +48,7 @@ class AzureTranslator(Translator):
         self.ms_translate_api_key = ms_translate_api_key
         self.ms_translate_api_location = ms_translate_api_location
 
+    @noself(cache)(ttl=timedelta(days=90))
     async def translate(self, text: str, translate_to: str, translate_from: str) -> str:
         headers = {
             'Ocp-Apim-Subscription-Key': self.ms_translate_api_key,
@@ -72,6 +79,7 @@ class AzureTranslator(Translator):
             result = r.json()[0]['translations'][0]['text']
         except Exception:
             raise ConnectionError(f'{r.json()}')
+        logger.info(f"Translated '{text}' to '{result}' ({translate_from=}, {translate_to=})")
         return result
 
 
@@ -95,7 +103,6 @@ async def translate_auction(
             translate_to=translate_to,
             translate_from=translate_from
         )
-        logger.debug(f"Translated '{auction.title}' to '{translated_title}' ({translate_from=}, {translate_to=})")
     except Exception as e:
         logger.warning(f"Error translating {auction.title} ({translate_from=}, {translate_to=}): {e}")
         auction.description = f"{auction.description}\n\nTranslate failed: '{e}'"

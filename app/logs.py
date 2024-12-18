@@ -8,8 +8,6 @@ from asgi_correlation_id import CorrelationIdFilter
 from rich.console import Console
 from rich.logging import RichHandler
 
-from app.settings import settings
-
 logger = logging.getLogger(__name__)
 
 
@@ -27,16 +25,22 @@ def setup_logging(
 
     # Setup FileHandler
     file_handler = logging.handlers.TimedRotatingFileHandler(filename=log_location, encoding='utf-8', when='W0')
+    file_handler.setLevel(log_level)
     file_handler.addFilter(cid_filter)
-    file_handler.setLevel(settings.LOG_LEVEL)
+
+    # Setup RichHandler
+    rich_handler = RichHandler(enable_link_path=False, console=Console(width=225))
+    rich_handler.setLevel(log_level)
+    rich_handler.addFilter(cid_filter)
 
     # Config
-    logging.basicConfig(level=log_level,
-                        format='%(asctime)s [%(correlation_id)s] [%(name)s:%(lineno)d] %(levelname)s %(name)s:%(lineno)d %(message)s',
-                        handlers=[
-                            file_handler,
-                            RichHandler(enable_link_path=False, console=Console(width=225))
-                        ])
+    logging.basicConfig(
+        level=log_level,
+        format='%(asctime)s [%(correlation_id)s] [%(name)s:%(lineno)d] %(levelname)s %(name)s:%(lineno)d %(message)s',
+        handlers=[
+            file_handler,
+            rich_handler
+        ])
 
     if not packages_to_suppress:
         packages_to_suppress = ['urllib3', 'suds', 'google.auth.transport.requests', 'gspread_dataframe', 'httpx',
