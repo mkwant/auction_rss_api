@@ -14,11 +14,11 @@ from models.auction import Auction
 # Setting up logging
 logger = logging.getLogger(__name__)
 
-# TODO Shards or not?
-# TODO Logging?
-# TODO Cache folder location (+ volume)
+# TODO Test Cache folder location (+ volume)
 
-cache.setup("disk://?directory=.cache&shards=0")
+# Setting up the cache for translations
+cache.setup(settings_url="disk://?directory=/.cache_translation&shards=0")
+
 
 class Translator(ABC):
     """An abstract class that defines the interface for translating strings."""
