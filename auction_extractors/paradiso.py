@@ -24,8 +24,8 @@ class Paradiso(AuctionExtractor):
             'query': '\n  query programItemsQuery(\n    $site: String\n    $size: Int = 100\n    $gteStartDateTime: String\n    $lteStartDateTime: String\n    $searchAfter: [String]\n    $location: [Int]\n    $subBrand: [Int]\n    $contentCategory: [Int]\n    $highlight: Boolean = false\n  ) {\n    program(\n      site: $site\n      size: $size\n      gteStartDateTime: $gteStartDateTime\n      lteStartDateTime: $lteStartDateTime\n      searchAfter: $searchAfter\n      location: $location\n      subBrand: $subBrand\n      contentCategory: $contentCategory\n      highlight: $highlight\n    ) {\n      __typename\n      events {\n        __typename\n        id\n        uri\n        title\n        startDateTime\n        date\n        subtitle\n        sort\n        eventStatus\n        highlight\n        supportAct\n        announceSupport\n        soldOut\n        location {\n          id\n          title\n        }\n        image {\n          mobile\n          mobile2x\n          mobileWebp\n          mobile2xWebp\n          tablet\n          tablet2x\n          tabletWebp\n          tablet2xWebp\n          desktop\n          desktop2x\n          desktopWebp\n          desktop2xWebp\n          desktopL\n          desktopL2x\n          desktopLWebp\n          desktopL2xWebp\n          desktopXL\n          desktopXL2x\n          desktopXLWebp\n          desktopXL2xWebp\n          type\n        }\n      }\n    }\n  }\n',
             'variables': {
                 'site': 'paradisoNederlands',
-                'size': 500,
-                'gteStartDateTime': f'{datetime.now():%Y-%m-%d}',  # '2024-11-27',
+                'size': 382,  # Seems this is the maximum entries allowed
+                'gteStartDateTime': f'{datetime.now():%Y-%m-%d}',
                 'lteStartDateTime': None,
                 'searchAfter': None,
                 'location': None,
@@ -39,6 +39,9 @@ class Paradiso(AuctionExtractor):
             url='https://knwxh8dmh1.execute-api.eu-central-1.amazonaws.com/graphql',
             json=json_data
         )
+        r.raise_for_status()
+        print(r.status_code)
+        print(r.json())
         events = r.json()['data']['program']['events']
 
         for event in events:
