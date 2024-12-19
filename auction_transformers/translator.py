@@ -46,8 +46,8 @@ class AzureTranslator(Translator):
         self.ms_translate_api_key = ms_translate_api_key
         self.ms_translate_api_location = ms_translate_api_location
 
-    @cache(key="{text}:{translate_to}:{translate_from}", ttl=timedelta(days=90))
-    async def translate(self, text: str, translate_to: str, translate_from: str) -> str:
+    @cache(key="{text}:{translate_from}:{translate_to}", ttl=timedelta(days=90))
+    async def translate(self, text: str, translate_from: str, translate_to: str) -> str:
         headers = {
             'Ocp-Apim-Subscription-Key': self.ms_translate_api_key,
             'Ocp-Apim-Subscription-Region': self.ms_translate_api_location,
