@@ -102,7 +102,8 @@ async def translate_auction(
             translate_from=translate_from
         )
     except Exception as e:
-        logger.warning(f"Error translating {auction.title} ({translate_from=}, {translate_to=}): {e}")
+        logger.warning(
+            f"Error translating {auction.title} ({translate_from=}, {translate_to=}): {e.__class__.__name__} '{e}'")
         auction.description = f"{auction.description}\n\nTranslate failed: '{e}'"
         return auction
 
