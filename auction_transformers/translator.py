@@ -6,7 +6,7 @@ from typing import Optional
 
 import httpx
 from asgi_correlation_id import correlation_id
-from cashews import cache, noself
+from cashews import cache
 
 from app.settings import settings
 from models.auction import Auction
@@ -14,10 +14,8 @@ from models.auction import Auction
 # Setting up logging
 logger = logging.getLogger(__name__)
 
-# TODO Test Cache folder location (+ volume)
-
-# Setting up the cache for translations
-cache.setup(settings_url="disk://?directory=/.cache_translation&shards=0")
+# Setting up the translation cache
+cache.setup(settings_url="disk://?directory=/.translation_cache")
 
 
 class Translator(ABC):
@@ -48,7 +46,7 @@ class AzureTranslator(Translator):
         self.ms_translate_api_key = ms_translate_api_key
         self.ms_translate_api_location = ms_translate_api_location
 
-    @noself(cache)(ttl=timedelta(days=90))
+    @cache(key="{text}:{translate_to}:{translate_from}", ttl=timedelta(days=90))
     async def translate(self, text: str, translate_to: str, translate_from: str) -> str:
         headers = {
             'Ocp-Apim-Subscription-Key': self.ms_translate_api_key,
@@ -79,7 +77,7 @@ class AzureTranslator(Translator):
             result = r.json()[0]['translations'][0]['text']
         except Exception:
             raise ConnectionError(f'{r.json()}')
-        logger.info(f"Translated '{text}' to '{result}' ({translate_from=}, {translate_to=})")
+        logger.debug(f"Translated '{text}' to '{result}' ({translate_from=}, {translate_to=})")
         return result
 
 

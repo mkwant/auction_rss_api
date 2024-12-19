@@ -113,7 +113,7 @@ services:
       - traefik-public
     volumes:
       - /var/log/auction_rss_api:/logs
-      - ./.cache_translation:/.cache_translation
+      - ./.translation_cache:/.translation_cache
 
   watchtower:
     image: containrrr/watchtower
