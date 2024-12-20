@@ -107,13 +107,13 @@ class EbayTest(AuctionExtractor):
                     tzinfo=pytz.timezone('UTC')).astimezone(pytz.timezone('Europe/Amsterdam'))
                 description += f"{auction_price}\nEnd Date: {item_end_date:%Y-%m-%d %H:%M:%S}\n"
 
-                auction_id_str += f'\nAuction price {auction_price}'
+                auction_id_str += f'|{auction_price.split('(')[0].strip()}'
 
             if 'FIXED_PRICE' in item['buyingOptions']:
                 bin_price = f"{item['price']['currency']} {item['price']['value']}"
                 description += f'Buy It Now for: {bin_price}\n'
 
-                auction_id_str += f'\nBuy It Now price: {bin_price}'
+                auction_id_str += f'|BIN:{bin_price}'
 
             # Creating an auction_id from the combination of title and price
             auction_id = hashlib.md5(auction_id_str.encode('utf-8')).hexdigest()
@@ -184,5 +184,3 @@ site_id_meta = {
     'EBAY-SG': {'country_code': 'SG', 'domain': 'https://www.ebay.com.sg'},
     'EBAY-US': {'country_code': 'US', 'domain': 'https://www.ebay.com'},
 }
-
-
