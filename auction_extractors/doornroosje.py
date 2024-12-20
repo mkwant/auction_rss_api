@@ -1,3 +1,4 @@
+import hashlib
 from typing import List
 
 import dateparser
@@ -63,10 +64,12 @@ class Doornroosje(AuctionExtractor):
             except AttributeError:
                 description = ''
 
+            auction_id = hashlib.md5(link.encode('utf-8')).hexdigest()
+
             auctions.append(
                 Auction(**{
                     'title': title,
-                    'auction_id': str(hash(link)),
+                    'auction_id': auction_id,
                     'description': description,
                     'link': link
                 }))

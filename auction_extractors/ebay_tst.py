@@ -1,4 +1,5 @@
 import base64
+import hashlib
 from datetime import datetime
 from enum import Enum
 from typing import List
@@ -115,7 +116,7 @@ class EbayTest(AuctionExtractor):
                 auction_id_str += f'\nBuy It Now price: {bin_price}'
 
             # Creating an auction_id from the combination of title and price
-            auction_id = str(hash(auction_id_str))
+            auction_id = hashlib.md5(auction_id_str.encode('utf-8')).hexdigest()
 
             description += f"\n{short_desc}"
             description = description.strip()

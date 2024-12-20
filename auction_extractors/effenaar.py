@@ -1,5 +1,4 @@
-import json
-from datetime import datetime
+import hashlib
 from typing import List
 
 import dateparser
@@ -27,7 +26,7 @@ class Effenaar(AuctionExtractor):
         soup = BeautifulSoup(r.content, features='html.parser')
         events = soup.select('a.agenda-card')
         for event in events:
-            event_id = str(hash(event['href']))
+            event_id = hashlib.md5(event['href'].encode('utf-8')).hexdigest()
             link = 'https://effenaar.nl' + event['href']
             image_link = event.select_one('img')['data-srcset'].split(',')[-1].split()[0]
             _title = event.select_one('h3.card-title').text.strip()
