@@ -1,3 +1,4 @@
+import html
 from typing import List
 
 import dateparser
@@ -19,7 +20,7 @@ class Kleinanzeigen(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
         r = requests.get(url=self.search_link)
-        soup = BeautifulSoup(r.content, 'html.parser')
+        soup = BeautifulSoup(html.unescape(r.text), features='html.parser')
         items = soup.select('ul.itemlist>li.ad-listitem')
 
         auctions = []
@@ -38,8 +39,15 @@ class Kleinanzeigen(AuctionExtractor):
             except TypeError:
                 image_link = 'https://www.kleinanzeigen.de/liberty/liberty-js/placeholder-logo.svg'
 
-            title = item.select_one('a.ellipsis').text
-            _description_text = item.select_one('p.aditem-main--middle--description').text.strip()
+            try:
+                title = item.select_one('meta[itemprop="name"]')['content']
+            except TypeError:
+                title = item.select_one('a.ellipsis').text.strip()
+
+            try:
+                _description_text = item.select_one('meta[itemprop="description"]')['content']
+            except TypeError:
+                _description_text = item.select_one('p.aditem-main--middle--description').text.strip()
             _price = item.select_one('p.aditem-main--middle--price-shipping--price').text.strip()
             description = f'{_description_text}\n\n{_price}'
             seller = item.select_one('div.aditem-main--top--left').text.strip()
@@ -57,3 +65,9 @@ class Kleinanzeigen(AuctionExtractor):
                 }))
 
         return auctions
+
+if __name__ == '__main__':
+    from rich import print
+    k = Kleinanzeigen(search_term='bowie')
+    print(k.get_auctions())
+    # k.get_auctions()

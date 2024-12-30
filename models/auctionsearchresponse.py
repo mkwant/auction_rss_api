@@ -10,7 +10,7 @@ from models.auction import Auction
 class AuctionSearchResponse(BaseModel):
     """The result from an auction search."""
     search_link: str
-    search_term: str
+    search_term: str | None
     site_desc: str
     auctions: List[Auction]
 
@@ -18,6 +18,11 @@ class AuctionSearchResponse(BaseModel):
         """Return an RSSResponse that can be used as a FastApi response."""
 
         items = []
+
+        if self.search_term is None:
+            title = self.site_desc
+        else:
+            title = f"{self.site_desc} ('{self.search_term}')"
 
         for auction in self.auctions:
 
@@ -43,7 +48,7 @@ class AuctionSearchResponse(BaseModel):
 
         # Instantiate the RSSFeed class
         feed_data = {
-            'title': f"{self.site_desc} ('{self.search_term}')",
+            'title': title,
             'link': self.search_link,
             'description': f"Search results for query '{self.search_term}' on {self.site_desc}",
             'language': 'en-us',

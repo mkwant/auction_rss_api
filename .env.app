@@ -1,6 +1,0 @@
-# Settings for the AuctionRssApi
-EBAY_APP_ID=MaartenK-2rss-PRD-f9f1e332f-8879cf01
-EBAY_APP_SECRET=PRD-9f1e332f88ec-931a-41b0-bf24-4fcc
-EBAY_RU_NAME=Maarten_Kwant-MaartenK-2rss-P-dvxudmbo
-MS_TRANSLATE_API_KEY=0da11c9863204e69a0a743ae54094702
-MS_TRANSLATE_API_LOCATION=westeurope

@@ -1,4 +1,5 @@
 import base64
+import hashlib
 from datetime import datetime
 from enum import Enum
 from typing import List
@@ -11,7 +12,7 @@ from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
 
 
-class Ebay(AuctionExtractor):
+class EbayTest(AuctionExtractor):
     """A wrapper class around the Ebay api."""
 
     site_id: str
@@ -20,7 +21,7 @@ class Ebay(AuctionExtractor):
 
     @property
     def site_desc(self) -> str:
-        return f'Ebay: {self.site_id}'
+        return f'Ebay Test: {self.site_id}'
 
     @property
     def search_link(self) -> str:
@@ -83,7 +84,7 @@ class Ebay(AuctionExtractor):
         r = httpx.get(url=api_endpoint, headers=headers, params=params)
 
         for item in r.json()['itemSummaries']:
-            auction_id = item['itemId'].split('|')[1]
+            # auction_id = item['itemId'].split('|')[1]
             title = item['title']
             link = item['itemWebUrl'].split('?')[0]
             try:
@@ -97,15 +98,25 @@ class Ebay(AuctionExtractor):
 
             short_desc = item.get('shortDescription', '').strip()
             description = ''
+            auction_id_str = title
+
             if 'AUCTION' in item['buyingOptions']:
                 auction_price = f"{item['currentBidPrice']['currency']} {item['currentBidPrice']['value']} " \
                                 f"({item['bidCount']} bids)"
                 item_end_date = datetime.fromisoformat(item['itemEndDate'][:-1]).replace(
                     tzinfo=pytz.timezone('UTC')).astimezone(pytz.timezone('Europe/Amsterdam'))
                 description += f"{auction_price}\nEnd Date: {item_end_date:%Y-%m-%d %H:%M:%S}\n"
+
+                auction_id_str += f'|{auction_price.split('(')[0].strip()}'
+
             if 'FIXED_PRICE' in item['buyingOptions']:
                 bin_price = f"{item['price']['currency']} {item['price']['value']}"
                 description += f'Buy It Now for: {bin_price}\n'
+
+                auction_id_str += f'|BIN:{bin_price}'
+
+            # Creating an auction_id from the combination of title and price
+            auction_id = hashlib.md5(auction_id_str.encode('utf-8')).hexdigest()
 
             description += f"\n{short_desc}"
             description = description.strip()

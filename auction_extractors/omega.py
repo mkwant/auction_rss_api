@@ -35,7 +35,11 @@ class Omega(AuctionExtractor):
             except AttributeError:
                 continue
 
-            _estimate = item.select_one('div.estimate').text.strip()
+            try:
+                _estimate = item.select_one('div.estimate').text.strip()
+            except AttributeError:
+                _estimate = ''
+
             try:
                 _premium = item.select_one('div.estimate>span')['title']
             except TypeError:
