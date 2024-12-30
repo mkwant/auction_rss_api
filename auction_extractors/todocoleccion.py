@@ -18,10 +18,10 @@ class Todocoleccion(AuctionExtractor):
 
     @property
     def search_link(self) -> str:
-        return f'https://en.todocoleccion.net/buscador?from=top&bu={self.search_term}'
+        return f'https://en.todocoleccion.net/buscador?O=r&bu={self.search_term}'
 
     def _get_auctions(self, search_term: str) -> ResultSet:
-        params = {'from': 'top',
+        params = {'O': 'r',
                   'bu': search_term}
 
         scraper = cloudscraper.create_scraper()
