@@ -10,7 +10,6 @@ from auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_extractors.catawiki import CataWiki
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.ebay import SiteId, Ebay
-from auction_extractors.ebay_tst import EbayTest
 from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.omega import Omega
@@ -86,20 +85,6 @@ def ebay_rss(
         only_locally_listed_items: bool = True
 ) -> RSSResponse:
     site = Ebay(
-        search_term=search_term,
-        site_id=site_id.value,
-        only_locally_listed_items=only_locally_listed_items
-    )
-    return site.search()
-
-
-@router.get(path='/ebay_tst')
-def ebay_test_rss(
-        search_term: str,
-        site_id: SiteId = SiteId.EBAY_US,
-        only_locally_listed_items: bool = True
-) -> RSSResponse:
-    site = EbayTest(
         search_term=search_term,
         site_id=site_id.value,
         only_locally_listed_items=only_locally_listed_items
