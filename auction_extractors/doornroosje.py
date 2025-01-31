@@ -1,4 +1,5 @@
 import hashlib
+from datetime import date
 from typing import List
 
 import dateparser
@@ -13,7 +14,7 @@ class Doornroosje(AuctionExtractor):
 
     @property
     def search_link(self) -> str:
-        return 'https://www.doornroosje.nl'
+        return 'https://www.doornroosje.nl/?confirmed-only=true'
 
     @property
     def site_desc(self) -> str:
@@ -45,7 +46,13 @@ class Doornroosje(AuctionExtractor):
             _event_date = ' '.join(event.select_one('div.c-program__date').get_text().strip().split())
             _event_year = dateparser.parse(event.parent.parent.select_one('h2.c-program__month').text).year
             _event_date = dateparser.parse(_event_date)
-            _event_date = _event_date.replace(year=_event_year)
+
+            try:
+                _event_date = _event_date.replace(year=_event_year)
+            except AttributeError:
+                # If there are two events with the same date, for the 2nd date the data can't be extracted.
+                # Using a dummy date in that case
+                _event_date = date(year=_event_year, month=1, day=1)
             _event_info = event.select('div.c-program__info')
 
             _event_location = [
