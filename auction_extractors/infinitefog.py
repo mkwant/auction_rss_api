@@ -22,7 +22,7 @@ class InfiniteFog(AuctionExtractor):
         page = 1
         while page < 6:
 
-            url = f'https://infinitefog.ru/shop/new'
+            url = 'https://infinitefog.ru/shop/new'
             params = {
                 'lang': 'en',
                 'page': page

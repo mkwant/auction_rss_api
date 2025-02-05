@@ -21,7 +21,7 @@ class CataWiki(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         auctions = []
 
-        url = f'https://www.catawiki.com/buyer/api/v1/search'
+        url = 'https://www.catawiki.com/buyer/api/v1/search'
         params = {
             'q': {self.search_term},
             'page': 1,

@@ -17,7 +17,7 @@ class KontaktAudio(AuctionExtractor):
 
     @property
     def search_link(self) -> str:
-        return f'https://www.kontaktaudio.com'
+        return 'https://www.kontaktaudio.com'
 
     def _get_auctions(self) -> ResultSet:
         r = requests.get(url=self.search_link)

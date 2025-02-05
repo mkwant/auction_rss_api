@@ -65,7 +65,7 @@ class DiscogsWantlist(AuctionExtractorAsync):
 
     async def _get_wantlist(self, client: httpx.AsyncClient) -> List[int]:
         """Get a users wantlist in the form of a list of item id's."""
-        url = f'https://www.discogs.com/wantlist'
+        url = 'https://www.discogs.com/wantlist'
         params = {
             'page': 1,
             'limit': 250,

@@ -64,7 +64,8 @@ class ShopifyExtractor(AuctionExtractor, ABC):
                     'auction_id': auction_id,
                     'description': description,
                     'link': link,
-                    'image_link': image_link
+                    'image_link': image_link,
+                    'start_date': start_date
                 }))
 
         return auctions

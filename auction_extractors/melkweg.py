@@ -37,7 +37,7 @@ class Melkweg(AuctionExtractor):
         events = events_1[0]['attributes']['initialEvents']
         for event in events:
             _event_type = event['attributes']['profile']
-            if not _event_type in ['Concert', 'Festival']:
+            if _event_type not in ['Concert', 'Festival']:
                 continue
 
             event_id = event['id']

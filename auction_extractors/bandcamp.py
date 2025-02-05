@@ -18,7 +18,7 @@ class Bandcamp(AuctionExtractor):
 
     @property
     def site_desc(self) -> str:
-        return f'Bandcamp'
+        return 'Bandcamp'
 
     def get_auctions(self) -> List[Auction]:
         auctions = []

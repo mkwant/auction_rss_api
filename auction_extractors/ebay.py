@@ -62,7 +62,7 @@ class Ebay(AuctionExtractor):
             search_filter += f',itemLocationCountry:{country}'
             self.search_link += '&LH_PrefLoc=1'
         else:
-            search_filter += f',itemLocationRegion:WORLDWIDE'
+            search_filter += ',itemLocationRegion:WORLDWIDE'
             self.search_link += '&LH_PrefLoc=98'
 
         params = {

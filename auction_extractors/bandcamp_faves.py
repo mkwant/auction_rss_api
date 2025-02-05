@@ -16,7 +16,7 @@ class BandcampFaves(AuctionExtractor):
 
     @property
     def site_desc(self) -> str:
-        return f'Bandcamp faves'
+        return 'Bandcamp faves'
 
     @staticmethod
     async def get_bandcamp_merch(subdomain: str, client: httpx.AsyncClient) -> list[Auction]:
