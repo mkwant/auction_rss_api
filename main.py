@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # Instantiate FastApi
 app = FastAPI(
     title='AuctionRSS',
-    version='1.16.11',
+    version='1.16.12',
     description='This API returns RSS feeds for the search results of auction sites, '
                 'online record stores and concert venues.'
 )
