@@ -1,4 +1,5 @@
 import html
+import json
 from typing import List
 
 import dateparser
@@ -40,8 +41,8 @@ class Kleinanzeigen(AuctionExtractor):
                 image_link = 'https://www.kleinanzeigen.de/liberty/liberty-js/placeholder-logo.svg'
 
             try:
-                title = item.select_one('meta[itemprop="name"]')['content']
-            except TypeError:
+                title = json.loads(item.select_one('script').text)['title']
+            except (TypeError, AttributeError):
                 title = item.select_one('a.ellipsis').text.strip()
 
             try:
@@ -65,9 +66,3 @@ class Kleinanzeigen(AuctionExtractor):
                 }))
 
         return auctions
-
-if __name__ == '__main__':
-    from rich import print
-    k = Kleinanzeigen(search_term='bowie')
-    print(k.get_auctions())
-    # k.get_auctions()
