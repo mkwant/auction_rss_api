@@ -27,12 +27,11 @@ class Melkweg(AuctionExtractor):
         }
 
         r = requests.get(
-            url='https://www.melkweg.nl/_next/data/bfWrA95a0hXEiWpatMqbq/nl/agenda.json',
+            url='https://www.melkweg.nl/_next/data/UMkhaTCXq0yCdHdB-YqHb/nl/agenda.json',
             params=params
         )
 
         timezone = tz.gettz('Europe/Amsterdam')
-
         events_1 = r.json()['pageProps']['pageData']['attributes']['content']
         events = events_1[0]['attributes']['initialEvents']
         for event in events:
