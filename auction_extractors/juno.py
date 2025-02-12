@@ -27,8 +27,11 @@ class Juno(AuctionExtractor):
             'hide_forthcoming': 0,
             'solrorder': 'date_down'
         }
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0'
+        }
 
-        r = requests.get(url=url, params=params)
+        r = requests.get(url=url, params=params, headers=headers)
         page = r.text
 
         soup = BeautifulSoup(page, features='html.parser')
