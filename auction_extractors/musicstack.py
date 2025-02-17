@@ -8,6 +8,18 @@ from models.auctionextractor import AuctionExtractor
 from models.auction import Auction
 
 
+def valid_xml_char_ordinal(c):
+    """Test for any non-unicode characters."""
+    codepoint = ord(c)
+    # conditions ordered by presumed frequency
+    return (
+            0x20 <= codepoint <= 0xD7FF or
+            codepoint in (0x9, 0xA, 0xD) or
+            0xE000 <= codepoint <= 0xFFFD or
+            0x10000 <= codepoint <= 0x10FFFF
+    )
+
+
 class MusicStack(AuctionExtractor):
     search_term: str
 
@@ -57,10 +69,11 @@ class MusicStack(AuctionExtractor):
             _condition = cells[7].text.strip()
             _price = cells[10].text.strip()
             description = '\n'.join((_price, _format, _condition, _description))
+            description = ''.join(c for c in description if valid_xml_char_ordinal(c))
             seller = cells[8].get_text(separator=', ')
             link = cells[12].select_one('a.t')['href']
             days_ago = cells[9].text.split()[0]
-            start_date = datetime.date.today() - datetime.timedelta(days=int(days_ago))
+            start_date = datetime.datetime.now() - datetime.timedelta(days=int(days_ago))
 
             auctions.append(
                 Auction(
@@ -74,3 +87,14 @@ class MusicStack(AuctionExtractor):
                 )
             )
         return auctions
+
+
+if __name__ == '__main__':
+    from rich import print
+
+    m = MusicStack(search_term='bowie')
+    auctions = m.get_auctions()
+    for auction in auctions:
+        if not all(valid_xml_char_ordinal(c) for c in auction.description):
+            print(auction)
+            print(f"bla: '{''.join(c for c in auction.description if not valid_xml_char_ordinal(c))}'")
