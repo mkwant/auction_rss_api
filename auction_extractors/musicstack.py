@@ -87,14 +87,3 @@ class MusicStack(AuctionExtractor):
                 )
             )
         return auctions
-
-
-if __name__ == '__main__':
-    from rich import print
-
-    m = MusicStack(search_term='bowie')
-    auctions = m.get_auctions()
-    for auction in auctions:
-        if not all(valid_xml_char_ordinal(c) for c in auction.description):
-            print(auction)
-            print(f"bla: '{''.join(c for c in auction.description if not valid_xml_char_ordinal(c))}'")
