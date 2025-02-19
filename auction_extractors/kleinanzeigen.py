@@ -43,7 +43,7 @@ class Kleinanzeigen(AuctionExtractor):
             try:
                 title = json.loads(item.select_one('script').text)['title']
             except (TypeError, AttributeError):
-                title = item.select_one('a.ellipsis').text.strip()
+                title = item.select_one('span.ellipsis').text.strip()
 
             try:
                 _description_text = item.select_one('meta[itemprop="description"]')['content']
