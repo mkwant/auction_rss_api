@@ -14,6 +14,7 @@ from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.omega import Omega
 from auction_extractors.todocoleccion import Todocoleccion
+from auction_extractors.tracksauctions import TracksAuctions
 from auction_extractors.tradera import Tradera
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.vinted import Vinted
@@ -121,6 +122,11 @@ def todocoleccion_rss(search_term: str, translate: Translate = Depends(Translate
         site = Todocoleccion(search_term=search_term)
     return site.search()
 
+
+@router.get(path='/tracksauctions')
+def tracksauctions_rss(search_term: str) -> RSSResponse:
+    site = TracksAuctions(search_term=search_term)
+    return site.search()
 
 @router.get(path='/tradera')
 def tradera_rss(search_term: str, currency: str = Query(
