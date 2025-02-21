@@ -40,10 +40,14 @@ class Kleinanzeigen(AuctionExtractor):
             except TypeError:
                 image_link = 'https://www.kleinanzeigen.de/liberty/liberty-js/placeholder-logo.svg'
 
+            # Get title from embedded json first, if that fails from span.ellipsis and if that fails from a.ellipsis
             try:
                 title = json.loads(item.select_one('script').text)['title']
             except (TypeError, AttributeError):
-                title = item.select_one('span.ellipsis').text.strip()
+                try:
+                    title = item.select_one('span.ellipsis').text.strip()
+                except AttributeError:
+                    title = item.select_one('a.ellipsis').text.strip()
 
             try:
                 _description_text = item.select_one('meta[itemprop="description"]')['content']
