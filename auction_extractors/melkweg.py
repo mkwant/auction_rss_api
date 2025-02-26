@@ -66,8 +66,3 @@ class Melkweg(AuctionExtractor):
 
         auctions.sort(key=lambda a: a.start_date, reverse=True)
         return auctions
-
-
-if __name__ == '__main__':
-    m = Melkweg()
-    print(m.get_auctions())
