@@ -27,10 +27,10 @@ class Melkweg(AuctionExtractor):
         }
 
         r = requests.get(
-            url='https://www.melkweg.nl/_next/data/UMkhaTCXq0yCdHdB-YqHb/nl/agenda.json',
+            url='https://www.melkweg.nl/_next/data/Q4-aSOxbv5OGdJLfH-RlZ/nl/agenda.json',
             params=params
         )
-
+        r.raise_for_status()
         timezone = tz.gettz('Europe/Amsterdam')
         events_1 = r.json()['pageProps']['pageData']['attributes']['content']
         events = events_1[0]['attributes']['initialEvents']
@@ -66,3 +66,8 @@ class Melkweg(AuctionExtractor):
 
         auctions.sort(key=lambda a: a.start_date, reverse=True)
         return auctions
+
+
+if __name__ == '__main__':
+    m = Melkweg()
+    print(m.get_auctions())
