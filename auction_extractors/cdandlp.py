@@ -36,6 +36,7 @@ class CdAndLp(AuctionExtractor):
         # Retrieve cookies
         s.get(url='https://www.cdandlp.com')
         r = s.get(url=self.URL, params=params, headers=headers)
+        r.raise_for_status()
 
         soup = BeautifulSoup(r.content, features='html.parser')
         site_auctions = soup.select('div[class*="twelve large-20 columns div_item_listing"]')
@@ -93,3 +94,8 @@ class CdAndLp(AuctionExtractor):
             )
 
         return auctions
+
+if __name__ == '__main__':
+    c = CdAndLp(search_term='bowie')
+    auctions = c.get_auctions()
+    print(auctions)
