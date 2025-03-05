@@ -30,8 +30,13 @@ class TracksAuctions(AuctionExtractor):
             image_link = item.select_one('div.auction-lot-image img')['src'].replace('-small', '')
             auction_id = hashlib.md5(link.encode('utf-8')).hexdigest()
 
-            _auction_info = item.select('span.lot-title')[1].text.strip().split('(')[1].split(')')[0]
-            _estimate = item.select_one('div.estimate').text.strip()
+            _auction_info = item.select('p.auction-lot-title')[1].text.strip().split('(')[1].split(')')[0]
+
+            try:
+                _estimate = item.select_one('div.estimate').text.strip()
+            except AttributeError:
+                _estimate = ''
+
             _desc = item.select_one('p.lot-desc').text.replace('... read more', '').strip() + ' ...'
             description = f'{_auction_info}\n{_estimate}\n\n{_desc}'
 
@@ -46,20 +51,3 @@ class TracksAuctions(AuctionExtractor):
             )
 
         return auctions
-
-
-if __name__ == '__main__':
-    t = TracksAuctions()
-    t.get_auctions()
-
-    # auctions.append(
-    #     Auction(
-    #         title=title,
-    #         auction_id=auction_id,
-    #         description=description,
-    #         link=link,
-    #         image_link=image_link,
-    #         seller=seller,
-    #         start_date=start_date
-    #     )
-    # )
