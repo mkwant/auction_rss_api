@@ -27,7 +27,7 @@ class Melkweg(AuctionExtractor):
         }
 
         r = requests.get(
-            url='https://www.melkweg.nl/_next/data/Q4-aSOxbv5OGdJLfH-RlZ/nl/agenda.json',
+            url='https://www.melkweg.nl/_next/data/-oCzMEMNmpeCqDIk9IptQ/nl/agenda.json',
             params=params
         )
         r.raise_for_status()
