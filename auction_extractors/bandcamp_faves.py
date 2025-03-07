@@ -26,6 +26,8 @@ class BandcampFaves(AuctionExtractor):
         base_url = f"https://{subdomain}.bandcamp.com"
 
         r = await client.get(f'{base_url}/merch')
+        r.raise_for_status()
+
         soup = BeautifulSoup(r.text, features='html.parser')
         item_list = soup.select_one('ol.merch-grid')
 
@@ -80,6 +82,7 @@ class BandcampFaves(AuctionExtractor):
         return following_subdomains
 
     async def get_faves_merch(self) -> list[Auction]:
+        """Get merch of all followed subdomains."""
         tasks = []
         client = httpx.AsyncClient(follow_redirects=True)
 
@@ -89,6 +92,7 @@ class BandcampFaves(AuctionExtractor):
 
         await client.aclose()
 
+        # Flatten the list of lists
         return [items for fave in faves_merch for items in fave]
 
     def get_auctions(self) -> List[Auction]:
