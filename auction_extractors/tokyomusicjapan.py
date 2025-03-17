@@ -20,6 +20,7 @@ class TokyoMusicJapan(AuctionExtractor):
     def _get_auctions(self) -> list:
         url = 'https://www.tokyomusicjapan.com/service/api/ArtistSearch?artist=new&currency=USD&isGeneral=true'
         r = requests.get(url=url)
+        r.raise_for_status()
         items = [x for x in r.json() if self.search_term.lower() in x['Artist'].lower()]
         return items
 
