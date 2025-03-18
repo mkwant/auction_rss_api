@@ -13,6 +13,7 @@ from auction_extractors.ebay import SiteId, Ebay
 from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.omega import Omega
+from auction_extractors.sothebys import Sothebys
 from auction_extractors.todocoleccion import Todocoleccion
 from auction_extractors.tracksauctions import TracksAuctions
 from auction_extractors.tradera import Tradera
@@ -111,6 +112,12 @@ def marktplaats_rss(search_term: str, search_in_seller_name: bool = False) -> RS
 @router.get(path='/omega')
 def omega_rss(search_term: str) -> RSSResponse:
     site = Omega(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/sothebys')
+def sothebys_rss(search_term: str) -> RSSResponse:
+    site = Sothebys(search_term=search_term)
     return site.search()
 
 
