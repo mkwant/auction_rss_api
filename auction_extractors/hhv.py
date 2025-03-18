@@ -21,9 +21,8 @@ class HHV(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
 
-        url = 'https://www.hhv.de/shop/en/search/i:N5ST1?term=bowie'
-        params = {'term': self.search_term}
-        r = requests.get(url=url, params=params)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0'}
+        r = requests.get(url=self.search_link, headers=headers)
         r.raise_for_status()
 
         soup = BeautifulSoup(r.text, features='html.parser')
