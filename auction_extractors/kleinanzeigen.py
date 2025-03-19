@@ -1,5 +1,6 @@
 import html
 import json
+from datetime import datetime
 from typing import List
 
 import dateparser
@@ -56,7 +57,12 @@ class Kleinanzeigen(AuctionExtractor):
             _price = item.select_one('p.aditem-main--middle--price-shipping--price').text.strip()
             description = f'{_description_text}\n\n{_price}'
             seller = item.select_one('div.aditem-main--top--left').text.strip()
-            start_date = dateparser.parse(item.select_one('div.aditem-main--top--right').text.strip(), languages=['de'])
+
+            _start_date = item.select_one('div.aditem-main--top--right').text.strip()
+            if _start_date:
+                start_date = dateparser.parse(_start_date, languages=['de'])
+            else:
+                start_date = datetime.now()
 
             auctions.append(
                 Auction(**{

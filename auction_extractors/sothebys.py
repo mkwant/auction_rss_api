@@ -29,7 +29,11 @@ class Sothebys(AuctionExtractor):
         for item in items:
             auction_id = item['objectID']
             title = item['title']
-            description = f'{item['type']}, {item['details']}\n\n{item['description']}'
+            try:
+                _desc = item['fullText']
+            except KeyError:
+                _desc = item['description']
+            description = f'{item['type']}, {item['details']}\n\n{_desc}'
             link = item['url']
             image_link = item['image']
 
