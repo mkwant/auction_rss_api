@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi_rss import RSSResponse
 
+from auction_extractors.anonne import Anonne
 from auction_extractors.bandcamp import Bandcamp
 from auction_extractors.bandcamp_faves import BandcampFaves
 from auction_extractors.cashensgap import CashensGap
@@ -24,6 +25,7 @@ from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_extractors.recordmecca import RecordMecca
 from auction_extractors.slcd import SLCD
+from auction_extractors.soisong import Soisong
 from auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_extractors.tracks import Tracks
 from auction_extractors.variaworld import Variaworld
@@ -35,6 +37,11 @@ router = APIRouter(
     default_response_class=RSSResponse,
     tags=['Record shops']
 )
+
+@router.get(path='/anonne')
+def anonne_rss() -> RSSResponse:
+    site = Anonne()
+    return site.search()
 
 
 @router.get(path='/bandcamp')
@@ -173,6 +180,12 @@ def recordmecca_rss(search_term: str) -> RSSResponse:
 @router.get(path='/slcd')
 def slcd_rss(search_term: str) -> RSSResponse:
     site = SLCD(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/soisong')
+def soisong_rss() -> RSSResponse:
+    site = Soisong()
     return site.search()
 
 
