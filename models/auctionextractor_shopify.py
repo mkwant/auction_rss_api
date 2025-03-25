@@ -2,8 +2,8 @@ import json
 from abc import ABC, abstractmethod
 from typing import List
 
+import cloudscraper
 import dateparser
-import requests
 
 from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
@@ -31,7 +31,8 @@ class ShopifyExtractor(AuctionExtractor, ABC):
         auctions = []
 
         url = f'https://www.{self.domain}/products.json?limit=250'
-        r = requests.get(url=url, headers=headers)
+        scraper = cloudscraper.create_scraper()
+        r = scraper.get(url=url, headers=headers)
 
         try:
             products = json.loads(r.text)['products']
@@ -69,3 +70,6 @@ class ShopifyExtractor(AuctionExtractor, ABC):
                 }))
 
         return auctions
+
+if __name__ == '__main__':
+    dais = ShopifyExtractor()
