@@ -14,7 +14,7 @@ class VinylmaniaExtractor(AuctionExtractor):
 
     @property
     def site_desc(self) -> str:
-        return 'Magicbus Records'
+        return 'VinylMania'
 
     def get_auctions(self) -> List[Auction]:
 
