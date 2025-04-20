@@ -20,6 +20,7 @@ from auction_extractors.japanrecords import JapanRecords
 from auction_extractors.juno import Juno
 from auction_extractors.kontaktaudio import KontaktAudio
 from auction_extractors.kroese import Kroese
+from auction_extractors.magicbus import MagicbusExtractor
 from auction_extractors.musicstack import MusicStack
 from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
@@ -29,6 +30,7 @@ from auction_extractors.soisong import Soisong
 from auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_extractors.tracks import Tracks
 from auction_extractors.variaworld import Variaworld
+from auction_extractors.vinylmania import VinylmaniaExtractor
 from auction_extractors.younggod import YoungGod
 from routers.logger import LoggedRoute
 
@@ -37,6 +39,7 @@ router = APIRouter(
     default_response_class=RSSResponse,
     tags=['Record shops']
 )
+
 
 @router.get(path='/anonne')
 def anonne_rss() -> RSSResponse:
@@ -153,6 +156,12 @@ def kroese_rss(search_term: str) -> RSSResponse:
     return site.search()
 
 
+@router.get(path='/magicbus')
+def magicbus_rss(search_term: str) -> RSSResponse:
+    site = MagicbusExtractor(search_term=search_term)
+    return site.search()
+
+
 @router.get(path='/musicstack')
 def musicstack_rss(search_term: str) -> RSSResponse:
     site = MusicStack(search_term=search_term)
@@ -204,6 +213,12 @@ def tracks_rss(search_term: str) -> RSSResponse:
 @router.get(path='/variaworld')
 def variaworld_rss(search_term: str) -> RSSResponse:
     site = Variaworld(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/vinylmania')
+def vinylmania_rss(search_term: str) -> RSSResponse:
+    site = VinylmaniaExtractor(search_term=search_term)
     return site.search()
 
 
