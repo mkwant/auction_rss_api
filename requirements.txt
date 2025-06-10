@@ -12,7 +12,7 @@ pydantic-settings==2.6.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2024.2
-requests==2.32.3
+requests==2.32.4
 requests-html==0.10.0
 uvicorn==0.32.1
 xmltodict==0.14.2
