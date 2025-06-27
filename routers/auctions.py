@@ -11,6 +11,7 @@ from auction_extractors.catawiki import CataWiki
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.ebay import SiteId, Ebay
 from auction_extractors.kleinanzeigen import Kleinanzeigen
+from auction_extractors.lastdodo import LastDodo
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.omega import Omega
 from auction_extractors.sothebys import Sothebys
@@ -97,6 +98,11 @@ def ebay_rss(
 @router.get(path='/kleinanzeigen')
 def kleinanzeigen_rss(search_term: str) -> RSSResponse:
     site = Kleinanzeigen(search_term=search_term)
+    return site.search()
+
+@router.get(path='/lastdodo')
+def lastdodo_rss(search_term: str) -> RSSResponse:
+    site = LastDodo(search_term=search_term)
     return site.search()
 
 
