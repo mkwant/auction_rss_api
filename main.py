@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 
+import truststore
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 
@@ -8,6 +9,8 @@ from app.logs import setup_logging
 from app.middleware import AddNoIndex
 from app.settings import settings
 from routers import redirect, auctions, venues, recordshops
+
+truststore.inject_into_ssl()  # Use OS trust store
 
 # TODO Add function to generate random User Agent
 # TODO Documentation
@@ -22,7 +25,7 @@ logger = logging.getLogger(__name__)
 # Instantiate FastApi
 app = FastAPI(
     title='AuctionRSS',
-    version='1.16.33',
+    version='1.16.34',
     description='This API returns RSS feeds for the search results of auction sites, '
                 'online record stores and concert venues.'
 )
