@@ -21,8 +21,11 @@ class Todocoleccion(AuctionExtractor):
         return f'https://en.todocoleccion.net/buscador?O=r&bu={self.search_term}'
 
     def _get_auctions(self, search_term: str) -> ResultSet:
-        params = {'O': 'r',
-                  'bu': search_term}
+        params = {
+            'O': 'r',
+            'bu': search_term,
+            'Navegacion': 'i'
+        }
 
         scraper = cloudscraper.create_scraper()
 
