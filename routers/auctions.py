@@ -34,12 +34,12 @@ router = APIRouter(
 def tweedehands_rss(
         search_term: str,
         search_in_seller_name: bool = False,
-        fuzzy_search: bool = False
+        disable_fuzzy_search: bool = True
 ) -> RSSResponse:
     site = TweedeHands(
         search_term=search_term,
         search_in_seller_name=search_in_seller_name,
-        fuzzy_search=fuzzy_search
+        disable_fuzzy_search=disable_fuzzy_search
     )
     return site.search()
 
@@ -116,12 +116,12 @@ def lastdodo_rss(search_term: str) -> RSSResponse:
 def marktplaats_rss(
         search_term: str,
         search_in_seller_name: bool = False,
-        fuzzy_search: bool = False
+        disable_fuzzy_search: bool = True
 ) -> RSSResponse:
     site = Marktplaats(
         search_term=search_term,
         search_in_seller_name=search_in_seller_name,
-        fuzzy_search=fuzzy_search
+        disable_fuzzy_search=disable_fuzzy_search
     )
     return site.search()
 
