@@ -31,10 +31,15 @@ router = APIRouter(
 
 
 @router.get(path='/2dehands')
-def tweedehands_rss(search_term: str, search_in_seller_name: bool = False) -> RSSResponse:
+def tweedehands_rss(
+        search_term: str,
+        search_in_seller_name: bool = False,
+        fuzzy_search: bool = False
+) -> RSSResponse:
     site = TweedeHands(
         search_term=search_term,
-        search_in_seller_name=search_in_seller_name
+        search_in_seller_name=search_in_seller_name,
+        fuzzy_search=fuzzy_search
     )
     return site.search()
 
@@ -100,6 +105,7 @@ def kleinanzeigen_rss(search_term: str) -> RSSResponse:
     site = Kleinanzeigen(search_term=search_term)
     return site.search()
 
+
 @router.get(path='/lastdodo')
 def lastdodo_rss(search_term: str) -> RSSResponse:
     site = LastDodo(search_term=search_term)
@@ -107,10 +113,15 @@ def lastdodo_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/marktplaats')
-def marktplaats_rss(search_term: str, search_in_seller_name: bool = False) -> RSSResponse:
+def marktplaats_rss(
+        search_term: str,
+        search_in_seller_name: bool = False,
+        fuzzy_search: bool = False
+) -> RSSResponse:
     site = Marktplaats(
         search_term=search_term,
-        search_in_seller_name=search_in_seller_name
+        search_in_seller_name=search_in_seller_name,
+        fuzzy_search=fuzzy_search
     )
     return site.search()
 
@@ -140,6 +151,7 @@ def todocoleccion_rss(search_term: str, translate: Translate = Depends(Translate
 def tracksauctions_rss(search_term: str) -> RSSResponse:
     site = TracksAuctions(search_term=search_term)
     return site.search()
+
 
 @router.get(path='/tradera')
 def tradera_rss(search_term: str, currency: str = Query(

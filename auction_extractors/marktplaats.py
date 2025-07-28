@@ -11,6 +11,7 @@ from models.auction import Auction
 class Marktplaats(AuctionExtractor):
     search_term: str
     search_in_seller_name: bool = False
+    fuzzy_search: bool = False
     CURRENT_PAGE: int = 0
     LIMIT: int = 100
     DOMAIN: str = 'marktplaats.nl'
@@ -58,6 +59,11 @@ class Marktplaats(AuctionExtractor):
             if not self.search_in_seller_name:
                 if self.search_term.lower() in item['sellerInformation']['sellerName'].lower() \
                         and self.search_term not in item['title']:
+                    continue
+
+            if not self.fuzzy_search:
+                if (self.search_term.lower() not in item['title'].lower()
+                        or self.search_term.lower() not in item['description']):
                     continue
 
             try:
