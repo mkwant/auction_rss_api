@@ -51,7 +51,6 @@ class BuyeeYahoo(AuctionExtractor):
             _auction_price = auction.select('div.g-priceDetails')[0].get_text(separator=' ', strip=True)
             _auction_days_left = auction.select_one('li.itemCard__infoItem>span.g-text--attention').text
             description = f'<b>{_auction_price}<br><b>Time left:</b> {_auction_days_left}<br>'
-            seller = auction.select_one('span.auctionSearchResult__seller>a').text.strip()
 
             auctions.append(
                 Auction(
@@ -60,7 +59,6 @@ class BuyeeYahoo(AuctionExtractor):
                     description=description,
                     link=link,
                     image_link=image_link,
-                    seller=seller
                 )
             )
 
