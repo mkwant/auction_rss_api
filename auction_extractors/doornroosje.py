@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 from datetime import date
 from typing import List
@@ -44,7 +45,12 @@ class Doornroosje(AuctionExtractor):
 
             # Get event date and the year from a few levels up, parse and combine the two
             _event_date = ' '.join(event.select_one('div.c-program__date').get_text().strip().split())
-            _event_year = dateparser.parse(event.parent.parent.select_one('h2.c-program__month').text).year
+
+            try:
+                _event_year = dateparser.parse(event.parent.parent.select_one('h2.c-program__month').text).year
+            except AttributeError:
+                _event_year = datetime.datetime.now().year
+
             _event_date = dateparser.parse(_event_date)
 
             try:
