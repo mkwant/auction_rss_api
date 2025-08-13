@@ -30,6 +30,7 @@ from auction_extractors.slcd import SLCD
 from auction_extractors.soisong import Soisong
 from auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_extractors.tracks import Tracks
+from auction_extractors.vandabowie import VandaBowie
 from auction_extractors.variaworld import Variaworld
 from auction_extractors.vinylmania import VinylmaniaExtractor
 from auction_extractors.younggod import YoungGod
@@ -214,6 +215,12 @@ def tokyomusicjapan_rss(search_term: str) -> RSSResponse:
 @router.get(path='/tracks')
 def tracks_rss(search_term: str) -> RSSResponse:
     site = Tracks(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/vandabowie')
+def vandabowie_rss() -> RSSResponse:
+    site = VandaBowie()
     return site.search()
 
 
