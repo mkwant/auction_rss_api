@@ -31,7 +31,10 @@ class VandaBowie(AuctionExtractor):
             _flash = item.select_one('span.u-priceinfo').text.strip()
             _title = item.select_one('p.u-product-tile-name').text.strip()
             _price = item.select_one('span.u-value').text.strip()
-            title = f'{_flash}: {_title}'
+            if _flash:
+                title = f'{_flash}: {_title}'
+            else:
+                title = _title
             description = f'{_flash}\n{_price}'
             auction_id = f'{_flash}_{_title}'.replace(' ', '_').lower()
 
