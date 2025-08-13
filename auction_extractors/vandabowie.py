@@ -17,7 +17,7 @@ class VandaBowie(AuctionExtractor):
         return 'V&A: David Bowie'
 
     def get_auctions(self) -> List[Auction]:
-        url = f'https://www.vam.ac.uk/shop/david-bowie/true?cgid=david-bowie&prefn1=vamSearchable&prefv1=true&srule=Recently%20added&start=0&sz=23' # noqa
+        url = f'https://www.vam.ac.uk/shop/david-bowie/true?cgid=david-bowie&prefn1=vamSearchable&prefv1=true&srule=Recently%20added&start=0&sz=23'  # noqa
 
         auctions = []
 
@@ -26,13 +26,14 @@ class VandaBowie(AuctionExtractor):
 
         items = soup.select('div.b-product')
         for item in items:
-            title = item.select_one('p.u-product-tile-name').text.strip()
             link = 'https://www.vam.ac.uk' + item.select_one('a')['href']
             image_link = item.select_one('source')['data-srcset'].replace('sw=244&sh=244&sm=fit', 'sw=520&sh=520')
             _flash = item.select_one('span.u-priceinfo').text.strip()
+            _title = item.select_one('p.u-product-tile-name').text.strip()
             _price = item.select_one('span.u-value').text.strip()
+            title = f'{_flash}: {_title}'
             description = f'{_flash}\n{_price}'
-            auction_id = f'{_flash}_{title}'.replace(' ', '_').lower()
+            auction_id = f'{_flash}_{_title}'.replace(' ', '_').lower()
 
             auctions.append(
                 Auction(auction_id=auction_id,
