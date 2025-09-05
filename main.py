@@ -8,6 +8,9 @@ from app.logs import setup_logging
 from app.middleware import AddNoIndex
 from app.settings import settings
 from routers import redirect, auctions, venues, recordshops
+import truststore
+
+truststore.inject_into_ssl()  # Use OS trust store
 
 # TODO Add function to generate random User Agent
 # TODO Documentation
@@ -22,7 +25,7 @@ logger = logging.getLogger(__name__)
 # Instantiate FastApi
 app = FastAPI(
     title='AuctionRSS',
-    version='1.16.53',
+    version='1.16.54',
     description='This API returns RSS feeds for the search results of auction sites, '
                 'online record stores and concert venues.'
 )
@@ -34,8 +37,8 @@ app.include_router(auctions.router)
 app.include_router(recordshops.router)
 app.include_router(venues.router)
 app.include_router(redirect.router)
-app.add_middleware(middleware_class=AddNoIndex)  # noqa
-app.add_middleware(middleware_class=CorrelationIdMiddleware)  # noqa
+app.add_middleware(middleware_class=AddNoIndex) # noqa
+app.add_middleware(middleware_class=CorrelationIdMiddleware) # noqa
 
-routes = {x.name for x in app.routes if x.name.endswith('_rss')}  # noqa
+routes = {x.name for x in app.routes if x.name.endswith('_rss')} # noqa
 logger.info(f'Total feeds: {len(routes)}')

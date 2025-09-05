@@ -9,6 +9,8 @@ from models.auctionextractor import AuctionExtractor
 # THES394093
 
 class VandaCollection(AuctionExtractor):
+    FEED_LENGTH: int = 100
+
     @property
     def search_link(self) -> str:
         return f'https://collections.vam.ac.uk/search/?id_category={self.search_term}&page=1&page_size=100'
@@ -53,7 +55,7 @@ class VandaCollection(AuctionExtractor):
         auctions = []
 
         records = self.get_all_records()
-        for record in records[:10]:
+        for record in records[:self.FEED_LENGTH]:
             _title = record['_primaryTitle']
             _date = record['_primaryDate']
             _object_type = record['objectType']
