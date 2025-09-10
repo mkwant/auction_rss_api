@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-import requests
+import cloudscraper as cloudscraper
 
 from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
@@ -34,8 +34,7 @@ class Vinted(AuctionExtractor):
             params['catalog_ids'] = self.catalog_id
 
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
-
-        s = requests.Session()
+        s = cloudscraper.create_scraper()
         s.headers.update(headers)
 
         # Retrieving cookie
@@ -43,6 +42,8 @@ class Vinted(AuctionExtractor):
 
         # Retrieving items
         r = s.get(url=url, params=params)
+        print(r.text)
+        r.raise_for_status()
         return r.json()['items']
 
     def get_auctions(self) -> List[Auction]:
@@ -57,7 +58,6 @@ class Vinted(AuctionExtractor):
             _service_fee_amount = float(item['service_fee']['amount'])
 
             description = f"{_currency} {_amount:.2f} (+ {_service_fee_currency} {_service_fee_amount:.2f})"
-
 
             # Skip items if search term not in title
             if self.search_title_only:
