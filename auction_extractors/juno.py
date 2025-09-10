@@ -1,6 +1,7 @@
 from typing import List
 
 import requests
+import cloudscraper as cloudscraper
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
@@ -27,14 +28,19 @@ class Juno(AuctionExtractor):
             'hide_forthcoming': 0,
             'solrorder': 'date_down'
         }
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0'
-        }
 
-        r = requests.get(url=url, params=params, headers=headers)
-        page = r.text
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
+        s = cloudscraper.create_scraper()
+        s.headers.update(headers)
 
-        soup = BeautifulSoup(page, features='html.parser')
+        # Retrieving cookie
+        s.get(url='https://www.juno.co.uk')
+
+        # Retrieving items
+        r = s.get(url=url, params=params, headers=headers)
+        r.raise_for_status()
+
+        soup = BeautifulSoup(r.text, features='html.parser')
         items = soup.select('div.product-list>div.dv-item')
         return items
 
