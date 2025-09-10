@@ -42,7 +42,6 @@ class Vinted(AuctionExtractor):
 
         # Retrieving items
         r = s.get(url=url, params=params)
-        print(r.text)
         r.raise_for_status()
         return r.json()['items']
 
