@@ -7,7 +7,7 @@ on:
       - 'v*'
 
 jobs:
-  docker_publish:
+  docker_publish_amd:
     runs-on: "ubuntu-24.04"
 
     steps:
