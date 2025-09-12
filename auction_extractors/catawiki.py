@@ -5,7 +5,7 @@ import requests
 
 from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
-
+import cloudscraper as cloudscraper
 
 class CataWiki(AuctionExtractor):
     search_term: str
@@ -27,7 +27,12 @@ class CataWiki(AuctionExtractor):
             'page': 1,
             'sort': 'published_at_desc'
         }
-        r = requests.get(url=url, params=params)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
+        s = cloudscraper.create_scraper()
+        s.headers.update(headers)
+
+        r = s.get(url=url, params=params)
+        r.raise_for_status()
 
         for auction in r.json()['lots']:
             auctions.append(
