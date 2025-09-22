@@ -16,6 +16,7 @@ from auction_extractors.eil import EIL
 from auction_extractors.hhv import HHV
 from auction_extractors.hmv_jp import HMVJapan
 from auction_extractors.houseofmythology import HouseOfMythology
+from auction_extractors.ideanow import IdeaNow
 from auction_extractors.infinitefog import InfiniteFog
 from auction_extractors.japanrecords import JapanRecords
 from auction_extractors.juno import Juno
@@ -132,6 +133,12 @@ def hmvjapan_rss(search_term: str) -> RSSResponse:
 @router.get(path='/houseofmythology')
 def houseofmythology_rss(search_term: str) -> RSSResponse:
     site = HouseOfMythology(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/ideanow')
+def ideanow_rss(search_term: str) -> RSSResponse:
+    site = IdeaNow(search_term=search_term)
     return site.search()
 
 
