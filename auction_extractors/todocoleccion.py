@@ -31,7 +31,7 @@ class Todocoleccion(AuctionExtractor):
 
         r = scraper.get(self.URL, params=params)
         soup = BeautifulSoup(r.content, features='html.parser')
-        site_auctions = soup.select('div._lote_item-image-and-content')
+        site_auctions = soup.select('div.card-lote')
         return site_auctions
 
     def get_auctions(self) -> List[Auction]:
@@ -45,7 +45,7 @@ class Todocoleccion(AuctionExtractor):
             title = _item_info.text.strip()
             link = 'https://en.todocoleccion.net' + _item_info['href']
             unique_id = _item_info['id'].replace('lot-title-', '')
-            price = auction.select_one('span.precio-lote-listado').text
+            price = auction.select_one('span.fs-18').text
 
             _seller_block = auction.select_one('p.lote-vendedor')
             if _seller_block is not None:
@@ -58,7 +58,7 @@ class Todocoleccion(AuctionExtractor):
                 _item_type = _item_type_block.text.strip()
             else:
                 _item_type = 'Buy now'
-            _category = auction.select_one('p._lote_item-section').text.strip()
+            _category = auction.select_one('a.fs-14').text.strip()
             desc = f'{price} | {_item_type} | {_category}'
 
             auctions.append(
