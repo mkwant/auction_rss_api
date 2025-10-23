@@ -20,6 +20,7 @@ class MagicbusExtractor(AuctionExtractor):
 
         auctions = []
         r = requests.get(self.search_link)
+        r.raise_for_status()
 
         soup = BeautifulSoup(r.content, features='html.parser')
 
@@ -28,7 +29,7 @@ class MagicbusExtractor(AuctionExtractor):
             title = item.select_one('h3.wp-block-post-title').text.strip()
             link = item.select_one('h3.wp-block-post-title>a')['href']
             image_link = item.select_one('img')['src'].replace('-450x450', '')
-            auction_id = item.select_one('img')['title']
+            auction_id = item.select_one('img')['data-image-id']
 
             try:
                 _desc = item.select_one('div.taxonomy-product_tag').text.strip()
