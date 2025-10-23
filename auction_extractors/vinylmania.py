@@ -30,7 +30,7 @@ class VinylmaniaExtractor(AuctionExtractor):
             link = item.select_one('h3.wp-block-post-title>a')['href']
 
             image_link = item.select_one('img')['data-opt-src'].split('best/')[1]
-            auction_id = item.select_one('img')['title']
+            auction_id = item.select_one('img')['data-image-id']
 
             try:
                 _desc = item.select_one('div.taxonomy-product_tag').text.strip()
