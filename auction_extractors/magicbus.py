@@ -28,7 +28,13 @@ class MagicbusExtractor(AuctionExtractor):
         for item in items:
             title = item.select_one('h3.wp-block-post-title').text.strip()
             link = item.select_one('h3.wp-block-post-title>a')['href']
-            image_link = item.select_one('img')['src'].replace('-450x450', '')
+
+            try:
+                raw_img_link = item.select_one('img')['data-opt-src']
+            except KeyError:
+                raw_img_link = item.select_one('img')['src']
+            image_link = 'https' + raw_img_link.split('https')[2].replace('avif', 'jpg')
+
             auction_id = item.select_one('img')['data-image-id']
 
             try:
