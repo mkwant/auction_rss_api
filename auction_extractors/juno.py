@@ -1,6 +1,5 @@
 from typing import List
 
-import requests
 import cloudscraper as cloudscraper
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet

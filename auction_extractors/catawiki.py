@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List
 
-import requests
 
 from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
