@@ -13,6 +13,7 @@ from auction_extractors.deezer import Deezer
 from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.discords import Discords
 from auction_extractors.eil import EIL
+from auction_extractors.evilgreed import EvilGreed
 from auction_extractors.hhv import HHV
 from auction_extractors.hmv_jp import HMVJapan
 from auction_extractors.houseofmythology import HouseOfMythology
@@ -115,6 +116,12 @@ def discords_rss(search_term: str) -> RSSResponse:
 @router.get(path='/eil')
 def eil_rss(search_term: str) -> RSSResponse:
     site = EIL(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/evilgreed')
+def evilgreed_rss(collection: str) -> RSSResponse:
+    site = EvilGreed(search_term=None, collection=collection)
     return site.search()
 
 

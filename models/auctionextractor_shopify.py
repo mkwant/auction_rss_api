@@ -40,15 +40,16 @@ class ShopifyExtractor(AuctionExtractor, ABC):
             return auctions
 
         for product in products:
+            if self.search_term is not None:
 
-            # If search_in_desc, search in description as well
-            if self.search_in_desc:
-                if (self.search_term.lower() not in product['vendor'].lower() and
-                        self.search_term.lower() not in product['body_html'].lower()):
-                    continue
-            if not self.search_in_desc:
-                if self.search_term.lower() not in product['vendor'].lower():
-                    continue
+                # If search_in_desc, search in description as well
+                if self.search_in_desc:
+                    if (self.search_term.lower() not in product['vendor'].lower() and
+                            self.search_term.lower() not in product['body_html'].lower()):
+                        continue
+                if not self.search_in_desc:
+                    if self.search_term.lower() not in product['vendor'].lower():
+                        continue
 
             title = f"{product['vendor']} - {product['title']}"
             auction_id = str(product['id'])
