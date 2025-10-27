@@ -1,7 +1,10 @@
+import json
 from datetime import datetime
-from typing import List
+from typing import Any, List
 
+import httpx
 import requests
+from bs4 import BeautifulSoup
 from dateutil import tz
 
 from models.auction import Auction
@@ -17,22 +20,23 @@ class Melkweg(AuctionExtractor):
     def site_desc(self) -> str:
         return 'Melkweg'
 
+    def _get_data(self) -> dict[str, Any]:
+        url = 'https://www.melkweg.nl/en/agenda/'
+
+        r = httpx.get(url=url)
+        r.raise_for_status()
+        soup = BeautifulSoup(r.text, features='html.parser')
+
+        json_str = soup.select(selector='script', namespaces={'type': 'application/json'})[-1].text
+        return json.loads(json_str)
+
     def get_auctions(self) -> List[Auction]:
         auctions = []
-        params = {
-            'slug': [
-                'nl',
-                'agenda',
-            ],
-        }
 
-        r = requests.get(
-            url='https://www.melkweg.nl/_next/data/-oCzMEMNmpeCqDIk9IptQ/nl/agenda.json',
-            params=params
-        )
-        r.raise_for_status()
         timezone = tz.gettz('Europe/Amsterdam')
-        events_1 = r.json()['pageProps']['pageData']['attributes']['content']
+        data = self._get_data()
+
+        events_1 = data['props']['pageProps']['pageData']['attributes']['content']
         events = events_1[0]['attributes']['initialEvents']
         for event in events:
             _event_type = event['attributes']['profile']
