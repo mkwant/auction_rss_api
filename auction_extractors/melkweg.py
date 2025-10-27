@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Any, List
 
 import httpx
-import requests
 from bs4 import BeautifulSoup
 from dateutil import tz
 
