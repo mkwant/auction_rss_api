@@ -1,10 +1,12 @@
 import datetime
-from typing import List
+from typing import List, TypeVar
 
 import httpx
 
 from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
+
+T = TypeVar("T")
 
 
 class JuliensAuctions(AuctionExtractor):
@@ -39,6 +41,12 @@ class JuliensAuctions(AuctionExtractor):
 
         return r.json()
 
+    @staticmethod
+    def format_currency(price_val: T) -> T | str:
+        if isinstance(price_val, int):
+            return f"${price_val / 100:.2f}"
+        return price_val
+
     def get_auctions(self) -> List[Auction]:
         auctions = []
 
@@ -51,13 +59,13 @@ class JuliensAuctions(AuctionExtractor):
         {auction['description']}
 
         Status:\t\t{auction['status']}
-        Starting bid:\t{auction['starting_bid']}
-        Current bid:\t{auction['current_bid']}
-        Sold price:\t{auction['sold_price']}
+        Starting bid:\t{self.format_currency(auction['starting_bid'])}
+        Current bid:\t{self.format_currency(auction['current_bid'])}
+        Sold price:\t{self.format_currency(auction['sold_price'])}
         Number of bids:\t{auction['number_of_bids']}
 
-        Low estimate:\t{auction['low_estimate']}
-        High estimate:\t{auction['high_estimate']}
+        Low estimate:\t{self.format_currency(auction['low_estimate'])}
+        High estimate:\t{self.format_currency(auction['high_estimate'])}
             """
             campaign = auction['auction_campaign']['title']
             start_date = datetime.datetime.fromisoformat(auction['start_date'])
