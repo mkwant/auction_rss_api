@@ -10,7 +10,7 @@ httpx==0.28.1
 lxml_html_clean==0.4.2
 nest-asyncio==1.6.0
 pydantic==2.12.3
-pydantic-settings==2.11.1
+pydantic-settings==2.11.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.1
 pytz==2025.2
