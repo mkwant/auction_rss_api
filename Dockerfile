@@ -13,6 +13,6 @@ RUN apt-get update
 # Deploy code
 WORKDIR /app
 COPY requirements.txt requirements.txt
-RUN uv pip install -r requirements.txt
+RUN uv pip install --system -r requirements.txt
 COPY . .
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80", "--no-access-log"]
