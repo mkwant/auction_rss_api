@@ -1,6 +1,6 @@
 import asyncio
 import itertools
-from typing import List, Dict, Any
+from typing import Any
 
 import httpx
 import xmltodict
@@ -10,12 +10,10 @@ from models.auction import Auction
 from models.auctionextractor import AuctionExtractorAsync
 
 
-# TODO Use cloudscraper to bypass Cloudflare challenge
-
 class DiscogsWantlist(AuctionExtractorAsync):
     search_term: str
     headers: dict = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:111.0) Gecko/20100101 Firefox/111.0'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0'
     }
     discogs_logo: str = ('https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Discogs_record_icon.svg/'
                          '480px-Discogs_record_icon.svg.png')
@@ -34,12 +32,11 @@ class DiscogsWantlist(AuctionExtractorAsync):
         params = {
             'ev': 'rb',
             'output': 'rss'}
-
         response = await client.get(url=url, params=params)
         return response.text
 
     @staticmethod
-    async def _get_offers(offer_page) -> List[Dict[str, Any]]:
+    async def _get_offers(offer_page) -> list[dict[str, Any]]:
         """From an offer page in rss format, get the listed offers"""
         result = xmltodict.parse(offer_page)
         entries = result['feed'].get('entry')
@@ -52,18 +49,17 @@ class DiscogsWantlist(AuctionExtractorAsync):
                     'text': item['summary']['#text']
                 } for item in result['feed']['entry']
             ]
-        elif isinstance(entries, dict):
-            item = entries
-            return [
-                {
-                    'updated': item['updated'],
-                    'link': item['link']['@href'],
-                    'title': item['title'],
-                    'text': item['summary']['#text']
-                }
-            ]
+        item = entries
+        return [
+            {
+                'updated': item['updated'],
+                'link': item['link']['@href'],
+                'title': item['title'],
+                'text': item['summary']['#text']
+            }
+        ]
 
-    async def _get_wantlist(self, client: httpx.AsyncClient) -> List[int]:
+    async def _get_wantlist(self, client: httpx.AsyncClient) -> list[int]:
         """Get a users wantlist in the form of a list of item id's."""
         url = 'https://www.discogs.com/wantlist'
         params = {
@@ -71,11 +67,14 @@ class DiscogsWantlist(AuctionExtractorAsync):
             'limit': 250,
             'user': self.search_term
         }
-        r = await client.get(url=url, params=params)
+        headers = {
+            'Referer': f'https://www.discogs.com/user/{self.search_term}',
+            'Cache-Control': 'no-cache',
+        }
+        r = await client.get(url=url, params=params, headers=headers)
         r.raise_for_status()
         soup = BeautifulSoup(r.content, features='html.parser')
         links = soup.select('span.marketplace_for_sale_count')
-        print(soup.prettify())
         result = []
         for link in links:
             link = link.find('a')['href']
@@ -84,7 +83,7 @@ class DiscogsWantlist(AuctionExtractorAsync):
 
         return result
 
-    async def get_auctions(self) -> List[Auction]:
+    async def get_auctions(self) -> list[Auction]:
 
         async with httpx.AsyncClient(headers=self.headers, follow_redirects=True) as client:
             wantlist = await self._get_wantlist(client)
