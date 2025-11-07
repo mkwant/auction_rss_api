@@ -42,8 +42,11 @@ class Omega(AuctionExtractor):
 
             try:
                 _premium = item.select_one('div.estimate>span')['title']
-            except TypeError:
-                _premium = item.select_one('div.clearfix')['title']
+            except Exception: # noqa
+                try:
+                    _premium = item.select_one('div.clearfix')['title']
+                except Exception: # noqa
+                    _premium = "ERROR"
 
             try:
                 _current = (f"{item.select_one('span.tb-heading').text.strip()} "
