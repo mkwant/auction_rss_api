@@ -36,7 +36,7 @@ class GumTree(AuctionExtractor):
             try:
                 image_link = item.select_one('img')['src']
             except KeyError:
-                print('-')
+                image_link = item.select_one('img')['data-src']
             title = item.select_one('div.e25keea18').text
             _desc = item.select_one('p.e25keea17').text
             _location = item.select_one('div[data-q="tile-location"]').text
