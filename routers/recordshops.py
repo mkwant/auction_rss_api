@@ -21,6 +21,7 @@ from auction_extractors.ideanow import IdeaNow
 from auction_extractors.infinitefog import InfiniteFog
 from auction_extractors.japanrecords import JapanRecords
 from auction_extractors.juno import Juno
+from auction_extractors.kent import Kent
 from auction_extractors.kontaktaudio import KontaktAudio
 from auction_extractors.kroese import Kroese
 from auction_extractors.magicbus import MagicbusExtractor
@@ -165,6 +166,12 @@ def japanrecords_rss(search_term: str) -> RSSResponse:
 @router.get(path='/juno')
 def juno_rss(search_term: str) -> RSSResponse:
     site = Juno(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/kent')
+def kent_rss(search_term: str) -> RSSResponse:
+    site = Kent(search_term=search_term)
     return site.search()
 
 
