@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi_rss import RSSResponse
 
+from app.dependencies import Translate
 from auction_extractors.anonne import Anonne
 from auction_extractors.bandcamp import Bandcamp
 from auction_extractors.bandcamp_faves import BandcampFaves
@@ -39,6 +40,7 @@ from auction_extractors.vandacollection import VandaCollection
 from auction_extractors.variaworld import Variaworld
 from auction_extractors.vinylmania import VinylmaniaExtractor
 from auction_extractors.younggod import YoungGod
+from auction_transformers.translator import translate_from_jp, translate_desc_from_jp
 from routers.logger import LoggedRoute
 
 router = APIRouter(
@@ -170,8 +172,11 @@ def juno_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/kent')
-def kent_rss(search_term: str) -> RSSResponse:
-    site = Kent(search_term=search_term)
+def kent_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
+    if translate.translate_titles:
+        site = Kent(search_term=search_term, transformers=[translate_desc_from_jp, translate_from_jp])
+    else:
+        site = Kent(search_term=search_term)
     return site.search()
 
 
