@@ -172,11 +172,8 @@ def juno_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/kent')
-def kent_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
-    if translate.translate_titles:
-        site = Kent(search_term=search_term, transformers=[translate_desc_from_jp, translate_from_jp])
-    else:
-        site = Kent(search_term=search_term)
+def kent_rss(search_term: str) -> RSSResponse:
+    site = Kent(search_term=search_term)
     return site.search()
 
 

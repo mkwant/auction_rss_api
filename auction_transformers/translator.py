@@ -112,40 +112,6 @@ async def translate_auction(
     return auction
 
 
-async def translate_auction_desc(
-        auction: Auction,
-        translator: Translator,
-        translate_to: str,
-        translate_from: Optional[str] = None
-) -> Auction:
-    """Translate the auction desc using a translator."""
-
-    # Don't translate error items
-    if auction.auction_id.startswith('ERROR_'):
-        return auction
-
-    original_desc = auction.description
-    try:
-
-        translated_desc = await translator.translate(
-            text=auction.description,
-            translate_to=translate_to,
-            translate_from=translate_from
-        )
-    except Exception as e:
-        logger.warning(
-            f"Error translating {auction.description} ({translate_from=}, {translate_to=}):"
-            f" {e.__class__.__name__} '{e}'")
-        auction.description = f"{auction.description}\n\nTranslate failed: '{e}'\n\n" \
-                              f"Original description:\n{original_desc}"
-        return auction
-
-    auction.description = f"{translated_desc}\n\nOriginal description:\n{original_desc}"
-    return auction
-
-
 azure_translator = AzureTranslator(client=httpx.AsyncClient())
 translate_from_jp = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='ja')
 translate_from_es = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='es')
-translate_desc_from_jp = partial(translate_auction_desc, translator=azure_translator,
-                                 translate_to='en', translate_from='ja')
