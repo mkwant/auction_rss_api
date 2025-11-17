@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from fastapi_rss import RSSResponse
 
-from app.dependencies import Translate
 from auction_extractors.anonne import Anonne
 from auction_extractors.bandcamp import Bandcamp
 from auction_extractors.bandcamp_faves import BandcampFaves
@@ -40,7 +39,6 @@ from auction_extractors.vandacollection import VandaCollection
 from auction_extractors.variaworld import Variaworld
 from auction_extractors.vinylmania import VinylmaniaExtractor
 from auction_extractors.younggod import YoungGod
-from auction_transformers.translator import translate_from_jp, translate_desc_from_jp
 from routers.logger import LoggedRoute
 
 router = APIRouter(
