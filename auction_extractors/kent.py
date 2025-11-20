@@ -23,7 +23,7 @@ class Kent(AuctionExtractor):
         params = {
             'w': 0,
             'k': self.search_term,
-            'o': 'ra',
+            'o': 'rd',
         }
 
         r = httpx.get(url=url, params=params)
