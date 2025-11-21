@@ -27,11 +27,11 @@ class GottaHaveRockAndRoll(AuctionExtractor):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0'}
 
         r = httpx.post(url=url, params=params, headers=headers)
+        r.raise_for_status()
 
         soup = BeautifulSoup(r.text, features="html.parser")
         items = soup.select('div.lot')
         for item in items:
-            print(item.prettify())
 
             link = item.select_one('span#LotName>a')['href']
             image_link = 'https://www.gottahaverockandroll.com' + item.select_one('div.imageDiv img')['src'].replace(
