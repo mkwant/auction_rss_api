@@ -10,6 +10,7 @@ from auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_extractors.catawiki import CataWiki
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.ebay import SiteId, Ebay
+from auction_extractors.gottahaverockandroll import GottaHaveRockAndRoll
 from auction_extractors.gumtree import GumTree
 from auction_extractors.juliens import JuliensAuctions
 from auction_extractors.kleinanzeigen import Kleinanzeigen
@@ -99,6 +100,12 @@ def ebay_rss(
         site_id=site_id.value,
         only_locally_listed_items=only_locally_listed_items
     )
+    return site.search()
+
+
+@router.get(path='/gottahaverockandroll')
+def gottahaverockandroll_rss(search_term: str) -> RSSResponse:
+    site = GottaHaveRockAndRoll(search_term=search_term)
     return site.search()
 
 
