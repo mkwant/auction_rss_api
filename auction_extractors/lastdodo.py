@@ -30,7 +30,10 @@ class LastDodo(AuctionExtractor):
             if link.endswith('?referer=marketplace'):
                 continue
 
-            image_link = item.select_one('picture>source')['data-srcset'].replace('ld_thumb3_webp', 'ld_large')
+            try:
+                image_link = item.select_one('picture>source')['data-srcset'].replace('ld_thumb3_webp', 'ld_large')
+            except TypeError:
+                image_link = None
             auction_id = link.split('?')[0].split('/')[-1]
             _title = item.select_one('div.title').text
             _serie = item.select_one('div.serie').text
