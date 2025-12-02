@@ -10,7 +10,7 @@ from models.auctionextractor import AuctionExtractor
 class Kent(AuctionExtractor):
     @property
     def search_link(self) -> str:
-        return f"https://kentjapan.com/en/list.php?v=1&w=0&k={self.search_term}&b=1&l=&o=ra&c=&d=&t=&a="
+        return f"https://kentjapan.com/en/list.php?v=1&w=0&k={self.search_term}&b=1&l=&o=rd&c=&d=&t=&a="
 
     @property
     def site_desc(self) -> str:
