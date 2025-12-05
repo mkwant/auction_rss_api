@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
 from app.dependencies import Translate
+from auction_extractors.bonhams import Bonhams
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
 from auction_extractors.buyee_yahoo import BuyeeYahoo
@@ -45,6 +46,12 @@ def tweedehands_rss(
         search_in_seller_name=search_in_seller_name,
         disable_fuzzy_search=disable_fuzzy_search
     )
+    return site.search()
+
+
+@router.get(path='/bonhams')
+def bonhams_rss(search_term: str) -> RSSResponse:
+    site = Bonhams(search_term=search_term)
     return site.search()
 
 
