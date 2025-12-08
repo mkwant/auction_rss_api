@@ -38,6 +38,7 @@ from auction_extractors.tracks import Tracks
 from auction_extractors.vandabowie import VandaBowie
 from auction_extractors.vandacollection import VandaCollection
 from auction_extractors.variaworld import Variaworld
+from auction_extractors.vinyleers import Vinyleers
 from auction_extractors.vinylmania import VinylmaniaExtractor
 from auction_extractors.younggod import YoungGod
 from routers.logger import LoggedRoute
@@ -269,6 +270,12 @@ def vandacollection_rss(category: str = 'THES394093') -> RSSResponse:
 @router.get(path='/variaworld')
 def variaworld_rss(search_term: str) -> RSSResponse:
     site = Variaworld(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/vinyleers')
+def vinyleers_rss(search_term: str) -> RSSResponse:
+    site = Vinyleers(search_term=search_term)
     return site.search()
 
 
