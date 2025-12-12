@@ -41,7 +41,7 @@ class Vinyleers(AuctionExtractor):
             auction_id = str(item['id'])
             title = item['title']
             link = 'https://vinyleers.com/products/' + item['handle']
-            image_link = 'https' + item['featured_image'].split('?')[0]
+            image_link = 'https:' + item['featured_image'].split('?')[0]
             _desc = '\n'.join([s for s in item['description'].splitlines() if s and s != '<p> </p>'])
             description = f"<p><strong>€{item['price'] / 100:.2f}</p></strong>\n\n{_desc}"
             start_date = datetime.datetime.fromisoformat(item['published_at'])
