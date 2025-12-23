@@ -26,39 +26,42 @@ class AuctionSearchResponse(BaseModel):
 
         for auction in self.auctions:
 
-            item_data = {
-                'title': auction.title,
-                'link': auction.link,
-                'description': auction.description,
-                'guid': GUID(content=auction.auction_id),
-                'author': auction.seller,
-                'pub_date': auction.start_date
-            }
-
             if auction.image_link:
-                item_data['enclosure'] = Enclosure(
-                    content='',
+                enclosure = Enclosure(
+                    content='',  # noqa, this field is needed due to a bug in fastapi_rss # ty: ignore[unknown-argument]
                     attrs=EnclosureAttrs(
                         url=auction.image_link,
                         length=1000,
                         type='image/jpeg'
                     )
                 )
-            items.append(Item(**item_data))
+            else:
+                enclosure = None
+
+            items.append(
+                Item(
+                    title=auction.title,
+                    link=auction.link,
+                    description=auction.description,
+                    guid=GUID(content=auction.auction_id),
+                    author=auction.seller,
+                    pub_date=auction.start_date,
+                    enclosure=enclosure,
+                )
+            )
 
         # Instantiate the RSSFeed class
-        feed_data = {
-            'title': title,
-            'link': self.search_link,
-            'description': f"Search results for query '{self.search_term}' on {self.site_desc}",
-            'language': 'en-us',
-            'generator': 'Auction RSS api',
-            'ttl': 40,
-            'item': items,
-            'pub_date': datetime.now(),
-            'last_build_date': datetime.now()
-        }
-        feed = RSSFeed(**feed_data)
+        feed = RSSFeed(
+            title=title,
+            link=self.search_link,
+            description=f"Search results for query '{self.search_term}' on {self.site_desc}",
+            language='en-us',
+            generator='Auction RSS api',
+            ttl=40,
+            item=items,
+            pub_date=datetime.now(),
+            last_build_date=datetime.now()
+        )
 
         # Return the RSSResponse
         return RSSResponse(content=feed)

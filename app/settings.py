@@ -19,7 +19,7 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    return Settings()  # ty: ignore[missing-argument]
 
 
 settings = get_settings()

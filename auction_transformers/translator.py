@@ -24,14 +24,14 @@ class Translator(ABC):
     translate_from: str
 
     @abstractmethod
-    async def translate(self, text: str, translate_to: str, translate_from: str) -> str:
+    async def translate(self, text: str, translate_to: str, translate_from: str | None) -> str:
         """Translate a string to another string."""
         raise NotImplementedError
 
 
 class AzureTranslator(Translator):
     """Azure Translator."""
-    api_version: float = '3.0'
+    api_version: str = '3.0'
     base_url = 'https://api.cognitive.microsofttranslator.com'
     endpoint = 'translate'
 
@@ -40,7 +40,7 @@ class AzureTranslator(Translator):
             client: httpx.AsyncClient,
             ms_translate_api_key: str = settings.MS_TRANSLATE_API_KEY,
             ms_translate_api_location: str = settings.MS_TRANSLATE_API_LOCATION
-    ):
+    ) -> None:
         """Initialize the AzureTranslator."""
         self.client = client
         self.ms_translate_api_key = ms_translate_api_key

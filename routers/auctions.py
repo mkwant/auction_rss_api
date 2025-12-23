@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
@@ -210,7 +210,7 @@ def tracksauctions_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/tradera')
-def tradera_rss(search_term: str, currency: str = Query(
+def tradera_rss(search_term: str, currency: Literal['DKK', 'EUR', 'GBP', 'JPY', 'NOK', 'SEK', 'USD'] = Query(
     default="EUR", enum=['DKK', 'EUR', 'GBP', 'JPY', 'NOK', 'SEK', 'USD']
 )) -> RSSResponse:
     site = Tradera(search_term=search_term, currency=currency)
