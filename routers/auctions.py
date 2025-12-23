@@ -17,6 +17,7 @@ from auction_extractors.gumtree import GumTree
 from auction_extractors.juliens import JuliensAuctions
 from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.lastdodo import LastDodo
+from auction_extractors.liveauctioneers import LiveAuctioneers
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.omega import Omega
 from auction_extractors.rrauction import RRAuction
@@ -145,6 +146,12 @@ def kleinanzeigen_rss(search_term: str) -> RSSResponse:
 @router.get(path='/lastdodo')
 def lastdodo_rss(search_term: str) -> RSSResponse:
     site = LastDodo(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/liveauctioneers')
+def liveauctioneers_rss(search_term: str) -> RSSResponse:
+    site = LiveAuctioneers(search_term=search_term)
     return site.search()
 
 
