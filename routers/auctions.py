@@ -9,6 +9,7 @@ from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
 from auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_extractors.catawiki import CataWiki
+from auction_extractors.christies import Christies
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.ebay import SiteId, Ebay
 from auction_extractors.ewbank import Ewbank
@@ -89,6 +90,12 @@ def buyee_yahoo_rss(search_term: str, translate: Translate = Depends(Translate))
 @router.get(path='/catawiki')
 def catawiki_rss(search_term: str) -> RSSResponse:
     site = CataWiki(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/christies')
+def christies_rss(search_term: str) -> RSSResponse:
+    site = Christies(search_term=search_term)
     return site.search()
 
 
