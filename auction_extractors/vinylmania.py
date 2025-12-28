@@ -29,7 +29,11 @@ class VinylmaniaExtractor(AuctionExtractor):
             title = item.select_one('h3.wp-block-post-title').text.strip()
             link = item.select_one('h3.wp-block-post-title>a')['href']
 
-            image_link = item.select_one('img')['data-opt-src'].split('best/')[1]
+            try:
+                image_link = item.select_one('img')['data-opt-src'].split('best/')[1]
+            except KeyError:
+                image_link = item.select_one('img')['srcset'].split(',')[-1].split()[0]
+
             auction_id = item.select_one('img')['data-image-id']
 
             try:
