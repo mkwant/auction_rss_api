@@ -1,3 +1,4 @@
+import re
 from typing import List
 
 import httpx
@@ -27,21 +28,24 @@ class GumTree(AuctionExtractor):
         if r.status_code == 247:
             raise ConnectionError("Received HTTP Error 247")
         soup = BeautifulSoup(r.text, features="html.parser")
-        items = soup.select('a.e25keea22')
 
+        items = soup.select('article[data-q="search-result"]')
         for item in items:
-            link = item['href']
+            link = 'https://www.gumtree.com' + item.select_one('a')['href']
             auction_id = link.split('/')[-1]
 
             try:
                 image_link = item.select_one('img')['src']
             except KeyError:
                 image_link = item.select_one('img')['data-src']
-            title = item.select_one('div.e25keea18').text
-            _desc = item.select_one('p.e25keea17').text
+
+            title = item.select_one('div[data-q="tile-title"]').text.strip()
+            _desc = item.select_one('p.css-ifrxa0-listing-tile-v-2023').text.strip()
             _location = item.select_one('div[data-q="tile-location"]').text
             _price = item.select_one('div[data-q="tile-price"]').text
-            description = f"{_desc}\n\n{_price}\n\n{_location}"
+            description = f"{_price}\n\n{_desc}\n\n{_location}"
+            description = re.sub(pattern="(^ |(?<=\n) |  +| (?=\n)| $)", repl="",
+                                 string="".join(description))  # Remove internal whitespace
 
             auctions.append(
                 Auction(**{

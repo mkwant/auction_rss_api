@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
@@ -9,13 +9,16 @@ from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
 from auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_extractors.catawiki import CataWiki
+from auction_extractors.christies import Christies
 from auction_extractors.delcampe import Delcampe
 from auction_extractors.ebay import SiteId, Ebay
+from auction_extractors.ewbank import Ewbank
 from auction_extractors.gottahaverockandroll import GottaHaveRockAndRoll
 from auction_extractors.gumtree import GumTree
 from auction_extractors.juliens import JuliensAuctions
 from auction_extractors.kleinanzeigen import Kleinanzeigen
 from auction_extractors.lastdodo import LastDodo
+from auction_extractors.liveauctioneers import LiveAuctioneers
 from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.omega import Omega
 from auction_extractors.rrauction import RRAuction
@@ -90,6 +93,12 @@ def catawiki_rss(search_term: str) -> RSSResponse:
     return site.search()
 
 
+@router.get(path='/christies')
+def christies_rss(search_term: str) -> RSSResponse:
+    site = Christies(search_term=search_term)
+    return site.search()
+
+
 @router.get(path='/delcampe_', include_in_schema=False)  # For backwards compatibility
 @router.get(path='/delcampe')
 def delcampe_rss(search_term: str) -> RSSResponse:
@@ -108,6 +117,12 @@ def ebay_rss(
         site_id=site_id.value,
         only_locally_listed_items=only_locally_listed_items
     )
+    return site.search()
+
+
+@router.get(path='/ewbank')
+def ewbank_rss(search_term: str) -> RSSResponse:
+    site = Ewbank(search_term=search_term)
     return site.search()
 
 
@@ -138,6 +153,12 @@ def kleinanzeigen_rss(search_term: str) -> RSSResponse:
 @router.get(path='/lastdodo')
 def lastdodo_rss(search_term: str) -> RSSResponse:
     site = LastDodo(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/liveauctioneers')
+def liveauctioneers_rss(search_term: str) -> RSSResponse:
+    site = LiveAuctioneers(search_term=search_term)
     return site.search()
 
 
@@ -189,7 +210,7 @@ def tracksauctions_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/tradera')
-def tradera_rss(search_term: str, currency: str = Query(
+def tradera_rss(search_term: str, currency: Literal['DKK', 'EUR', 'GBP', 'JPY', 'NOK', 'SEK', 'USD'] = Query(
     default="EUR", enum=['DKK', 'EUR', 'GBP', 'JPY', 'NOK', 'SEK', 'USD']
 )) -> RSSResponse:
     site = Tradera(search_term=search_term, currency=currency)

@@ -34,23 +34,37 @@ class GreedbagExtractor(AuctionExtractor, ABC):
 
         products = soup.select('div.hproduct')
         for product in products:
-            _title = product.select_one('h2.album').text.strip()
-            _artist = product.select_one('h3.artist').text.strip()
+            _title = product.select_one('h2.album')
+            if _title:
+                _title = _title.text.strip()
+            _artist = product.select_one('h3.artist')
+            if _artist:
+                _artist = _artist.text.strip()
             title = f'{_artist} - {_title}'
-            link = self.search_link + product.select_one('a')['href']
-            image_link = product.select_one('img')['src']
-            _desc = product.select_one('div.description').text.strip()
-            _price = product.select_one('div.line-details').text.strip()
+            link = self.search_link + str(product.select_one('a')['href'])  # ty: ignore[non-subscriptable]
+
+            _image = product.select_one('img')
+            if _image:
+                image_link = _image['src']
+            else:
+                image_link = None
+
+            _desc = product.select_one('div.description')
+            if _desc:
+                _description = _desc.text.strip()
+            _price = product.select_one('div.line-details')
+            if _price:
+                _price = _price.text.strip()
             description = f"{_price}\n\n{_desc}"
             auction_id = hashlib.md5(link.encode('utf-8')).hexdigest()
 
             auctions.append(
-                Auction(**{
-                    'title': title,
-                    'auction_id': auction_id,
-                    'description': description,
-                    'link': link,
-                    'image_link': image_link,
-                }))
+                Auction(
+                    title=title,
+                    auction_id=auction_id,
+                    description=description,
+                    link=link,
+                    image_link=image_link,
+                ))
 
         return auctions

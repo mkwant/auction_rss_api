@@ -61,16 +61,18 @@ class ShopifyExtractor(AuctionExtractor, ABC):
             description = f"{_variants}\n\n{product['body_html']}"
 
             auctions.append(
-                Auction(**{
-                    'title': title,
-                    'auction_id': auction_id,
-                    'description': description,
-                    'link': link,
-                    'image_link': image_link,
-                    'start_date': start_date
-                }))
+                Auction(
+                    title=title,
+                    auction_id=auction_id,
+                    description=description,
+                    link=link,
+                    image_link=image_link,
+                    start_date=start_date,
+                )
+            )
 
         return auctions
+
 
 if __name__ == '__main__':
     dais = ShopifyExtractor()
