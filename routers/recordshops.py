@@ -21,6 +21,7 @@ from auction_extractors.houseofmythology import HouseOfMythology
 from auction_extractors.ideanow import IdeaNow
 from auction_extractors.infinitefog import InfiniteFog
 from auction_extractors.japanrecords import JapanRecords
+from auction_extractors.japanrecordvinyl import JapanRecordVinyl
 from auction_extractors.juno import Juno
 from auction_extractors.kent import Kent
 from auction_extractors.kontaktaudio import KontaktAudio
@@ -168,6 +169,12 @@ def infinitefog_rss(search_term: str) -> RSSResponse:
 @router.get(path='/japanrecords')
 def japanrecords_rss(search_term: str) -> RSSResponse:
     site = JapanRecords(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/japanrecordvinyl')
+def japanrecordvinyl_rss(search_term: str) -> RSSResponse:
+    site = JapanRecordVinyl(search_term=search_term)
     return site.search()
 
 
