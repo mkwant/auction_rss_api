@@ -1,9 +1,12 @@
 import json
+import re
 from abc import ABC, abstractmethod
 from typing import List
 
 import cloudscraper
 import dateparser
+import httpx
+from bs4 import BeautifulSoup
 
 from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
@@ -74,5 +77,58 @@ class ShopifyExtractor(AuctionExtractor, ABC):
         return auctions
 
 
-if __name__ == '__main__':
-    dais = ShopifyExtractor()
+class ShopifySearchExtractor(AuctionExtractor, ABC):
+    @property
+    @abstractmethod
+    def domain(self) -> str:
+        """The domain of the Shopify site, i.e 'mysite.com'."""
+        ...
+
+    @property
+    def search_link(self) -> str:
+        return f"https://www.{self.domain}/search?q={self.search_term}"
+
+    def get_auctions(self) -> List[Auction]:
+        auctions = []
+
+        url = f'https://{self.domain}/search'
+        params = {
+            'q': self.search_term,
+        }
+        r = httpx.get(url=url, params=params, follow_redirects=True)
+        r.raise_for_status()
+        soup = BeautifulSoup(r.text, features='html.parser')
+
+        script = soup.select_one('script#web-pixels-manager-setup').text
+        json_str = script.split('searchResult\\":')[1].replace('}]]"});', '')
+
+        json_str = re.sub(r'\\"', '"', json_str)  # Replace escaped quotes with actual quotes
+        json_str = re.sub(r'\\(?!")', '', json_str)  # Remove unnecessary backslashes that aren't escaping quotes
+
+        json_parsed = json.loads(json_str)
+        items = json_parsed['productVariants']
+        for item in items:
+            auction_id = item['product']['id']
+            title = item['product']['title']
+            link = self.domain + item['product']['url']
+
+            try:
+                image_link = 'https:' + item['image']['src']
+            except TypeError:
+                image_link = None
+
+            _price = f'{item['price']['currencyCode']} {item['price']['amount']}'
+            _desc = item['title']
+            description = f'{_price}\n\n{_desc}'
+
+            auctions.append(
+                Auction(
+                    auction_id=auction_id,
+                    title=title,
+                    link=link,
+                    image_link=image_link,
+                    description=description,
+                )
+            )
+
+        return auctions

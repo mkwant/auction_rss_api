@@ -1,12 +1,11 @@
 from models.auctionextractor_shopify import ShopifySearchExtractor
 
 
-class JapanRecordVinyl(ShopifySearchExtractor):
-
+class BoilerRoom(ShopifySearchExtractor):
     @property
     def domain(self) -> str:
-        return "japan-record-vinyl.com"
+        return "boilerroomrecords.co.uk"
 
     @property
     def site_desc(self) -> str:
-        return "Japan Record Vinyl"
+        return "Boiler Room Records"

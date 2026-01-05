@@ -5,6 +5,7 @@ from auction_extractors.anonne import Anonne
 from auction_extractors.backstage import BackStage
 from auction_extractors.bandcamp import Bandcamp
 from auction_extractors.bandcamp_faves import BandcampFaves
+from auction_extractors.boilerroom import BoilerRoom
 from auction_extractors.cashensgap import CashensGap
 from auction_extractors.cdandlp import CdAndLp
 from auction_extractors.dais import Dais
@@ -72,6 +73,12 @@ def bandcamp_rss(artist: str) -> RSSResponse:
 @router.get(path='/bandcamp_faves')
 def bandcamp_faves_rss(username: str) -> RSSResponse:
     site = BandcampFaves(search_term=username)
+    return site.search()
+
+
+@router.get(path='/boilerroom')
+def boilerroom_rss(search_term: str) -> RSSResponse:
+    site = BoilerRoom(search_term=search_term)
     return site.search()
 
 
