@@ -79,6 +79,7 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
 class ShopifySearchExtractor(AuctionExtractor, ABC):
     """A base class for Shopify sites. Builds a feed off a search result."""
+
     @property
     @abstractmethod
     def domain(self) -> str:
@@ -104,8 +105,9 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
         script = soup.select_one('script#web-pixels-manager-setup').text
         json_str = script.split('searchResult\\":')[1].replace('}]]"});', '')
 
-        json_str = re.sub(r'\\"', '"', json_str)  # Replace escaped quotes with actual quotes
-        json_str = re.sub(r'\\(?!")', '', json_str)  # Remove unnecessary backslashes that aren't escaping quotes
+        json_str = re.sub(pattern=r'\\"', repl='"', string=json_str)  # Replace escaped quotes with actual quotes
+        json_str = re.sub(pattern=r'\\(?!")', repl='',
+                          string=json_str)  # Remove unnecessary backslashes that aren't escaping quotes
 
         json_parsed = json.loads(json_str)
         items = json_parsed['productVariants']
@@ -113,15 +115,19 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
             auction_id = item['product']['id']
             title = item['product']['title']
             link = self.domain + item['product']['url']
+            seller = item['product']['vendor']
 
             try:
                 image_link = 'https:' + item['image']['src']
             except TypeError:
                 image_link = None
 
-            _price = f'{item['price']['currencyCode']} {item['price']['amount']}'
+            _price = f'{item['price']['currencyCode']} {item['price']['amount']:.2f}'
+            _type = item['product']['type']
             _desc = item['title']
-            description = f'{_price}\n\n{_desc}'
+            description = f'{_price}\n\n{_type}'
+            if _desc != 'Default Title':
+                description += f'\n\n{_desc}'
 
             auctions.append(
                 Auction(
@@ -130,6 +136,7 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
                     link=link,
                     image_link=image_link,
                     description=description,
+                    seller=seller,
                 )
             )
 
