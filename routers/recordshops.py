@@ -32,6 +32,7 @@ from auction_extractors.memorabiliauk import MemorabiliaUk
 from auction_extractors.musicstack import MusicStack
 from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
+from auction_extractors.rarevinyl import RareVinyl
 from auction_extractors.recordmecca import RecordMecca
 from auction_extractors.slcd import SLCD
 from auction_extractors.soisong import Soisong
@@ -236,6 +237,12 @@ def platomania_rss(search_term: str) -> RSSResponse:
 @router.get(path='/pleasuresofpasttimes')
 def pleasuresofpasttimes_rss(search_term: str) -> RSSResponse:
     site = PleasuresOfPastTimes(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/rarevinyl')
+def rarevinyl_rss(search_term: str) -> RSSResponse:
+    site = RareVinyl(search_term=search_term)
     return site.search()
 
 

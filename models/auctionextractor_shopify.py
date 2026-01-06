@@ -13,7 +13,7 @@ from models.auctionextractor import AuctionExtractor
 
 
 class ShopifyExtractor(AuctionExtractor, ABC):
-    """A base class for Shopify sites."""
+    """A base class for Shopify sites. Extracts the first 250 items from a Shopify site."""
     search_in_desc: bool = False
 
     @property
@@ -78,6 +78,7 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
 
 class ShopifySearchExtractor(AuctionExtractor, ABC):
+    """A base class for Shopify sites. Builds a feed off a search result."""
     @property
     @abstractmethod
     def domain(self) -> str:
@@ -94,6 +95,7 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
         url = f'https://{self.domain}/search'
         params = {
             'q': self.search_term,
+            'sort_by': 'created',
         }
         r = httpx.get(url=url, params=params, follow_redirects=True)
         r.raise_for_status()
