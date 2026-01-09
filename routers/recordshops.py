@@ -16,6 +16,7 @@ from auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_extractors.discords import Discords
 from auction_extractors.eil import EIL
 from auction_extractors.evilgreed import EvilGreed
+from auction_extractors.foetus import Foetus
 from auction_extractors.hhv import HHV
 from auction_extractors.hmv_jp import HMVJapan
 from auction_extractors.houseofmythology import HouseOfMythology
@@ -141,6 +142,12 @@ def eil_rss(search_term: str) -> RSSResponse:
 @router.get(path='/evilgreed')
 def evilgreed_rss(collection: str) -> RSSResponse:
     site = EvilGreed(search_term=None, collection=collection)
+    return site.search()
+
+
+@router.get(path='/foetus')
+def foetus_rss() -> RSSResponse:
+    site = Foetus()
     return site.search()
 
 
