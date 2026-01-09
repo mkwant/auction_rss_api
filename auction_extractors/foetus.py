@@ -31,6 +31,9 @@ class Foetus(AuctionExtractor):
             _title = item.select_one('h2.prodtitle').text.strip()
             title = f'{_title} ({_type})'
 
+            if item.select_one('input.wpsc_buy_button')['value'].lower() == 'sold out':
+                title = f'SOLD OUT | {title}'
+
             try:
                 image_link = item.find(string=lambda text: isinstance(text, Comment)).split('\"')[-2]
             except Exception as e:
