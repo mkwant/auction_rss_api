@@ -1,7 +1,7 @@
 from typing import List
 
 import httpx
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 
 from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
@@ -31,7 +31,11 @@ class Foetus(AuctionExtractor):
             _title = item.select_one('h2.prodtitle').text.strip()
             title = f'{_title} ({_type})'
 
-            image_link = item.select_one('img.product_image')['src']
+            try:
+                image_link = item.find(string=lambda text: isinstance(text, Comment)).split('\"')[-2]
+            except Exception as e:
+                print(e)
+                image_link = item.select_one('img.product_image')['src']
 
             _cat_nr = item.select_one('small').text.strip()
             _desc_1 = item.select_one('div.wpsc_description').text.strip()
