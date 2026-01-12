@@ -23,6 +23,7 @@ from auction_extractors.marktplaats import Marktplaats
 from auction_extractors.omega import Omega
 from auction_extractors.rrauction import RRAuction
 from auction_extractors.sothebys import Sothebys
+from auction_extractors.subito import Subito
 from auction_extractors.todocoleccion import Todocoleccion
 from auction_extractors.tracksauctions import TracksAuctions
 from auction_extractors.tradera import Tradera
@@ -191,6 +192,12 @@ def rrauction_rss(search_term: str) -> RSSResponse:
 @router.get(path='/sothebys')
 def sothebys_rss(search_term: str) -> RSSResponse:
     site = Sothebys(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/subito')
+def subito_rss(search_term: str) -> RSSResponse:
+    site = Subito(search_term=search_term)
     return site.search()
 
 
