@@ -114,7 +114,7 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
         for item in items:
             auction_id = item['product']['id']
             title = item['product']['title']
-            link = self.domain + item['product']['url']
+            link = f'https://{self.domain}{item['product']['url']}'
             seller = item['product']['vendor']
 
             try:
