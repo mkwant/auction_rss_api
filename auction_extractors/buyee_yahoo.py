@@ -49,8 +49,12 @@ class BuyeeYahoo(AuctionExtractor):
             auction_id = _url_ext.split('/')[-1]
             image_link = auction.select_one('img.g-thumbnail__image')['data-src'].split('?')[0]
             _auction_price = auction.select('div.g-priceDetails')[0].get_text(separator=' ', strip=True)
-            _auction_days_left = auction.select_one('li.itemCard__infoItem>span.g-text--attention').text
-            description = f'<b>{_auction_price}<br><b>Time left:</b> {_auction_days_left}<br>'
+            try:
+                _auction_days_left = auction.select_one('li.itemCard__infoItem>span.g-text--attention').text
+                description = f'<b>{_auction_price}<br><b>Time left:</b> {_auction_days_left}<br>'
+            except AttributeError:
+                _auction_days_left = '?'
+                description = f'<b>{_auction_price}</b>'
 
             auctions.append(
                 Auction(
