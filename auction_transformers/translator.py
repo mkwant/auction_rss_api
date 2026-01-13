@@ -1,15 +1,17 @@
 import logging
 from abc import ABC, abstractmethod
 from datetime import timedelta
-from functools import partial
 from typing import Optional
 
 import httpx
+import truststore
 from asgi_correlation_id import correlation_id
 from cashews import cache
 
 from app.settings import settings
 from models.auction import Auction
+
+truststore.inject_into_ssl()  # Use OS trust store
 
 # Setting up logging
 logger = logging.getLogger(__name__)
@@ -112,6 +114,6 @@ async def translate_auction(
     return auction
 
 
-azure_translator = AzureTranslator(client=httpx.AsyncClient())
-translate_from_jp = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='ja')
-translate_from_es = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='es')
+# azure_translator = AzureTranslator(client=httpx.AsyncClient())
+# translate_from_jp = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='ja')
+# translate_from_es = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='es')

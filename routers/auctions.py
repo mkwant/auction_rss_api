@@ -3,7 +3,7 @@ from typing import Literal, Optional
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
-from app.dependencies import Translate
+from app.dependencies import Translate, TranslateLanguage
 from auction_extractors.bonhams import Bonhams
 from auction_extractors.buyee_mercari import BuyeeMercari
 from auction_extractors.buyee_rakuma import BuyeeRakuma
@@ -29,7 +29,6 @@ from auction_extractors.tracksauctions import TracksAuctions
 from auction_extractors.tradera import Tradera
 from auction_extractors.tweedehands import TweedeHands
 from auction_extractors.vinted import Vinted
-from auction_transformers.translator import translate_from_jp, translate_from_es
 from routers.logger import LoggedRoute
 
 router = APIRouter(
@@ -62,7 +61,10 @@ def bonhams_rss(search_term: str) -> RSSResponse:
 @router.get(path='/buyee_mercari')
 def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
     if translate.translate_titles:
-        site = BuyeeMercari(search_term=search_term, transformers=[translate_from_jp])
+        site = BuyeeMercari(
+            search_term=search_term,
+            transformers=[translate.translate_from(language=TranslateLanguage.JAPANESE)]
+        )
     else:
         site = BuyeeMercari(search_term=search_term)
     return site.search()
@@ -72,7 +74,10 @@ def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate
 @router.get(path='/buyee_rakuma')
 def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
     if translate.translate_titles:
-        site = BuyeeRakuma(search_term=search_term, transformers=[translate_from_jp])
+        site = BuyeeRakuma(
+            search_term=search_term,
+            transformers=[translate.translate_from(language=TranslateLanguage.JAPANESE)]
+        )
     else:
         site = BuyeeRakuma(search_term=search_term)
     return site.search()
@@ -82,7 +87,10 @@ def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)
 @router.get(path='/buyee_yahoo')
 def buyee_yahoo_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
     if translate.translate_titles:
-        site = BuyeeYahoo(search_term=search_term, transformers=[translate_from_jp])
+        site = BuyeeYahoo(
+            search_term=search_term,
+            transformers=[translate.translate_from(language=TranslateLanguage.JAPANESE)]
+        )
     else:
         site = BuyeeYahoo(search_term=search_term)
     return site.search()
@@ -204,7 +212,10 @@ def subito_rss(search_term: str) -> RSSResponse:
 @router.get(path='/todocoleccion')
 def todocoleccion_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
     if translate.translate_titles:
-        site = Todocoleccion(search_term=search_term, transformers=[translate_from_es])
+        site = Todocoleccion(
+            search_term=search_term,
+            transformers=[translate.translate_from(language=TranslateLanguage.SPANISH)]
+        )
     else:
         site = Todocoleccion(search_term=search_term)
     return site.search()
