@@ -36,6 +36,7 @@ from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_extractors.rarevinyl import RareVinyl
 from auction_extractors.recordmecca import RecordMecca
 from auction_extractors.redeye import RedEye
+from auction_extractors.rockaway import Rockaway
 from auction_extractors.slcd import SLCD
 from auction_extractors.soisong import Soisong
 from auction_extractors.tokyomusicjapan import TokyoMusicJapan
@@ -263,6 +264,12 @@ def recordmecca_rss(search_term: str) -> RSSResponse:
 @router.get(path='/redeye')
 def redeye_rss(search_term: str) -> RSSResponse:
     site = RedEye(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/rockaway')
+def rockaway_rss(search_term: str) -> RSSResponse:
+    site = Rockaway(search_term=search_term)
     return site.search()
 
 
