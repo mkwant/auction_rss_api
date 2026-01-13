@@ -162,15 +162,16 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
     # TODO: Figure out more complicated endpoints (eBay, Yahoo Japan, etc) - make `feed` func a part of the ABC?
 
     def create_route(self) -> None:
-        async def feed() -> RSSResponse:
-            return self.search()
+        # async def feed() -> RSSResponse:
+        #     return self.search()
 
         route_name = self.domain.split('.')[0].lower()
         router.add_api_route(
             path=f'/{route_name}',
-            endpoint=feed,
+            endpoint=self.search,
             methods=["GET"],
             dependencies=[Depends(CommonQueryParams)],
+            response_class=RSSResponse,
             summary=f"Rss feed for {self.site_desc}",
             description=f"Returns an RSS feed for {self.site_desc} ({self.domain}).",
         )
