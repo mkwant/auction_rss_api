@@ -204,8 +204,14 @@ def sothebys_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/subito')
-def subito_rss(search_term: str) -> RSSResponse:
-    site = Subito(search_term=search_term)
+def subito_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
+    if translate.translate_titles:
+        site = Subito(
+            search_term=search_term,
+            transformers=[translate.translate_from(language=TranslateLanguage.ITALIAN)]
+        )
+    else:
+        site = Subito(search_term=search_term)
     return site.search()
 
 
