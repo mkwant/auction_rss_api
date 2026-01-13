@@ -59,7 +59,7 @@ def bonhams_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/buyee_mercari')
-def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
+def buyee_mercari_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
     if translate.translate_titles:
         site = BuyeeMercari(
             search_term=search_term,
@@ -72,7 +72,7 @@ def buyee_mercari_rss(search_term: str, translate: Translate = Depends(Translate
 
 @router.get(path='/buyee__rakuma', include_in_schema=False)  # For backwards compatibility
 @router.get(path='/buyee_rakuma')
-def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
+def buyee_rakuma_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
     if translate.translate_titles:
         site = BuyeeRakuma(
             search_term=search_term,
@@ -85,7 +85,7 @@ def buyee_rakuma_rss(search_term: str, translate: Translate = Depends(Translate)
 
 @router.get(path='/buyee__yahoo', include_in_schema=False)  # For backwards compatibility
 @router.get(path='/buyee_yahoo')
-def buyee_yahoo_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
+def buyee_yahoo_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
     if translate.translate_titles:
         site = BuyeeYahoo(
             search_term=search_term,
@@ -210,7 +210,7 @@ def subito_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/todocoleccion')
-def todocoleccion_rss(search_term: str, translate: Translate = Depends(Translate)) -> RSSResponse:
+def todocoleccion_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
     if translate.translate_titles:
         site = Todocoleccion(
             search_term=search_term,
