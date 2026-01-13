@@ -1,14 +1,16 @@
 import logging
 from pathlib import Path
 
+import truststore
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 
 from app.logs import setup_logging
 from app.middleware import AddNoIndex
 from app.settings import settings
-from routers import redirect, auctions, venues, recordshops
-import truststore
+from auction_extractors.rockaway import Rockaway
+from models import auctionextractor_shopify
+from routers import auctions, recordshops, redirect, venues
 
 truststore.inject_into_ssl()  # Use OS trust store
 
@@ -32,13 +34,17 @@ app = FastAPI(
 
 logger.info('Starting application...')
 
+Rockaway().create_route()
+
 # Add routers and middleware
 app.include_router(auctions.router)
 app.include_router(recordshops.router)
 app.include_router(venues.router)
+app.include_router(auctionextractor_shopify.router)
 app.include_router(redirect.router)
-app.add_middleware(middleware_class=AddNoIndex) # noqa
-app.add_middleware(middleware_class=CorrelationIdMiddleware) # noqa
+app.add_middleware(middleware_class=AddNoIndex)  # noqa
+app.add_middleware(middleware_class=CorrelationIdMiddleware)  # noqa
 
-routes = {x.name for x in app.routes if x.name.endswith('_rss')} # noqa
+
+routes = {x.name for x in app.routes if x.name.endswith('_rss')}  # noqa
 logger.info(f'Total feeds: {len(routes)}')

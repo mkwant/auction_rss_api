@@ -1,15 +1,30 @@
 import json
 import re
 from abc import ABC, abstractmethod
-from typing import List
+from dataclasses import dataclass
+from typing import Annotated, List
 
 import cloudscraper
 import dateparser
 import httpx
 from bs4 import BeautifulSoup
+from fastapi import APIRouter, Depends
+from fastapi_rss import RSSResponse
 
 from models.auction import Auction
 from models.auctionextractor import AuctionExtractor
+from routers.logger import LoggedRoute
+
+router = APIRouter(
+    route_class=LoggedRoute,
+    default_response_class=RSSResponse,
+    tags=['Shopify']
+)
+
+
+@dataclass
+class CommonQueryParams:
+    search_term: str
 
 
 class ShopifyExtractor(AuctionExtractor, ABC):
@@ -141,3 +156,21 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
             )
 
         return auctions
+
+    # TODO: Import classes using importlib, making sure they are imported before the routes are added
+    # TODO: Move CommonQueryParams class
+    # TODO: Figure out more complicated endpoints (eBay, Yahoo Japan, etc) - make `feed` func a part of the ABC?
+
+    def create_route(self) -> None:
+        async def feed() -> RSSResponse:
+            return self.search()
+
+        route_name = self.domain.split('.')[0].lower()
+        router.add_api_route(
+            path=f'/{route_name}',
+            endpoint=feed,
+            methods=["GET"],
+            dependencies=[Depends(CommonQueryParams)],
+            summary=f"Rss feed for {self.site_desc}",
+            description=f"Returns an RSS feed for {self.site_desc} ({self.domain}).",
+        )
