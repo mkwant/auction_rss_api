@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from fastapi_rss import RSSResponse
 
 from auction_extractors.anonne import Anonne
