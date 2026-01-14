@@ -35,7 +35,7 @@ class MagicbusExtractor(AuctionExtractor):
                 raw_img_link = item.select_one('img')['src']
             image_link = 'https' + raw_img_link.split('https')[2].replace('avif', 'jpg')
 
-            auction_id = item.select_one('img')['data-image-id']
+            auction_id = link.split('/')[-2]
 
             try:
                 _desc = item.select_one('div.taxonomy-product_tag').text.strip()
