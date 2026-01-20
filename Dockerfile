@@ -9,9 +9,6 @@ ENV TZ=Europe/Amsterdam
 # Ignore pip root error warnings
 ENV PIP_ROOT_USER_ACTION=ignore
 
-# Update apt-get
-RUN apt-get update
-
 # Deploy code
 WORKDIR /app
 COPY requirements.txt requirements.txt
