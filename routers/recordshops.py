@@ -19,6 +19,7 @@ from auction_extractors.evilgreed import EvilGreed
 from auction_extractors.foetus import Foetus
 from auction_extractors.hhv import HHV
 from auction_extractors.hmv_jp import HMVJapan
+from auction_extractors.hotstuff import HotStuff
 from auction_extractors.houseofmythology import HouseOfMythology
 from auction_extractors.ideanow import IdeaNow
 from auction_extractors.infinitefog import InfiniteFog
@@ -36,6 +37,7 @@ from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_extractors.rarevinyl import RareVinyl
 from auction_extractors.recordmecca import RecordMecca
 from auction_extractors.redeye import RedEye
+from auction_extractors.rockabuy import RockaBuy
 from auction_extractors.rockaway import Rockaway
 from auction_extractors.slcd import SLCD
 from auction_extractors.soisong import Soisong
@@ -164,6 +166,12 @@ def hmvjapan_rss(search_term: str) -> RSSResponse:
     return site.search()
 
 
+@router.get(path='/hotstuff')
+def hotstuff_rss(search_term: str) -> RSSResponse:
+    site = HotStuff(search_term=search_term)
+    return site.search()
+
+
 @router.get(path='/houseofmythology')
 def houseofmythology_rss(search_term: str) -> RSSResponse:
     site = HouseOfMythology(search_term=search_term)
@@ -264,6 +272,12 @@ def recordmecca_rss(search_term: str) -> RSSResponse:
 @router.get(path='/redeye')
 def redeye_rss(search_term: str) -> RSSResponse:
     site = RedEye(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/rockabuy')
+def rockabuy_rss(search_term: str) -> RSSResponse:
+    site = RockaBuy(search_term=search_term)
     return site.search()
 
 
