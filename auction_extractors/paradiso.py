@@ -73,7 +73,10 @@ class Paradiso(AuctionExtractor):
             description = f'{event['subtitle']}\n{_start_date:%H:%M}'
 
             link = 'https://www.paradiso.nl/' + event['uri']
-            image_link = event['image'][0]['desktopXL2x']
+            try:
+                image_link = event['image'][0]['desktopXL2x']
+            except TypeError:
+                image_link = None
 
             auctions.append(
                 Auction(**{
