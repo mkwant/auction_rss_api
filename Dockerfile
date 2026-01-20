@@ -1,7 +1,7 @@
 FROM python@sha256:9b81fe9acff79e61affb44aaf3b6ff234392e8ca477cb86c9f7fd11732ce9b6a
 
 # Install UV
-COPY --from=ghcr.io/astral-sh/uv@sha256:ac4baed46b4ca69acf99fe645563970b758fecab89ad48d8222356d68dd06e7b /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv@sha256:eed5b30f303a09933451248c6ccde9f53e922a4e5d80bde560ab38662ce6ccf5 /uv /uvx /bin/
 
 # Set timezone
 ENV TZ=Europe/Amsterdam
