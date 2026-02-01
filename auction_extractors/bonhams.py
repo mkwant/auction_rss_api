@@ -44,8 +44,13 @@ class Bonhams(AuctionExtractor):
             image_link = item['image']['url']
             _price = f"{item['price']['currencySymbol']}{item['price']['estimateLow']}-{item['price']['estimateHigh']}"
             _hammertime = f"{self.ts_to_date(item['hammerTime']['timestamp']):%Y-%m-%d %H:%M}"
-            _bidding_start = f"{self.ts_to_date(item['biddableFrom']['timestamp']):%Y-%m-%d %H:%M}"
-            description = f"{item['heading']}\n{item['title']}\n\nEstimate: {_price}\n\nHammer time: {_hammertime}\nBidding start: {_bidding_start}"
+            description = f"{item['heading']}\n{item['title']}\n\nEstimate: {_price}\n\nHammer time: {_hammertime}"
+            try:
+                _bidding_start = f"{self.ts_to_date(item['biddableFrom']['timestamp']):%Y-%m-%d %H:%M}"
+                description += '\nBidding start: {_bidding_start}'
+            except KeyError:
+                pass
+
             creation_date = self.ts_to_date(item['updatedAt']['timestamp'])
 
             auctions.append(
