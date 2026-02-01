@@ -22,6 +22,7 @@ from auction_extractors.hmv_jp import HMVJapan
 from auction_extractors.hotstuff import HotStuff
 from auction_extractors.houseofmythology import HouseOfMythology
 from auction_extractors.ideanow import IdeaNow
+from auction_extractors.imusic import Imusic
 from auction_extractors.infinitefog import InfiniteFog
 from auction_extractors.japanrecords import JapanRecords
 from auction_extractors.japanrecordvinyl import JapanRecordVinyl
@@ -181,6 +182,12 @@ def houseofmythology_rss(search_term: str) -> RSSResponse:
 @router.get(path='/ideanow')
 def ideanow_rss(search_term: str) -> RSSResponse:
     site = IdeaNow(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/imusic')
+def imusic_rss(search_term: str) -> RSSResponse:
+    site = Imusic(search_term=search_term)
     return site.search()
 
 
