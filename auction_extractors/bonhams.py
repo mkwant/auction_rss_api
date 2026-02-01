@@ -47,7 +47,7 @@ class Bonhams(AuctionExtractor):
             description = f"{item['heading']}\n{item['title']}\n\nEstimate: {_price}\n\nHammer time: {_hammertime}"
             try:
                 _bidding_start = f"{self.ts_to_date(item['biddableFrom']['timestamp']):%Y-%m-%d %H:%M}"
-                description += '\nBidding start: {_bidding_start}'
+                description += f'\nBidding start: {_bidding_start}'
             except KeyError:
                 pass
 
