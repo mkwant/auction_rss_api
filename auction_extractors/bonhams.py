@@ -40,6 +40,9 @@ class Bonhams(AuctionExtractor):
         for item in items:
             auction_id = item['id']
             title = item['image']['caption']
+            if title == "":
+                title = item['title']
+
             link = f'https://www.bonhams.com/auction/{item['auctionId']}/lot/{item['lotId']}/{item['slug']}'
             image_link = item['image']['url']
             _price = f"{item['price']['currencySymbol']}{item['price']['estimateLow']}-{item['price']['estimateHigh']}"
