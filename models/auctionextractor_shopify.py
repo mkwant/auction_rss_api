@@ -98,6 +98,8 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 class ShopifySearchExtractor(AuctionExtractor, ABC):
     """A base class for Shopify sites. Builds a feed off a search result."""
 
+    dependencies: list[Depends] = []
+
     @property
     @abstractmethod
     def domain(self) -> str:
@@ -174,6 +176,7 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
             path=f'/{route_name}',
             endpoint=self.search,
             methods=["GET"],
+            dependencies=self.dependencies,
             # dependencies=[Depends(Translate)],
             summary=f"Rss feed for {self.site_desc}",
             description=f"Returns an RSS feed for {self.site_desc} ({self.domain}).",

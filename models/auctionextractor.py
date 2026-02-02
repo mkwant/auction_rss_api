@@ -1,7 +1,8 @@
 import asyncio
 import logging
 import traceback
-from abc import abstractmethod
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from datetime import datetime, date
 from typing import List, Callable, Awaitable
 
@@ -25,7 +26,8 @@ nest_asyncio.apply()
 # TODO Create AuctionResponseTransformer ABC that can take an awaitable (or a func and use asyncio.to_thread?) to
 #  transform Auction objects.
 
-class AuctionExtractor(BaseModel):
+@dataclass
+class AuctionExtractor(ABC):
     """
     A base class for an auction extractor.
     :param search_term: What to search for
@@ -35,8 +37,8 @@ class AuctionExtractor(BaseModel):
 
     """
     search_term: str | None = None
-    transformers: List[Transformer] = Field(default_factory=list)
-    default_transformers: List[Transformer] = Field(default_factory=lambda: [html_linebreaks_in_desc])
+    transformers: List[Transformer] = field(default_factory=list)
+    default_transformers: List[Transformer] = field(default_factory=list)
 
     @property
     @abstractmethod
@@ -114,6 +116,7 @@ class AuctionExtractor(BaseModel):
 
         # Apply the transformers to the auction search response
         async def transform():
+            print(f"{self.transformers=}")
             for transformer in self.transformers + self.default_transformers:
                 statements = [transformer(x) for x in auctions]
                 await asyncio.gather(*statements)

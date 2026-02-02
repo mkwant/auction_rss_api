@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from app.logs import setup_logging
 from app.middleware import AddNoIndex
 from app.settings import settings
+from auction_extractors.redeye import RedEye
 from auction_extractors.rockaway import Rockaway
 from models import auctionextractor_shopify
 from routers import auctions, recordshops, redirect, venues
@@ -35,6 +36,7 @@ app = FastAPI(
 logger.info('Starting application...')
 
 Rockaway().create_route()
+RedEye().create_route()
 
 # Add routers and middleware
 app.include_router(auctions.router)
