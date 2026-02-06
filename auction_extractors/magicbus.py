@@ -33,7 +33,11 @@ class MagicbusExtractor(AuctionExtractor):
                 raw_img_link = item.select_one('img')['data-opt-src']
             except KeyError:
                 raw_img_link = item.select_one('img')['src']
-            image_link = 'https' + raw_img_link.split('https')[2].replace('avif', 'jpg')
+            print(raw_img_link)
+            try:
+                image_link = 'https' + raw_img_link.split('https')[2].replace('avif', 'jpg')
+            except IndexError:
+                image_link = raw_img_link.replace('avif', 'jpg')
 
             auction_id = link.split('/')[-2]
 
