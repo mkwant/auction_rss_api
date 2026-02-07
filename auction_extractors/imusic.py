@@ -30,8 +30,9 @@ class Imusic(AuctionExtractor):
         soup = BeautifulSoup(r.text, features='html.parser')
         items = soup.select('div.media')
         for item in items:
-            auction_id = item.select_one('input[name=itemId]')['value']
-            link = 'https://imusic.co' + item.select_one('a')['href']
+            _slug = item.select_one('a')['href']
+            auction_id = _slug.split('/')[2]
+            link = 'https://imusic.co' + _slug
             image_link = item.select_one('img')['src'].replace('scaled', 'original')
             title = item.select_one('a')['title']
 
