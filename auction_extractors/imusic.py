@@ -36,8 +36,16 @@ class Imusic(AuctionExtractor):
             image_link = item.select_one('img')['src'].replace('scaled', 'original')
             title = item.select_one('a')['title']
 
-            _price = item.select_one('button.price').text.strip()
-            _note = item.select_one('button.btn-success[title]')['title']
+            try:
+                _price = item.select_one('button.price').text.strip()
+            except AttributeError:
+                _price = soup.select_one("a.btn-success").text.replace('Select size', '').strip()
+
+            try:
+                _note = item.select_one('button.btn-success[title]')['title']
+            except TypeError:
+                _note = item.select_one('a.btn-success[title]')['title']
+
             description = f'{_price}\n\n{_note}'
 
             auctions.append(
