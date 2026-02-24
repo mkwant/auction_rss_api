@@ -34,7 +34,7 @@ class Variaworld(AuctionExtractor):
         auctions = []
 
         for auction in self._get_auctions():
-            link = auction['href']
+            link = 'https://www.variaworld.nl' + auction['href']
             auction_id = link.split('&at=')[1].split('&')[0]
             image = auction.select_one('div.overzichtfotobox_2')
             image_link = f"https://www.variaworld.nl{image.select_one('img')['src']}"
