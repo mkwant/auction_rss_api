@@ -33,6 +33,7 @@ from auction_extractors.kontaktaudio import KontaktAudio
 from auction_extractors.kroese import Kroese
 from auction_extractors.magicbus import MagicbusExtractor
 from auction_extractors.memorabiliauk import MemorabiliaUk
+from auction_extractors.montreuxjazzshop import MontreuxJazzShop
 from auction_extractors.musicstack import MusicStack
 from auction_extractors.platomania import PlatoMania
 from auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
@@ -250,6 +251,12 @@ def magicbus_rss(search_term: str) -> RSSResponse:
 @router.get(path='/memorabiliauk')
 def memorabiliauk_rss(search_term: str) -> RSSResponse:
     site = MemorabiliaUk(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/montreuxjazzshop')
+def montreuxjazzshop_rss(search_term: str) -> RSSResponse:
+    site = MontreuxJazzShop(search_term=search_term)
     return site.search()
 
 
