@@ -14,7 +14,7 @@ class MusicHug(AuctionExtractor):
 
     @property
     def site_desc(self) -> str:
-        return "MusikHug"
+        return "MusicHug"
 
     def get_auctions(self) -> List[Auction]:
         auctions = []
