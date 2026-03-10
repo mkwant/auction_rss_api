@@ -26,9 +26,9 @@ class Kent(AuctionExtractor):
             'o': 'rd',
         }
 
-        r = httpx.get(url=url, params=params)
+        r = httpx.get(url=url, params=params, timeout=10.0)
         r.raise_for_status()
-        soup = BeautifulSoup(r.text, "html.parser")
+        soup = BeautifulSoup(markup=r.text, features="html.parser")
         items = soup.select('table[width="630"]')  # outer tables
 
         for item in items:
