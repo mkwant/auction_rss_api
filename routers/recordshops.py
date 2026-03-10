@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from fastapi_rss import RSSResponse
 
 from auction_extractors.anonne import Anonne
+from auction_extractors.atlasrecords import AtlasRecords
 from auction_extractors.audiophileusa import AudiophileUSA
 from auction_extractors.backstage import BackStage
 from auction_extractors.bandcamp import Bandcamp
@@ -65,6 +66,12 @@ router = APIRouter(
 @router.get(path='/anonne')
 def anonne_rss() -> RSSResponse:
     site = Anonne()
+    return site.search()
+
+
+@router.get(path='/atlasrecords')
+def atlasrecords_rss(search_term: str) -> RSSResponse:
+    site = AtlasRecords(search_term=search_term)
     return site.search()
 
 
