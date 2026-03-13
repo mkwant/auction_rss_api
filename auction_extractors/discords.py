@@ -9,23 +9,24 @@ from models.auctionextractor import AuctionExtractor
 
 
 class Discords(AuctionExtractor):
-    search_term: str
-    SITE: str = 'https://discords.nl'
-    URL: str = f'{SITE}/collections/vendors'
-
     @property
     def site_desc(self) -> str:
         return 'Discords'
 
     @property
     def search_link(self) -> str:
-        return f'{self.URL}?q={self.search_term}&sort_by=created-descending'
+        return f'https://discords.nl/search?type=product&q={self.search_term}&sort_by=created-descending'
 
     def _get_items(self) -> ResultSet:
-        params = {'q': self.search_term,
-                  'sort_by': 'created-descending'}
+        url = 'https://discords.nl/search'
+        params = {
+            'type': 'product',
+            'q': self.search_term,
+            'sort_by': 'created-descending'
+        }
 
-        r = requests.get(url=self.URL, params=params)
+        r = requests.get(url=url, params=params)
+        r.raise_for_status()
         soup = BeautifulSoup(r.content, features='html.parser')
         items = soup.select('div.product-item')
         return items
@@ -36,7 +37,7 @@ class Discords(AuctionExtractor):
         for item in self._get_items():
             item_id = item.select_one('input[name=id]')['value']
             _product_info = item.select_one('a.product-item__title')
-            item_url = f"{self.SITE}{_product_info['href']}"
+            item_url = 'https://discords.nl' + _product_info['href']
             title = _product_info.text.strip()
             try:
                 _inventory = item.select_one('span.inventory').text.strip()
