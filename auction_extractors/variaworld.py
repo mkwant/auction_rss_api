@@ -48,7 +48,7 @@ class Variaworld(AuctionExtractor):
                 _item_price = auction.select_one('span.div_kleur_prijs_2').text.strip()
             title = f"{_artist_name} - '{_item_name}' ({_item_type})"
             description = '\n'.join([_artist_name, _item_name, _item_type, _item_price])
-            start_date = auction.select_one('div.overzicht_datum_ingebracht').text.strip()
+            start_date = auction.select_one('div.overzicht_datum_ingebracht').text.strip().split('\n')[0]
             start_date = datetime.strptime(start_date, '%d-%m-%Y')
 
             auctions.append(
