@@ -31,8 +31,8 @@ def doornroosje_rss(location: str | None = None) -> RSSResponse:
 
 
 @router.get(path='/doornroosje_resale')
-def doornroosjeresale_rss() -> RSSResponse:
-    site = DoornroosjeResale()
+def doornroosjeresale_rss(available_only: bool = False) -> RSSResponse:
+    site = DoornroosjeResale(available_only=available_only)
     return site.search()
 
 
