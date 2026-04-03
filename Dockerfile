@@ -15,6 +15,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     uv pip install --system -r requirements.txt
 
 # Copy application code
-COPY . .
+COPY src/auction_rss_api/. .
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80", "--no-access-log"]

@@ -1,0 +1,66 @@
+from fastapi import APIRouter
+from fastapi_rss import RSSResponse
+
+from auction_rss_api.auction_extractors.doornroosje import Doornroosje
+from auction_rss_api.auction_extractors.doornroosje_resale import DoornroosjeResale
+from auction_rss_api.auction_extractors.effenaar import Effenaar
+from auction_rss_api.auction_extractors.melkweg import Melkweg
+from auction_rss_api.auction_extractors.paradiso import Paradiso
+from auction_rss_api.auction_extractors.tilburg013 import Tilburg013
+from auction_rss_api.auction_extractors.tivolivredenburg import TivoliVredenburg
+from auction_rss_api.auction_extractors.vera import Vera
+from auction_rss_api.routers.logger import LoggedRoute
+
+router = APIRouter(
+    route_class=LoggedRoute,
+    default_response_class=RSSResponse,
+    tags=['Concert venues']
+)
+
+
+@router.get(path='/013')
+def tilburg013_rss() -> RSSResponse:
+    site = Tilburg013()
+    return site.search()
+
+
+@router.get(path='/doornroosje')
+def doornroosje_rss(location: str | None = None) -> RSSResponse:
+    site = Doornroosje(search_term=location)
+    return site.search()
+
+
+@router.get(path='/doornroosje_resale')
+def doornroosjeresale_rss(available_only: bool = False) -> RSSResponse:
+    site = DoornroosjeResale(available_only=available_only)
+    return site.search()
+
+
+@router.get(path='/effenaar')
+def effenaar_rss() -> RSSResponse:
+    site = Effenaar()
+    return site.search()
+
+
+@router.get(path='/melkweg')
+def melkweg_rss() -> RSSResponse:
+    site = Melkweg()
+    return site.search()
+
+
+@router.get(path='/paradiso')
+def paradiso_rss() -> RSSResponse:
+    site = Paradiso()
+    return site.search()
+
+
+@router.get(path='/tivolivredenburg')
+def tivolivredenburg_rss() -> RSSResponse:
+    site = TivoliVredenburg()
+    return site.search()
+
+
+@router.get(path='/vera')
+def vera_rss() -> RSSResponse:
+    site = Vera()
+    return site.search()
