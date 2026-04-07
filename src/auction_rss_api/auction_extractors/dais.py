@@ -1,4 +1,4 @@
-from models.auctionextractor_shopify import ShopifyExtractor
+from auction_rss_api.models.auctionextractor_shopify import ShopifyExtractor
 
 
 class Dais(ShopifyExtractor):

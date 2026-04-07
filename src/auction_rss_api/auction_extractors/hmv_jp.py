@@ -4,8 +4,8 @@ from typing import List
 from bs4 import BeautifulSoup
 from requests_html import HTMLSession
 
-from models.auction import Auction
-from models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 class HMVJapan(AuctionExtractor):

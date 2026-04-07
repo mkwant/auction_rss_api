@@ -1,4 +1,4 @@
-from models.auctionextractor_greedbag import GreedbagExtractor
+from auction_rss_api.models.auctionextractor_greedbag import GreedbagExtractor
 
 
 class Anonne(GreedbagExtractor):

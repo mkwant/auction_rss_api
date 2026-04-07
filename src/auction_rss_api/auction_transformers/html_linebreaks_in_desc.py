@@ -1,4 +1,4 @@
-from models.auction import Auction
+from auction_rss_api.models.auction import Auction
 
 
 async def html_linebreaks_in_desc(auction: Auction) -> Auction:

@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from fastapi_rss import RSSResponse
 
-from auction_extractors.amatterofconcrete import AMatterOfConcrete
-from routers.logger import LoggedRoute
+from auction_rss_api.auction_extractors.amatterofconcrete import AMatterOfConcrete
+from auction_rss_api.routers.logger import LoggedRoute
 
 router = APIRouter(
     route_class=LoggedRoute,

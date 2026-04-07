@@ -9,9 +9,9 @@ import nest_asyncio
 from fastapi_rss import RSSResponse
 from pydantic import BaseModel, Field
 
-from auction_transformers.html_linebreaks_in_desc import html_linebreaks_in_desc
-from models.auction import Auction
-from models.auctionsearchresponse import AuctionSearchResponse
+from auction_rss_api.auction_transformers.html_linebreaks_in_desc import html_linebreaks_in_desc
+from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionsearchresponse import AuctionSearchResponse
 
 Transformer = Callable[[Auction], Awaitable[Auction]]
 

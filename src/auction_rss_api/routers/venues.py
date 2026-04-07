@@ -1,15 +1,15 @@
 from fastapi import APIRouter
 from fastapi_rss import RSSResponse
 
-from auction_extractors.doornroosje import Doornroosje
-from auction_extractors.doornroosje_resale import DoornroosjeResale
-from auction_extractors.effenaar import Effenaar
-from auction_extractors.melkweg import Melkweg
-from auction_extractors.paradiso import Paradiso
-from auction_extractors.tilburg013 import Tilburg013
-from auction_extractors.tivolivredenburg import TivoliVredenburg
-from auction_extractors.vera import Vera
-from routers.logger import LoggedRoute
+from auction_rss_api.auction_extractors.doornroosje import Doornroosje
+from auction_rss_api.auction_extractors.doornroosje_resale import DoornroosjeResale
+from auction_rss_api.auction_extractors.effenaar import Effenaar
+from auction_rss_api.auction_extractors.melkweg import Melkweg
+from auction_rss_api.auction_extractors.paradiso import Paradiso
+from auction_rss_api.auction_extractors.tilburg013 import Tilburg013
+from auction_rss_api.auction_extractors.tivolivredenburg import TivoliVredenburg
+from auction_rss_api.auction_extractors.vera import Vera
+from auction_rss_api.routers.logger import LoggedRoute
 
 router = APIRouter(
     route_class=LoggedRoute,

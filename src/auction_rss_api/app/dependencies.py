@@ -5,8 +5,8 @@ from typing import Any, Coroutine
 
 import httpx
 
-from auction_transformers.translator import AzureTranslator, translate_auction
-from models.auction import Auction
+from auction_rss_api.auction_transformers.translator import AzureTranslator, translate_auction
+from auction_rss_api.models.auction import Auction
 
 
 class TranslateLanguage(StrEnum):

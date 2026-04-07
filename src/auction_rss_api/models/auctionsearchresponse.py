@@ -4,7 +4,7 @@ from typing import List
 from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
 from pydantic import BaseModel
 
-from models.auction import Auction
+from auction_rss_api.models.auction import Auction
 
 
 class AuctionSearchResponse(BaseModel):

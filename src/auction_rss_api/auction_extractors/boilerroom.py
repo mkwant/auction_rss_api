@@ -1,4 +1,4 @@
-from models.auctionextractor_shopify import ShopifySearchExtractor
+from auction_rss_api.models.auctionextractor_shopify import ShopifySearchExtractor
 
 
 class BoilerRoom(ShopifySearchExtractor):

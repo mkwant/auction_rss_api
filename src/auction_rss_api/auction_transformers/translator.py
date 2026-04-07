@@ -8,8 +8,8 @@ import truststore
 from asgi_correlation_id import correlation_id
 from cashews import cache
 
-from app.settings import settings
-from models.auction import Auction
+from auction_rss_api.app.settings import settings
+from auction_rss_api.models.auction import Auction
 
 truststore.inject_into_ssl()  # Use OS trust store
 

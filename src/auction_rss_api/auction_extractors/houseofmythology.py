@@ -5,8 +5,8 @@ import cloudscraper
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as date_parse
 
-from models.auction import Auction
-from models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 class HouseOfMythology(AuctionExtractor):

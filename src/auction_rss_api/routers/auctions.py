@@ -3,33 +3,33 @@ from typing import Literal, Optional
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
 
-from app.dependencies import Translate, TranslateLanguage
-from auction_extractors.bonhams import Bonhams
-from auction_extractors.buyee_mercari import BuyeeMercari
-from auction_extractors.buyee_rakuma import BuyeeRakuma
-from auction_extractors.buyee_yahoo import BuyeeYahoo
-from auction_extractors.catawiki import CataWiki
-from auction_extractors.christies import Christies
-from auction_extractors.delcampe import Delcampe
-from auction_extractors.ebay import SiteId, Ebay
-from auction_extractors.ewbank import Ewbank
-from auction_extractors.gottahaverockandroll import GottaHaveRockAndRoll
-from auction_extractors.gumtree import GumTree
-from auction_extractors.juliens import JuliensAuctions
-from auction_extractors.kleinanzeigen import Kleinanzeigen
-from auction_extractors.lastdodo import LastDodo
-from auction_extractors.liveauctioneers import LiveAuctioneers
-from auction_extractors.marktplaats import Marktplaats
-from auction_extractors.omega import Omega
-from auction_extractors.rrauction import RRAuction
-from auction_extractors.sothebys import Sothebys
-from auction_extractors.subito import Subito
-from auction_extractors.todocoleccion import Todocoleccion
-from auction_extractors.tracksauctions import TracksAuctions
-from auction_extractors.tradera import Tradera
-from auction_extractors.tweedehands import TweedeHands
-from auction_extractors.vinted import Vinted
-from routers.logger import LoggedRoute
+from auction_rss_api.app.dependencies import Translate, TranslateLanguage
+from auction_rss_api.auction_extractors.bonhams import Bonhams
+from auction_rss_api.auction_extractors.buyee_mercari import BuyeeMercari
+from auction_rss_api.auction_extractors.buyee_rakuma import BuyeeRakuma
+from auction_rss_api.auction_extractors.buyee_yahoo import BuyeeYahoo
+from auction_rss_api.auction_extractors.catawiki import CataWiki
+from auction_rss_api.auction_extractors.christies import Christies
+from auction_rss_api.auction_extractors.delcampe import Delcampe
+from auction_rss_api.auction_extractors.ebay import SiteId, Ebay
+from auction_rss_api.auction_extractors.ewbank import Ewbank
+from auction_rss_api.auction_extractors.gottahaverockandroll import GottaHaveRockAndRoll
+from auction_rss_api.auction_extractors.gumtree import GumTree
+from auction_rss_api.auction_extractors.juliens import JuliensAuctions
+from auction_rss_api.auction_extractors.kleinanzeigen import Kleinanzeigen
+from auction_rss_api.auction_extractors.lastdodo import LastDodo
+from auction_rss_api.auction_extractors.liveauctioneers import LiveAuctioneers
+from auction_rss_api.auction_extractors.marktplaats import Marktplaats
+from auction_rss_api.auction_extractors.omega import Omega
+from auction_rss_api.auction_extractors.rrauction import RRAuction
+from auction_rss_api.auction_extractors.sothebys import Sothebys
+from auction_rss_api.auction_extractors.subito import Subito
+from auction_rss_api.auction_extractors.todocoleccion import Todocoleccion
+from auction_rss_api.auction_extractors.tracksauctions import TracksAuctions
+from auction_rss_api.auction_extractors.tradera import Tradera
+from auction_rss_api.auction_extractors.tweedehands import TweedeHands
+from auction_rss_api.auction_extractors.vinted import Vinted
+from auction_rss_api.routers.logger import LoggedRoute
 
 router = APIRouter(
     route_class=LoggedRoute,

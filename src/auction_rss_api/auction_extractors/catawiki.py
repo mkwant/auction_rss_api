@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import List
 
 
-from models.auction import Auction
-from models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionextractor import AuctionExtractor
 import cloudscraper as cloudscraper
 
 class CataWiki(AuctionExtractor):

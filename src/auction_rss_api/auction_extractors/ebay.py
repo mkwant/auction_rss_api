@@ -6,9 +6,9 @@ from typing import List
 import httpx
 import pytz
 
-from app.settings import settings
-from models.auction import Auction
-from models.auctionextractor import AuctionExtractor
+from auction_rss_api.app.settings import settings
+from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 class Ebay(AuctionExtractor):

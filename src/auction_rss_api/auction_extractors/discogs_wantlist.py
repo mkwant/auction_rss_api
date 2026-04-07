@@ -6,8 +6,8 @@ import httpx
 import xmltodict
 from bs4 import BeautifulSoup
 
-from models.auction import Auction
-from models.auctionextractor import AuctionExtractorAsync
+from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
 
 class DiscogsWantlist(AuctionExtractorAsync):

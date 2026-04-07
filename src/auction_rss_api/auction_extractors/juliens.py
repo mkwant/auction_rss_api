@@ -3,8 +3,8 @@ from typing import List, TypeVar
 
 import httpx
 
-from models.auction import Auction
-from models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 T = TypeVar("T")
 

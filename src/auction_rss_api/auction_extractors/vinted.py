@@ -2,8 +2,8 @@ from typing import List, Optional
 
 import cloudscraper as cloudscraper
 
-from models.auction import Auction
-from models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 class Vinted(AuctionExtractor):

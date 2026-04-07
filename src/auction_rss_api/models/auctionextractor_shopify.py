@@ -8,8 +8,8 @@ import dateparser
 import httpx
 from bs4 import BeautifulSoup
 
-from models.auction import Auction
-from models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 class ShopifyExtractor(AuctionExtractor, ABC):
