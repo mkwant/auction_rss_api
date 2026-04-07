@@ -5,10 +5,10 @@ import truststore
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 
-from app.logs import setup_logging
-from app.middleware import AddNoIndex
-from app.settings import settings
-from routers import auctions, othershops, recordshops, redirect, venues
+from auction_rss_api.app.logs import setup_logging
+from auction_rss_api.app.middleware import AddNoIndex
+from auction_rss_api.app.settings import settings
+from auction_rss_api.routers import auctions, othershops, recordshops, redirect, venues
 
 truststore.inject_into_ssl()  # Use OS trust store
 
