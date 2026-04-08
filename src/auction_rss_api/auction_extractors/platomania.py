@@ -20,6 +20,7 @@ class PlatoMania(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
         r = requests.get(url=self.search_link)
+        r.raise_for_status()
 
         soup = BeautifulSoup(r.content, features='html.parser')
         articles = soup.select('main.content>article')
@@ -29,7 +30,10 @@ class PlatoMania(AuctionExtractor):
         for article in articles:
             title = article.select_one('div.article__content')['title']
             link = 'https://www.platomania.nl' + article.select_one('div.article__image-container > a')['href']
-            image_link = 'https://www.platomania.nl' + article.select_one('div.article__image')['style'].split('\'')[1]
+            try:
+                image_link = 'https://www.platomania.nl' + article.select_one('div.article__image')['style'].split('\'')[1]
+            except KeyError:
+                image_link = 'https://www.platomania.nl' + article.select_one('img')['src']
             _medium = article.select_one('div.article__medium').text.strip()
             _price = article.select_one('div.article__price').text.strip()
             _desc = '\n'.join([x.text.strip() for x in article.select('div.article-details__text')])
