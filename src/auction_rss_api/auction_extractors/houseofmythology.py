@@ -24,6 +24,7 @@ class HouseOfMythology(AuctionExtractor):
         scraper = cloudscraper.create_scraper()
 
         r = scraper.get(url=self.search_link, headers=headers)
+        r.raise_for_status()
         soup = BeautifulSoup(r.text, features='html.parser')
 
         json_str = soup.select_one('default-products')[':products'].split('\'')[1]
