@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi_rss import RSSResponse
 
+from auction_rss_api.auction_extractors.artunlimited import ArtunLimited
 from auction_rss_api.auction_extractors.anonne import Anonne
 from auction_rss_api.auction_extractors.atlasrecords import AtlasRecords
 from auction_rss_api.auction_extractors.audiophileusa import AudiophileUSA
@@ -68,6 +69,10 @@ def anonne_rss() -> RSSResponse:
     site = Anonne()
     return site.search()
 
+@router.get(path='/artunlimited')
+def artunlimited_rss(search_term: str) -> RSSResponse:
+    site = ArtunLimited(search_term=search_term)
+    return site.search()
 
 @router.get(path='/atlasrecords')
 def atlasrecords_rss(search_term: str) -> RSSResponse:
