@@ -23,10 +23,9 @@ class LiveAuctioneers(AuctionExtractor):
         params = {'keyword': self.search_term, 'sort': '-publishDate', 'status': 'online', 'pageSize': 48}
 
         r = httpx.get(url=url, params=params)
-        r.raise_for_status()
 
         soup = BeautifulSoup(markup=r.text, features='html.parser')
-        script = [x for x in soup.select('script') if x.text.startswith('window.__data')][0]
+        script = soup.select_one('script:not([async]):not([id]):not([type]):not([defer])')
         json_str = \
             script.text.lstrip('window.__data=').replace('undefined', 'null').split(';window.__amplitude')[0]
 
