@@ -4,8 +4,8 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 
-from auction_rss_api.models.auctionextractor import AuctionExtractor
 from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 def valid_xml_char_ordinal(c):
@@ -38,9 +38,11 @@ class MusicStack(AuctionExtractor):
             'find': self.search_term,
             'new': 1
         }
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0'}
 
         r = requests.get(url=url, params=params, headers=headers)
+        r.raise_for_status()
+
         soup = BeautifulSoup(r.text, features='html.parser')
 
         table = soup.find(name='table', attrs={'border': 0, 'cellpadding': 3, 'cellspacing': 0, 'width': '100%'})
