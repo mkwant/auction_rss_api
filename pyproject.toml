@@ -1,0 +1,49 @@
+[project]
+name = "auction-rss-api"
+version = "1.51.1"
+description = "This API returns RSS feeds for the search results of auction sites, online record stores and concert venues."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "asgi-correlation-id>=4.3.4",
+    "beautifulsoup4>=4.14.3",
+    "cashews>=7.5.0",
+    "cloudscraper>=1.2.71",
+    "dateparser>=1.4.0",
+    "diskcache>=5.6.3",
+    "fastapi[standard]>=0.135.3",
+    "fastapi-rss>=0.4.0",
+    "httpx>=0.28.1",
+    "lxml-html-clean>=0.4.4",
+    "nest-asyncio>=1.6.0",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.13.1",
+    "python-dateutil>=2.9.0.post0",
+    "python-dotenv>=1.2.2",
+    "pytz>=2026.1.post1",
+    "requests>=2.33.1",
+    "requests-html>=0.10.0",
+    "rich>=14.3.3",
+    "starlette>=1.0.0",
+    "truststore>=0.10.4",
+    "uvicorn>=0.44.0",
+    "xmltodict>=1.0.4",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.9",
+    "ty>=0.0.29",
+]
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`) codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["E4", "E7", "E9", "F", "S", "I"]

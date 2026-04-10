@@ -1,3 +1,5 @@
 .env
 .deta
+.idea/
 venv
+__pycache__
