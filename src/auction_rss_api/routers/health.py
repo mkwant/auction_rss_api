@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from httpx import __version__
 from starlette.responses import JSONResponse
 
+from auction_rss_api import __version__
 from auction_rss_api.routers.logger import LoggedRoute
 
 router = APIRouter(
