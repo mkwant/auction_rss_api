@@ -26,6 +26,7 @@ from auction_rss_api.auction_extractors.sothebys import Sothebys
 from auction_rss_api.auction_extractors.subito import Subito
 from auction_rss_api.auction_extractors.todocoleccion import Todocoleccion
 from auction_rss_api.auction_extractors.tracksauctions import TracksAuctions
+from auction_rss_api.auction_extractors.trademe import TradeMe
 from auction_rss_api.auction_extractors.tradera import Tradera
 from auction_rss_api.auction_extractors.tweedehands import TweedeHands
 from auction_rss_api.auction_extractors.vinted import Vinted
@@ -230,6 +231,12 @@ def todocoleccion_rss(search_term: str, translate: Translate = Depends()) -> RSS
 @router.get(path='/tracksauctions')
 def tracksauctions_rss(search_term: str) -> RSSResponse:
     site = TracksAuctions(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/trademe')
+def trademe_rss(search_term: str) -> RSSResponse:
+    site = TradeMe(search_term=search_term)
     return site.search()
 
 
