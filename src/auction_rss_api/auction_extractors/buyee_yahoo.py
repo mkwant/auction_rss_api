@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
 
-
 # TODO Multiple pages? / keep in db?
 
 

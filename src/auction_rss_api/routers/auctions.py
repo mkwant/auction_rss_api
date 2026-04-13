@@ -11,7 +11,7 @@ from auction_rss_api.auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_rss_api.auction_extractors.catawiki import CataWiki
 from auction_rss_api.auction_extractors.christies import Christies
 from auction_rss_api.auction_extractors.delcampe import Delcampe
-from auction_rss_api.auction_extractors.ebay import SiteId, Ebay
+from auction_rss_api.auction_extractors.ebay import Ebay, SiteId
 from auction_rss_api.auction_extractors.ewbank import Ewbank
 from auction_rss_api.auction_extractors.gottahaverockandroll import GottaHaveRockAndRoll
 from auction_rss_api.auction_extractors.gumtree import GumTree

@@ -7,7 +7,6 @@ from bs4.element import ResultSet
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
 
-
 # TODO Translate titles -> make async
 
 class BuyeeRakuma(AuctionExtractor):

@@ -4,8 +4,8 @@ from typing import List
 import dateparser
 import requests
 
-from auction_rss_api.models.auctionextractor import AuctionExtractor
 from auction_rss_api.models.auction import Auction
+from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 class Marktplaats(AuctionExtractor):

@@ -1,4 +1,4 @@
-from auction_rss_api.models.auctionextractor_shopify import ShopifyExtractor, ShopifySearchExtractor
+from auction_rss_api.models.auctionextractor_shopify import ShopifySearchExtractor
 
 
 class AtlasRecords(ShopifySearchExtractor):

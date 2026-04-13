@@ -2,8 +2,8 @@ import asyncio
 import logging
 import traceback
 from abc import abstractmethod
-from datetime import datetime, date
-from typing import List, Callable, Awaitable
+from datetime import date, datetime
+from typing import Awaitable, Callable, List
 
 import nest_asyncio
 from fastapi_rss import RSSResponse

@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import List
 
+import cloudscraper as cloudscraper
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
-import cloudscraper as cloudscraper
+
 
 class CataWiki(AuctionExtractor):
     search_term: str

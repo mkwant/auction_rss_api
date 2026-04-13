@@ -5,7 +5,6 @@ import requests
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
 
-
 # THES394093
 
 class VandaCollection(AuctionExtractor):

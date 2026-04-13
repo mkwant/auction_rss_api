@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from fastapi_rss import RSSResponse, GUID, Enclosure, EnclosureAttrs, Item, RSSFeed
+from fastapi_rss import GUID, Enclosure, EnclosureAttrs, Item, RSSFeed, RSSResponse
 from pydantic import BaseModel
 
 from auction_rss_api.models.auction import Auction
