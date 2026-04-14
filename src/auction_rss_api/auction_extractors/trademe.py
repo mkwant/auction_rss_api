@@ -27,14 +27,15 @@ class TradeMe(AuctionExtractor):
             'condition': 'used',
         }
         s = HTMLSession()
-        response = s.get(
+        r = s.get(
             url='https://www.trademe.co.nz/a/search',
             params=params,
             cookies=cookies,
             headers=headers,
         )
+        r.raise_for_status()
 
-        json_str = response.html.find('script#frend-state', first=True).text  # noqa
+        json_str = r.html.find('script#frend-state', first=True).text  # noqa
         json_parsed = json.loads(json_str)
         search_result = next(iter(json_parsed))
         items = json_parsed[search_result]['b']['list']
@@ -42,7 +43,10 @@ class TradeMe(AuctionExtractor):
             item_id = str(item['listingId'])
             title = item['title']
             link = 'https://www.trademe.co.nz/a' + item['canonicalPath']
-            image_link = item['pictureHref'].replace('thumb', 'plus')
+            try:
+                image_link = item['pictureHref'].replace('thumb', 'plus')
+            except KeyError:
+                image_link = None
 
             _start_price = item['startPrice']
             try:
