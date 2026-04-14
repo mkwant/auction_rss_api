@@ -60,8 +60,14 @@ class Delcampe(AuctionExtractor):
         auctions = []
 
         for auction in self._get_auctions():
-            image_link = auction.select_one('a.img-view')['href']
-            auction_id = auction.select_one('a.img-view')['data-item-id']
+            try:
+                image_link = auction.select_one('a.img-view')['href']
+            except TypeError:
+                image_link = auction.select_one('a.img-link')['href']
+            try:
+                auction_id = auction.select_one('a.img-view')['data-item-id']
+            except TypeError:
+                auction_id = auction.select_one('a.img-link')['data-item-id']
             link = f"https://www.delcampe.net{auction.select_one('a.item-link')['href']}"
             title = auction.select_one('h2.item-title').text
             _price = auction.select_one('strong.item-price').text
