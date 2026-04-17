@@ -26,12 +26,15 @@ class TivoliVredenburg(AuctionExtractor):
         s = cloudscraper.create_scraper()
         r = s.get(url='https://www.tivolivredenburg.nl/agenda/', params=params)
         r.raise_for_status()
-        soup = BeautifulSoup(r.content, features='html.parser')
+        soup = BeautifulSoup(markup=r.content, features='html.parser')
 
         events = soup.select('li.agenda-list-item')
         for event in events:
             link = event.select_one('a.link')['href']
-            image_link = event.select_one('img')['src']
+            try:
+                image_link = event.select_one('img')['src']
+            except TypeError:
+                image_link = None
             event_id = link.split('/')[-2]
 
             _event_name = event.select_one('.agenda-list-item__title').text.strip()
