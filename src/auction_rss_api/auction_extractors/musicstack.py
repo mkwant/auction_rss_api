@@ -73,7 +73,10 @@ class MusicStack(AuctionExtractor):
             description = '\n'.join((_price, _format, _condition, _description))
             description = ''.join(c for c in description if valid_xml_char_ordinal(c))
             seller = cells[8].get_text(separator=', ')
-            link = cells[12].select_one('a')['href']
+            try:
+                link = cells[12].select_one('a.t')['href']
+            except TypeError:
+                link = cells[12].select_one('a')['href']
             days_ago = cells[9].text.split()[0]
             start_date = datetime.datetime.now() - datetime.timedelta(days=int(days_ago))
 
