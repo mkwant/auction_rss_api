@@ -4,6 +4,7 @@ from fastapi_rss import RSSResponse
 from auction_rss_api.auction_extractors.doornroosje import Doornroosje
 from auction_rss_api.auction_extractors.doornroosje_resale import DoornroosjeResale
 from auction_rss_api.auction_extractors.effenaar import Effenaar
+from auction_rss_api.auction_extractors.ekko import Ekko
 from auction_rss_api.auction_extractors.melkweg import Melkweg
 from auction_rss_api.auction_extractors.paradiso import Paradiso
 from auction_rss_api.auction_extractors.tilburg013 import Tilburg013
@@ -39,6 +40,12 @@ def doornroosjeresale_rss(available_only: bool = False) -> RSSResponse:
 @router.get(path='/effenaar')
 def effenaar_rss() -> RSSResponse:
     site = Effenaar()
+    return site.search()
+
+
+@router.get(path='/ekko')
+def ekko_rss() -> RSSResponse:
+    site = Ekko()
     return site.search()
 
 
