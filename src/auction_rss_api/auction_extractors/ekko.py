@@ -1,8 +1,8 @@
 from typing import List
 
 import dateparser
+import httpx
 from bs4 import BeautifulSoup
-from requests_html import HTMLSession
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -21,11 +21,11 @@ class Ekko(AuctionExtractor):
         auctions = []
 
         url = 'https://ekko.nl/agenda/concert/'
-        s = HTMLSession()
-        r = s.get(url)
-        events_html = r.html.find('div.pb-8')[0].html
-        soup = BeautifulSoup(markup=events_html, features='html.parser')
-        events = soup.select('a')
+        r = httpx.get(url=url)
+        r.raise_for_status()
+
+        soup = BeautifulSoup(markup=r.text, features='html.parser')
+        events = soup.select('div.pb-8>a')
         for event in events:
             link = str(event['href'])
             _event_name = event.select_one('h3').text
