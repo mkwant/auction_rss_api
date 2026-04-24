@@ -20,7 +20,6 @@ dependencies = [
     "pydantic-settings>=2.14.0",
     "python-dateutil>=2.9.0.post0",
     "python-dotenv>=1.2.2",
-    "pytz>=2026.1.post1",
     "requests>=2.33.1",
     "rich>=15.0.0",
     "starlette>=1.0.0",
