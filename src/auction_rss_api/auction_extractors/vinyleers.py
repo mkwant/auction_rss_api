@@ -3,13 +3,10 @@ import json
 from typing import List
 
 import httpx
-import truststore
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
-
-truststore.inject_into_ssl()  # Use OS trust store
 
 
 class Vinyleers(AuctionExtractor):
