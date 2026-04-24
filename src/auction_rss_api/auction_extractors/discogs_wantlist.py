@@ -3,7 +3,6 @@ import itertools
 from typing import Any
 
 import httpx
-import xmltodict
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -29,35 +28,43 @@ class DiscogsWantlist(AuctionExtractorAsync):
     @staticmethod
     async def _get_offer_page(client: httpx.AsyncClient, item_id: int) -> str:
         url = f"https://www.discogs.com/sell/release/{item_id}"
-        params = {
-            'ev': 'rb',
-            'output': 'rss'}
+        params = {'sort': 'listed,desc'}
         response = await client.get(url=url, params=params)
         return response.text
 
     @staticmethod
     async def _get_offers(offer_page) -> list[dict[str, Any]]:
-        """From an offer page in rss format, get the listed offers"""
-        result = xmltodict.parse(offer_page)
-        entries = result['feed'].get('entry')
-        if isinstance(entries, list):
-            return [
-                {
-                    'updated': item['updated'],
-                    'link': item['link']['@href'],
-                    'title': item['title'],
-                    'text': item['summary']['#text']
-                } for item in result['feed']['entry']
-            ]
-        item = entries
-        return [
-            {
-                'updated': item['updated'],
-                'link': item['link']['@href'],
-                'title': item['title'],
-                'text': item['summary']['#text']
-            }
-        ]
+        """From an offer page, get the listed offers"""
+        item_list = []
+        soup = BeautifulSoup(markup=offer_page, features='html.parser')
+        items = soup.select('tr.shortcut_navigable')
+
+        for item in items:
+            title = item.select_one('a.item_description_title').text.strip()
+            item_link = 'https://www.discogs.com' + str(item.select_one('a.item_description_title')['href'])
+            seller = item.select_one('td.seller_info a').text.strip()
+
+            try:
+                _rating = item.select_one('span.star_rating + strong').text.strip()
+                seller += f" ({_rating})"
+            except AttributeError:
+                pass
+
+            _price = item.select_one('span.price').text.strip()
+            _shipping = ' '.join([x.strip() for x in item.select_one('span.item_shipping').text.strip().split('\n')])
+            _media_condition = item.select_one('span.mplabel.condition-label-mobile + span').text.strip().split('\n')[0]
+            _sleeve_condition = item.select_one('span.item_sleeve_condition').text.strip()
+            _ships_from = item.select_one('li:has(span.mplabel:-soup-contains("Ships From:"))').text.strip().replace(
+                'Ships From:', '')
+            description = f"Price: {_price} ({_shipping})\nMedia condition: {_media_condition}\nSleeve condition: {_sleeve_condition}\nShips from: {_ships_from}"
+
+            item_list.append({
+                'link': item_link,
+                'title': title,
+                'text': description,
+                'seller': seller,
+            })
+        return item_list
 
     async def _get_wantlist(self, client: httpx.AsyncClient) -> list[int]:
         """Get a users wantlist in the form of a list of item id's."""
@@ -100,15 +107,14 @@ class DiscogsWantlist(AuctionExtractorAsync):
         offers = itertools.chain(*offers)  # flatten list of lists
 
         rss_items = []
-        for offer in sorted(offers, key=lambda x: x['updated'], reverse=True):
+        for offer in offers:
             offer_dict = {
                 'title': offer['title'],
                 'auction_id': offer['link'].split('/')[-1],
                 'description': offer['text'],
                 'image_link': self.discogs_logo,
                 'link': offer['link'],
-                'seller': offer['text'].split(' - ')[1],
-                'start_date': offer['updated']
+                'seller': offer['seller'],
             }
             rss_items.append(
                 Auction(**offer_dict)
