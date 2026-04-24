@@ -5,7 +5,7 @@ from abc import abstractmethod
 from datetime import date, datetime
 from typing import Awaitable, Callable, List
 
-import nest_asyncio
+import nest_asyncio2
 from fastapi_rss import RSSResponse
 from pydantic import BaseModel, Field
 
@@ -19,7 +19,7 @@ Transformer = Callable[[Auction], Awaitable[Auction]]
 logger = logging.getLogger(__name__)
 
 # To allow nested event loops. Should prevent 'event loop is closed' errors
-nest_asyncio.apply()
+nest_asyncio2.apply()
 
 
 # TODO Create AuctionResponseTransformer ABC that can take an awaitable (or a func and use asyncio.to_thread?) to
