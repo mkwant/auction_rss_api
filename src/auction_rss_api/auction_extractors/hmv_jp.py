@@ -1,8 +1,7 @@
-import os
 from typing import List
 
+import httpx
 from bs4 import BeautifulSoup
-from requests_html import HTMLSession
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -18,24 +17,18 @@ class HMVJapan(AuctionExtractor):
         return 'HMV Japan'
 
     def get_auctions(self) -> List[Auction]:
-        os.environ['PYPPETEER_CHROMIUM_REVISION'] = '1263111'
-
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0'
-        }
-
         auctions = []
 
-        s = HTMLSession()
-        s.headers.update(headers)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0'}
+        s = httpx.Client(headers=headers)
 
         r = s.post(url=self.search_link)
+        r.raise_for_status()
 
-        soup = BeautifulSoup(r.text, features='html.parser')
+        soup = BeautifulSoup(markup=r.text, features='html.parser')
         products = soup.select('ul.resultList>li.list')
 
         for product in products:
-
             _artist = product.select_one('p.name').text.strip()
             _title = product.select_one('h3.title').text.strip()
             title = f"{_artist} - {_title}"
