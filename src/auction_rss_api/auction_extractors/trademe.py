@@ -1,7 +1,8 @@
 import json
 from typing import List
 
-from requests_html import HTMLSession
+import httpx
+from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -26,8 +27,7 @@ class TradeMe(AuctionExtractor):
             'sort_order': 'expirydesc',
             'condition': 'used',
         }
-        s = HTMLSession()
-        r = s.get(
+        r = httpx.get(
             url='https://www.trademe.co.nz/a/search',
             params=params,
             cookies=cookies,
@@ -35,7 +35,9 @@ class TradeMe(AuctionExtractor):
         )
         r.raise_for_status()
 
-        json_str = r.html.find('script#frend-state', first=True).text  # noqa
+        soup = BeautifulSoup(markup=r.text, features='html.parser')
+        json_str = soup.select_one('script#frend-state').text
+
         json_parsed = json.loads(json_str)
         search_result = next(iter(json_parsed))
         items = json_parsed[search_result]['b']['list']
