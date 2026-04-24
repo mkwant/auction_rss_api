@@ -22,7 +22,6 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "pytz>=2026.1.post1",
     "requests>=2.33.1",
-    "requests-html>=0.10.0",
     "rich>=15.0.0",
     "starlette>=1.0.0",
     "truststore>=0.10.4",
