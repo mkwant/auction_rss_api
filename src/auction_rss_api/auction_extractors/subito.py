@@ -29,7 +29,7 @@ class Subito(AuctionExtractor):
             'qso': True,
             'o': 1,
         }
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0'}
         r = scraper.get(url=url, params=params, headers=headers)
         r.raise_for_status()
 
