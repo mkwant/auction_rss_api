@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from typing import List
 
+import cloudscraper
 import httpx
 from bs4 import BeautifulSoup
 
@@ -20,6 +21,7 @@ class Subito(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
         auctions = []
+        scraper = cloudscraper.create_scraper()
 
         url = 'https://www.subito.it/annunci-italia/vendita/sport-hobby/'
         params = {
@@ -27,15 +29,15 @@ class Subito(AuctionExtractor):
             'qso': True,
             'o': 1,
         }
-        r = httpx.get(url=url, params=params)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0'}
+        r = scraper.get(url=url, params=params, headers=headers)
+        r.raise_for_status()
 
         soup = BeautifulSoup(markup=r.text, features="html.parser")
         json_str = soup.select_one('script#__NEXT_DATA__').text
         json_parsed = json.loads(json_str)
-        items = json_parsed['props']['pageProps']['initialState']['items']['list']
+        items = json_parsed['props']['pageProps']['initialState']['items']['originalList']
         for item in items:
-            item = item['item']
-
             auction_id = item['urn'].split(':')[-1]
             title = item['subject']
             link = item['urls']['default']
@@ -43,7 +45,11 @@ class Subito(AuctionExtractor):
             date_published = datetime.fromisoformat(item['date'])
             _desc = item['body']
             _town = item['geo']['town']['value']
-            _price = item['features']['/price']['values'][0]['value']
+
+            try:
+                _price = item['features']['/price']['values'][0]['value']
+            except KeyError:
+                _price = 'No price'
 
             try:
                 _shipping = item['features']['/item_shipping_cost_tuttosubito']['values'][0]['value']
