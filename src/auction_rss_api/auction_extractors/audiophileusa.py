@@ -25,7 +25,8 @@ class AudiophileUSA(AuctionExtractor):
             'searchTerms': self.search_term
         }
 
-        r = httpx.get(url=url, params=params)
+        r = httpx.get(url=url, params=params, timeout=10.0)
+        r.raise_for_status()
 
         soup = BeautifulSoup(markup=r.text, features='html.parser')
 
