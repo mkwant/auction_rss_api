@@ -28,7 +28,7 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
     def get_auctions(self) -> List[Auction]:
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0'
         }
 
         auctions = []
@@ -99,17 +99,16 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
             'q': self.search_term,
             'sort_by': 'created',
         }
-        r = httpx.get(url=url, params=params, follow_redirects=True)
+        r = httpx.get(url=url, params=params, follow_redirects=True, timeout=10.0)
         r.raise_for_status()
-        soup = BeautifulSoup(r.text, features='html.parser')
+        soup = BeautifulSoup(markup=r.text, features='html.parser')
 
         script = soup.select_one('script#web-pixels-manager-setup').text
-        json_str = script.split('searchResult\\":')[1].replace('}]]"});', '')
+        json_str = script.split('searchResult\\":')[1].replace('}]]"});})();', '')
 
         json_str = re.sub(pattern=r'\\"', repl='"', string=json_str)  # Replace escaped quotes with actual quotes
         json_str = re.sub(pattern=r'\\(?!")', repl='',
                           string=json_str)  # Remove unnecessary backslashes that aren't escaping quotes
-
         json_parsed = json.loads(json_str)
         items = json_parsed['productVariants']
         for item in items:
