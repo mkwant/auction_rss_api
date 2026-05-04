@@ -22,7 +22,7 @@ class HMVJapan(AuctionExtractor):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0'}
         s = httpx.Client(headers=headers)
 
-        r = s.post(url=self.search_link)
+        r = s.post(url=self.search_link, timeout=10.0)
         r.raise_for_status()
 
         soup = BeautifulSoup(markup=r.text, features='html.parser')
