@@ -9,7 +9,7 @@ from auction_rss_api import __version__
 from auction_rss_api.app.logs import setup_logging
 from auction_rss_api.app.middleware import AddNoIndex
 from auction_rss_api.app.settings import settings
-from auction_rss_api.routers import auctions, health, othershops, recordshops, redirect, venues
+from auction_rss_api.routers import auctions, health, othershops, recordshops, redirect, tools, venues
 
 truststore.inject_into_ssl()  # Use OS trust store
 
@@ -39,6 +39,7 @@ app.include_router(recordshops.router)
 app.include_router(othershops.router)
 app.include_router(venues.router)
 app.include_router(health.router)
+app.include_router(tools.router)
 app.include_router(redirect.router)
 app.add_middleware(middleware_class=AddNoIndex)  # noqa
 app.add_middleware(middleware_class=CorrelationIdMiddleware)  # noqa
