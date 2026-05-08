@@ -41,7 +41,7 @@ class IdeaNow(AuctionExtractor):
         for product in r.json()['products']:
             auction_id = str(product['identifier']['productId'])
             title = product['name']
-            link = 'https://www.ideanow.online' + product['urls']['shareUrl']
+            link = 'https://www.ideanow.online' + product['seo']['canonicalUrl']
             image_link = product['defaultOptionsOverrides']['variationOverrides']['mediaItems'][0]['imageOriginalUrl']
             _price = product['defaultOptionsOverrides']['pricesOverrides']['basePriceWithModifiersDiscount']
             _desc = product['description']
