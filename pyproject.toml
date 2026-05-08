@@ -15,7 +15,7 @@ dependencies = [
     "fastapi[standard]>=0.136.1",
     "httpx>=0.28.1",
     "nest-asyncio2>=1.7.2",
-    "pydantic>=2.13.3",
+    "pydantic>=2.13.4",
     "pydantic-settings>=2.14.0",
     "python-dateutil>=2.9.0.post0",
     "python-dotenv>=1.2.2",
@@ -23,14 +23,14 @@ dependencies = [
     "rich>=15.0.0",
     "starlette>=1.0.0",
     "truststore>=0.10.4",
-    "urllib3>=2.6.3",
+    "urllib3>=2.7.0",
     "uvicorn>=0.46.0",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.15.11",
-    "ty>=0.0.32",
+    "ruff>=0.15.12",
+    "ty>=0.0.34",
 ]
 
 [tool.uv]
