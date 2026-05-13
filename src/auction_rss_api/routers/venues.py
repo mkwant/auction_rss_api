@@ -8,6 +8,7 @@ from auction_rss_api.auction_extractors.ekko import Ekko
 from auction_rss_api.auction_extractors.melkweg import Melkweg
 from auction_rss_api.auction_extractors.paradiso import Paradiso
 from auction_rss_api.auction_extractors.tilburg013 import Tilburg013
+from auction_rss_api.auction_extractors.tivoli_presale import TivoliPresale
 from auction_rss_api.auction_extractors.tivolivredenburg import TivoliVredenburg
 from auction_rss_api.auction_extractors.vera import Vera
 from auction_rss_api.routers.logger import LoggedRoute
@@ -64,6 +65,12 @@ def paradiso_rss() -> RSSResponse:
 @router.get(path='/tivolivredenburg')
 def tivolivredenburg_rss() -> RSSResponse:
     site = TivoliVredenburg()
+    return site.search()
+
+
+@router.get(path='/tivolivredenburg_presale')
+def tivolivredenburgpresale_rss(presale_id: str) -> RSSResponse:
+    site = TivoliPresale(search_term=presale_id)
     return site.search()
 
 
