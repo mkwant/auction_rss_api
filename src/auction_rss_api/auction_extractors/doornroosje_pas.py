@@ -31,7 +31,7 @@ class DoornroosjePas(AuctionExtractor):
             _program_titles = item.select('h3.c-program__title>span')
             _program_title = ' '.join([x.text.strip() for x in _program_titles if x != ""])
             _date = dateparser.parse(' '.join([x.text for x in item.select('div.c-program__date>span')]))
-            title = f'{_date:%a %Y-%m-%d} {_program_title}'
+            title = f'DOORNROOSJEPAS: {_date:%a %Y-%m-%d} {_program_title}'
 
             auctions.append(
                 Auction(
