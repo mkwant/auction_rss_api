@@ -28,6 +28,7 @@ class RedHandFiles(AuctionExtractor):
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         json_str = soup.select_one('script[type="application/ld+json"]').text
         json_parsed = json.loads(json_str)
+        self.feed_description = json_parsed['description']
         posts = json_parsed['blogPost']
         for post in posts:
             title = post['headline'].strip()
