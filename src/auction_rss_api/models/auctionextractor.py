@@ -71,7 +71,13 @@ class AuctionExtractor(BaseModel):
         """
         A description for the RSS feed.
         """
-        return f"Search results for query '{self.search_term}' on {self.site_desc}"
+        if not hasattr(self, "_feed_desc"):
+            self._feed_desc = f"Search results for query '{self.search_term}' on {self.site_desc}"  # noqa
+        return self._feed_desc
+
+    @feed_description.setter
+    def feed_description(self, feed_description: str) -> None:
+        self._feed_desc = feed_description  # noqa
 
     def auctions_on_error(self, error_text: str, error: str) -> List[Auction]:
         """
