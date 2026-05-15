@@ -13,6 +13,7 @@ class AuctionSearchResponse(BaseModel):
     search_link: str
     search_term: str | None
     site_desc: str
+    feed_desc: str
     auctions: List[Auction]
 
     def to_rss(self) -> RSSResponse:
@@ -55,7 +56,7 @@ class AuctionSearchResponse(BaseModel):
         feed = RSSFeed(
             title=title,
             link=self.search_link,
-            description=f"Search results for query '{self.search_term}' on {self.site_desc}",
+            description=self.feed_desc,
             language='en-us',
             generator=f'{__name__}/{__version__}',
             ttl=40,

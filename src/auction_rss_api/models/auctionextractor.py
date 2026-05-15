@@ -66,6 +66,13 @@ class AuctionExtractor(BaseModel):
         """
         ...
 
+    @property
+    def feed_description(self) -> str:
+        """
+        A description for the RSS feed.
+        """
+        return f"Search results for query '{self.search_term}' on {self.site_desc}"
+
     def auctions_on_error(self, error_text: str, error: str) -> List[Auction]:
         """
         This will be returned when there is an error retrieving the auctions.
@@ -109,6 +116,7 @@ class AuctionExtractor(BaseModel):
             search_link=self.search_link,
             search_term=self.search_term,
             site_desc=self.site_desc,
+            feed_desc=self.feed_description,
             auctions=auctions,
         )
 
