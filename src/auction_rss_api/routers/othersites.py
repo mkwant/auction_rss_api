@@ -2,15 +2,23 @@ from fastapi import APIRouter
 from fastapi_rss import RSSResponse
 
 from auction_rss_api.auction_extractors.amatterofconcrete import AMatterOfConcrete
+from auction_rss_api.auction_extractors.redhandfiles import RedHandFiles
 from auction_rss_api.routers.logger import LoggedRoute
 
 router = APIRouter(
     route_class=LoggedRoute,
     default_response_class=RSSResponse,
-    tags=['Other shops']
+    tags=['Other sites']
 )
+
 
 @router.get(path='/amatterofconcrete')
 def amatterofconcrete_rss(search_term: str, available_only: bool = False) -> RSSResponse:
     site = AMatterOfConcrete(search_term=search_term, available_only=available_only)
+    return site.search()
+
+
+@router.get(path='/redhandfiles')
+def redhandfiles_rss() -> RSSResponse:
+    site = RedHandFiles()
     return site.search()
