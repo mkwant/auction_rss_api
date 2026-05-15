@@ -5,6 +5,7 @@ from fastapi_rss import GUID, Enclosure, EnclosureAttrs, Item, RSSFeed, RSSRespo
 from pydantic import BaseModel
 
 from auction_rss_api.models.auction import Auction
+from auction_rss_api import __name__, __version__
 
 
 class AuctionSearchResponse(BaseModel):
@@ -56,7 +57,7 @@ class AuctionSearchResponse(BaseModel):
             link=self.search_link,
             description=f"Search results for query '{self.search_term}' on {self.site_desc}",
             language='en-us',
-            generator='Auction RSS api',
+            generator=f'{__name__}/{__version__}',
             ttl=40,
             item=items,
             pub_date=datetime.now(),
