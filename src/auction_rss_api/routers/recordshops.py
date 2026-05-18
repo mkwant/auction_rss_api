@@ -54,6 +54,7 @@ from auction_rss_api.auction_extractors.vandacollection import VandaCollection
 from auction_rss_api.auction_extractors.variaworld import Variaworld
 from auction_rss_api.auction_extractors.vinyleers import Vinyleers
 from auction_rss_api.auction_extractors.vinylmania import VinylmaniaExtractor
+from auction_rss_api.auction_extractors.waaghals import Waaghals
 from auction_rss_api.auction_extractors.younggod import YoungGod
 from auction_rss_api.routers.logger import LoggedRoute
 
@@ -69,10 +70,12 @@ def anonne_rss() -> RSSResponse:
     site = Anonne()
     return site.search()
 
+
 @router.get(path='/artunlimited')
 def artunlimited_rss(search_term: str) -> RSSResponse:
     site = ArtunLimited(search_term=search_term)
     return site.search()
+
 
 @router.get(path='/atlasrecords')
 def atlasrecords_rss(search_term: str) -> RSSResponse:
@@ -384,4 +387,10 @@ def vinylmania_rss(search_term: str) -> RSSResponse:
 @router.get(path='/younggod')
 def younggod_rss(search_term: str, search_in_desc: bool = False) -> RSSResponse:
     site = YoungGod(search_term=search_term, search_in_desc=search_in_desc)
+    return site.search()
+
+
+@router.get(path='/waaghals')
+def waaghals_rss(collection: str) -> RSSResponse:
+    site = Waaghals(collection=collection)
     return site.search()

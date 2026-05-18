@@ -24,7 +24,7 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
     @property
     def search_link(self) -> str:
-        return f"https://www.{self.domain}/search?q={self.search_term}"
+        return f"https://{self.domain}/search?q={self.search_term}"
 
     def get_auctions(self) -> List[Auction]:
         headers = {
@@ -33,7 +33,7 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
         auctions = []
 
-        url = f'https://www.{self.domain}/products.json?limit=250'
+        url = f'https://{self.domain}/products.json?limit=250'
         scraper = cloudscraper.create_scraper()
         r = scraper.get(url=url, headers=headers)
         r.raise_for_status()
@@ -57,8 +57,12 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
             title = f"{product['vendor']} - {product['title']}"
             auction_id = str(product['id'])
-            link = f'https://www.{self.domain}/products/' + product['handle']
-            image_link = product['images'][0]['src']
+            link = f'https://{self.domain}/products/' + product['handle']
+
+            try:
+                image_link = product['images'][0]['src']
+            except IndexError:
+                image_link = None
             start_date = dateparser.parse(product['created_at'])
 
             _variants = '\n'.join([f"${x['price']} - {x['title']}" for x in product['variants']])
