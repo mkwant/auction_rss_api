@@ -3,7 +3,7 @@ from typing import List
 import httpx
 from bs4 import BeautifulSoup
 
-from app.awswaf.aws import AwsWaf
+from auction_rss_api.app.awswaf.aws import AwsWaf
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
 
