@@ -1,3 +1,5 @@
 - Vendored from https://github.com/xKiian/awswaf/
 - Changes applied as described in https://github.com/pytr-org/pytr/pull/320
 - Fix finding of `webgl.json`
+
+Also see https://roundproxies.com/blog/bypass-aws-waf/
