@@ -5,7 +5,7 @@ import uuid
 import zlib
 from pathlib import Path
 
-from awswaf.crypto import encrypt
+from auction_rss_api.app.awswaf.crypto import encrypt
 
 
 def encode_with_crc(obj):
