@@ -29,8 +29,8 @@ import re
 
 from curl_cffi import requests
 
-from awswaf.fingerprint import get_fp
-from awswaf.verify import CHALLENGE_SOLVERS
+from auction_rss_api.app.awswaf.fingerprint import get_fp
+from auction_rss_api.app.awswaf.verify import CHALLENGE_SOLVERS
 
 
 def parse_challenge_js(js_text: str) -> dict:
@@ -97,14 +97,14 @@ def parse_challenge_js(js_text: str) -> dict:
 
 class AwsWaf:
     def __init__(
-        self,
-        endpoint: str,
-        domain: str,
-        challenge_js_text: str = "",
-        user_agent: str = (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-            " (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
-        ),
+            self,
+            endpoint: str,
+            domain: str,
+            challenge_js_text: str = "",
+            user_agent: str = (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                    " (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+            ),
     ):
         self.session: requests.Session = requests.Session(impersonate="chrome")
         self.session.headers.update(
