@@ -3,6 +3,7 @@ from typing import List
 import httpx
 from bs4 import BeautifulSoup
 
+from app.awswaf.aws import AwsWaf
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
 
@@ -27,9 +28,21 @@ class BuyeeMercari(AuctionExtractor):
             'order-sort': 'desc-created_time',
             'currencyCode': 'EUR',
         }
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0'}
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        }
+        session = httpx.Client(headers=headers)
 
-        r = httpx.get(url=link, params=params, headers=headers)
+        response = session.get(url=link, params=params)
+
+        endpoint = response.text.split('src="https://')[1].split("/challenge.js")[0]
+        challenge_js = session.get(f"https://{endpoint}/challenge.js").text
+
+        token = AwsWaf(endpoint=endpoint, domain="buyee.jp", challenge_js_text=challenge_js)()
+        session.cookies.set(name='aws-waf-token', value=token)
+
+        r = session.get(url=link, params=params)
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features='html.parser')
 
