@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
+from awswaf.aws import AwsWaf
+
 
 # TODO Multiple pages? / keep in db?
 
@@ -23,7 +25,10 @@ class BuyeeYahoo(AuctionExtractor):
     def _get_page(self) -> str:
         """Retrieve search page."""
         url = f'https://buyee.jp/item/search/query/{self.search_term}'
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        }
         params = {
             'sort': 'end',
             'order': 'd',
@@ -33,6 +38,14 @@ class BuyeeYahoo(AuctionExtractor):
         }
 
         client = httpx.Client(headers=headers)
+
+        # Solve AwsWaf challenge
+        response = client.get(url=url, params=params)
+        endpoint = response.text.split('src="https://')[1].split("/challenge.js")[0]
+        challenge_js = client.get(f"https://{endpoint}/challenge.js").text
+        token = AwsWaf(endpoint=endpoint, domain="buyee.jp", challenge_js_text=challenge_js)()
+        client.cookies.set(name='aws-waf-token', value=token)
+
         r = client.get(url=url, params=params)
         return r.text
 
