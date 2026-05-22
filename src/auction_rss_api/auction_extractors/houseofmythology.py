@@ -1,9 +1,8 @@
-import json
+import hashlib
 from typing import List
 
-import cloudscraper
+import curl_cffi
 from bs4 import BeautifulSoup
-from dateutil.parser import parse as date_parse
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -21,40 +20,34 @@ class HouseOfMythology(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0'}
 
-        scraper = cloudscraper.create_scraper()
 
-        r = scraper.get(url=self.search_link, headers=headers)
+        r = curl_cffi.get(url=self.search_link, headers=headers, impersonate="chrome")
         r.raise_for_status()
-        soup = BeautifulSoup(r.text, features='html.parser')
+        soup = BeautifulSoup(markup=r.text, features='html.parser')
 
-        json_str = soup.select_one('default-products')[':products'].split('\'')[1]
 
-        # Escaping unicode characters
-        json_str = bytes(json_str, 'utf-8').decode('unicode_escape')
-        
-        items = json.loads(json_str)
         auctions = []
 
-        for item in items:
+        products = soup.select('div.row_product')
+        for product in products:
+            unique_id = hashlib.md5(
+                product.select_one('a.product_med')['href'].split('/')[-1].encode('utf-8')).hexdigest()
+            title = " ".join(product.select_one('span.productTitle').text.strip().split())
+            link = str(product.select_one('a')['href'])
+            image_link = product.select_one('img')['x-data'].split("img.src = '")[1].split("';")[0].replace("\\", "")
+            description = product.select_one('span.price').text.strip()
 
-            auction_id = str(item['id'])
-            title = f"{item['artist']} - {item['title']}"
-            description = f"{item['standardPriceWithSymbol']}\n\n{item['description']}".replace('\\', '')
-            image_link = item['image'].replace('\\', '')
-            link = f"https://store.houseofmythology.com/product/{item['linkId']}"
-            start_date = date_parse(item['location_info']['created_at'])
-
-            if self.search_term.lower() not in title.lower():
-                continue
+            if self.search_term:
+                if self.search_term.lower() not in title.lower():
+                    continue
 
             auctions.append(
                 Auction(
-                    auction_id=auction_id,
+                    auction_id=unique_id,
                     description=description,
                     image_link=image_link,
                     link=link,
                     title=title,
-                    start_date=start_date
                 )
             )
 
