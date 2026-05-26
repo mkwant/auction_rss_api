@@ -14,7 +14,7 @@ dependencies = [
     "dateparser>=1.4.0",
     "diskcache>=5.6.3",
     "fastapi-rss>=0.5.0",
-    "fastapi[standard]>=0.136.1",
+    "fastapi[standard]>=0.136.3",
     "httpx>=0.28.1",
     "nest-asyncio2>=1.7.2",
     "pydantic>=2.13.4",
@@ -23,16 +23,16 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "requests>=2.34.2",
     "rich>=15.0.0",
-    "starlette>=1.0.0",
+    "starlette>=1.0.1",
     "truststore>=0.10.4",
     "urllib3>=2.7.0",
-    "uvicorn>=0.47.0",
+    "uvicorn>=0.48.0",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.15.13",
-    "ty>=0.0.38",
+    "ruff>=0.15.14",
+    "ty>=0.0.39",
 ]
 
 [tool.uv]
