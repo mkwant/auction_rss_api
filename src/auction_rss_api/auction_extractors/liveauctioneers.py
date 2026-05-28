@@ -21,8 +21,9 @@ class LiveAuctioneers(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         url = 'https://www.liveauctioneers.com/search/'
         params = {'keyword': self.search_term, 'sort': '-publishDate', 'status': 'online', 'pageSize': 48}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0'}
 
-        r = httpx.get(url=url, params=params)
+        r = httpx.get(url=url, params=params, headers=headers)
         r.raise_for_status()
 
         soup = BeautifulSoup(markup=r.text, features='html.parser')
