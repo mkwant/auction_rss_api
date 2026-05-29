@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi_rss import RSSResponse
 
+from auction_extractors.beeldengeluid import BeeldEnGeluid
 from auction_rss_api.auction_extractors.amatterofconcrete import AMatterOfConcrete
 from auction_rss_api.auction_extractors.redhandfiles import RedHandFiles
 from auction_rss_api.routers.logger import LoggedRoute
@@ -15,6 +16,12 @@ router = APIRouter(
 @router.get(path='/amatterofconcrete')
 def amatterofconcrete_rss(search_term: str, available_only: bool = False) -> RSSResponse:
     site = AMatterOfConcrete(search_term=search_term, available_only=available_only)
+    return site.search()
+
+
+@router.get(path='/beeldengeluid')
+def beeldengeluid_rss(search_term: str) -> RSSResponse:
+    site = BeeldEnGeluid(search_term=search_term)
     return site.search()
 
 
