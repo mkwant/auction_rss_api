@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 from fastapi_rss import RSSResponse
 
-from auction_extractors.beeldengeluid import BeeldEnGeluid
+
 from auction_rss_api.auction_extractors.amatterofconcrete import AMatterOfConcrete
+from auction_rss_api.auction_extractors.beeldengeluid import BeeldEnGeluid
 from auction_rss_api.auction_extractors.redhandfiles import RedHandFiles
 from auction_rss_api.routers.logger import LoggedRoute
 
