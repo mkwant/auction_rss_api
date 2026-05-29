@@ -12,7 +12,7 @@ class BeeldEnGeluid(AuctionExtractor):
 
     @property
     def search_link(self) -> str:
-        return f"https://schatkamer.beeldengeluid.nl/zoeken?q={self.search_term}&sorteren=oudste"
+        return f"https://schatkamer.beeldengeluid.nl/zoeken?q={self.search_term}&sorteren=nieuwste"
 
     @property
     def site_desc(self) -> str:
@@ -23,7 +23,7 @@ class BeeldEnGeluid(AuctionExtractor):
         params = {
             "query": self.search_term,
             "playable": True,
-            "sort": "date-oldest",
+            "sort": "date-newest",
             "offset": offset,
             "limit": self.LIMIT,
         }
