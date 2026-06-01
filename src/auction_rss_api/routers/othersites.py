@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 from fastapi_rss import RSSResponse
 
-
 from auction_rss_api.auction_extractors.amatterofconcrete import AMatterOfConcrete
 from auction_rss_api.auction_extractors.beeldengeluid import BeeldEnGeluid
 from auction_rss_api.auction_extractors.illustrateddbdiscography import IllustratedDBDiscography
+from auction_rss_api.auction_extractors.justanothercollection import JustAnotherCollection
 from auction_rss_api.auction_extractors.redhandfiles import RedHandFiles
 from auction_rss_api.routers.logger import LoggedRoute
 
@@ -30,6 +30,12 @@ def beeldengeluid_rss(search_term: str) -> RSSResponse:
 @router.get(path='/illustrateddbdiscography')
 def illustrateddbdiscography_rss() -> RSSResponse:
     site = IllustratedDBDiscography()
+    return site.search()
+
+
+@router.get(path='/justanothercollection')
+def justanothercollection_rss() -> RSSResponse:
+    site = JustAnotherCollection()
     return site.search()
 
 
