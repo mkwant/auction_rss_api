@@ -5,7 +5,7 @@ description = "This API returns RSS feeds for the search results of auction site
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "asgi-correlation-id>=4.3.4",
+    "asgi-correlation-id>=5.0.0",
     "beautifulsoup4>=4.14.3",
     "cashews>=7.5.0",
     "cloudscraper>=1.2.71",
@@ -23,7 +23,7 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "requests>=2.34.2",
     "rich>=15.0.0",
-    "starlette>=1.2.0",
+    "starlette>=1.2.1",
     "truststore>=0.10.4",
     "urllib3>=2.7.0",
     "uvicorn>=0.48.0",
@@ -32,7 +32,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ruff>=0.15.15",
-    "ty>=0.0.40",
+    "ty>=0.0.41",
 ]
 
 [tool.uv]
