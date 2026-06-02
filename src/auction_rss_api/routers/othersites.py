@@ -5,6 +5,7 @@ from auction_rss_api.auction_extractors.amatterofconcrete import AMatterOfConcre
 from auction_rss_api.auction_extractors.beeldengeluid import BeeldEnGeluid
 from auction_rss_api.auction_extractors.bowiewonderworld import BowieWonderWorld
 from auction_rss_api.auction_extractors.illustrateddbdiscography import IllustratedDBDiscography
+from auction_rss_api.auction_extractors.indebuurt import InDeBuurt
 from auction_rss_api.auction_extractors.justanothercollection import JustAnotherCollection
 from auction_rss_api.auction_extractors.redhandfiles import RedHandFiles
 from auction_rss_api.routers.logger import LoggedRoute
@@ -37,6 +38,12 @@ def bowiewonderworld_rss() -> RSSResponse:
 @router.get(path='/illustrateddbdiscography')
 def illustrateddbdiscography_rss() -> RSSResponse:
     site = IllustratedDBDiscography()
+    return site.search()
+
+
+@router.get(path='/indebuurt')
+def indebuurt_rss(city: str) -> RSSResponse:
+    site = InDeBuurt(search_term=city)
     return site.search()
 
 
