@@ -1,5 +1,6 @@
 import hashlib
 import json
+import time
 from typing import List
 
 import dateparser
@@ -19,10 +20,32 @@ class InDeBuurt(AuctionExtractor):
     def site_desc(self) -> str:
         return "InDeBuurt"
 
-    def get_auctions(self) -> List[Auction]:
-        r = httpx.get(url=self.search_link, timeout=10)
-        r.raise_for_status()
+    def fetch_page(self) -> httpx.Response:
+        max_attempts = 10
+        for attempt in range(max_attempts):
+            try:
+                r = httpx.get(url=self.search_link, timeout=3.0)
 
+                if r.status_code == 503:
+                    raise httpx.HTTPStatusError(
+                        message="503 Service Unavailable",
+                        request=r.request,
+                        response=r,
+                    )
+
+                return r
+
+            except (httpx.TimeoutException, httpx.HTTPStatusError):
+                if attempt == max_attempts - 1:
+                    raise
+
+                print('retrying')
+                time.sleep(0.5)
+
+        raise AssertionError("Unreachable")
+
+    def get_auctions(self) -> List[Auction]:
+        r = self.fetch_page()
         soup = BeautifulSoup(markup=r.text, features="html.parser")
         json_str = soup.select_one('script[type="application/ld+json"]')
         json_parsed = json.loads(json_str.text)
