@@ -20,7 +20,7 @@ class BuyeeMercari(AuctionExtractorAsync):
     async def get_auctions(self) -> List[Auction]:
         auctions = []
 
-        link = 'https://buyee.jp/mercari/search'
+        url = 'https://buyee.jp/mercari/search'
         params = {
             'limit': 100,
             'keyword': self.search_term,
@@ -37,18 +37,15 @@ class BuyeeMercari(AuctionExtractorAsync):
 
         try:
             await page.goto(url="https://buyee.jp")
-            await page.wait_for_function(
-                expression="() => !document.querySelector('#challenge-container')",
-                timeout=3000,
-            )
-            await page.goto(url=f"{link}?{urlencode(params)}", wait_until="networkidle")
+            await page.wait_for_timeout(timeout=3)
+            await page.goto(url=f"{url}?{urlencode(params)}", wait_until="domcontentloaded", timeout=10000)
             html = await page.content()
 
         finally:
             await page.close()
 
         soup = BeautifulSoup(markup=html, features='html.parser')
-        # print(soup.prettify())
+        print(soup.prettify())
 
         items = soup.select('ul.item-lists>li.list')
         for item in items:

@@ -41,11 +41,8 @@ class BuyeeYahoo(AuctionExtractorAsync):
 
         try:
             await page.goto(url="https://buyee.jp")
-            await page.wait_for_function(
-                expression="() => !document.querySelector('#challenge-container')",
-                timeout=3000,
-            )
-            await page.goto(url=f"{url}?{urlencode(params)}", wait_until="networkidle")
+            await page.wait_for_timeout(timeout=3)
+            await page.goto(url=f"{url}?{urlencode(params)}", wait_until="domcontentloaded", timeout=10000)
             html = await page.content()
 
         finally:
