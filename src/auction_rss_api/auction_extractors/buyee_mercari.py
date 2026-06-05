@@ -37,6 +37,10 @@ class BuyeeMercari(AuctionExtractorAsync):
 
         try:
             await page.goto(url="https://buyee.jp")
+            await page.wait_for_function(
+                expression="() => !document.querySelector('#challenge-container')",
+                timeout=3000,
+            )
             await page.goto(url=f"{link}?{urlencode(params)}", wait_until="networkidle")
             html = await page.content()
 
