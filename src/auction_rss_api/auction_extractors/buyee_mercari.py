@@ -35,6 +35,20 @@ class BuyeeMercari(AuctionExtractorAsync):
         page = await self.browser.new_page()
         await page.set_extra_http_headers(headers)
 
+        # Debug
+        user_agent = await page.evaluate("navigator.userAgent")
+        headless_flag_detection = await page.evaluate("navigator.webdriver")
+        webgl_vendor = await page.evaluate("""
+                                           () => {
+                                               const canvas = document.createElement('canvas');
+                                               const gl = canvas.getContext('webgl');
+                                               return gl?.getParameter(gl.VENDOR);
+                                           }
+                                           """)
+        print(f"{user_agent=}")
+        print(f"{headless_flag_detection=}")
+        print(f"{webgl_vendor=}")
+
         try:
             await page.goto(url=f"{link}?{urlencode(params)}", wait_until="networkidle")
             html = await page.content()
