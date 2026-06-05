@@ -1,14 +1,13 @@
 from typing import List
+from urllib.parse import urlencode
 
-import httpx
 from bs4 import BeautifulSoup
 
-from auction_rss_api.app.awswaf.aws import AwsWaf
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
 
-class BuyeeMercari(AuctionExtractor):
+class BuyeeMercari(AuctionExtractorAsync):
 
     @property
     def search_link(self) -> str:
@@ -18,7 +17,7 @@ class BuyeeMercari(AuctionExtractor):
     def site_desc(self) -> str:
         return 'Buyee (Mercari)'
 
-    def get_auctions(self) -> List[Auction]:
+    async def get_auctions(self) -> List[Auction]:
         auctions = []
 
         link = 'https://buyee.jp/mercari/search'
@@ -32,18 +31,18 @@ class BuyeeMercari(AuctionExtractor):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         }
-        client = httpx.Client(headers=headers)
 
-        # Solve AwsWaf challenge
-        response = client.get(url=link, params=params)
-        endpoint = response.text.split('src="https://')[1].split("/challenge.js")[0]
-        challenge_js = client.get(f"https://{endpoint}/challenge.js").text
-        token = AwsWaf(endpoint=endpoint, domain="buyee.jp", challenge_js_text=challenge_js)()
-        client.cookies.set(name='aws-waf-token', value=token)
+        page = await self.browser.new_page()
+        await page.set_extra_http_headers(headers)
 
-        r = client.get(url=link, params=params)
-        r.raise_for_status()
-        soup = BeautifulSoup(markup=r.text, features='html.parser')
+        try:
+            await page.goto(url=f"{link}?{urlencode(params)}", wait_until="networkidle")
+            html = await page.content()
+
+        finally:
+            await page.close()
+
+        soup = BeautifulSoup(markup=html, features='html.parser')
 
         items = soup.select('ul.item-lists>li.list')
         for item in items:

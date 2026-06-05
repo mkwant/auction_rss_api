@@ -1,17 +1,16 @@
 from typing import List
+from urllib.parse import urlencode
 
-import httpx
 from bs4 import BeautifulSoup
 
-from auction_rss_api.app.awswaf.aws import AwsWaf
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
 
 # TODO Multiple pages? / keep in db?
 
 
-class BuyeeYahoo(AuctionExtractor):
+class BuyeeYahoo(AuctionExtractorAsync):
     search_term: str
 
     @property
@@ -22,7 +21,7 @@ class BuyeeYahoo(AuctionExtractor):
     def search_link(self) -> str:
         return f'https://buyee.jp/item/search/query/{self.search_term}?sort=end&order=d&new=1&translationType=1'
 
-    def _get_page(self) -> str:
+    async def _get_page(self) -> str:
         """Retrieve search page."""
         url = f'https://buyee.jp/item/search/query/{self.search_term}'
         headers = {
@@ -37,20 +36,21 @@ class BuyeeYahoo(AuctionExtractor):
             'translationType': 1
         }
 
-        client = httpx.Client(headers=headers)
+        page = await self.browser.new_page()
+        await page.set_extra_http_headers(headers)
 
-        # Solve AwsWaf challenge
-        response = client.get(url=url, params=params)
-        endpoint = response.text.split('src="https://')[1].split("/challenge.js")[0]
-        challenge_js = client.get(f"https://{endpoint}/challenge.js").text
-        token = AwsWaf(endpoint=endpoint, domain="buyee.jp", challenge_js_text=challenge_js)()
-        client.cookies.set(name='aws-waf-token', value=token)
+        try:
+            await page.goto(url=f"{url}?{urlencode(params)}", wait_until="networkidle")
+            html = await page.content()
 
-        r = client.get(url=url, params=params)
-        return r.text
+        finally:
+            await page.close()
 
-    def get_auctions(self) -> List[Auction]:
-        soup = BeautifulSoup(self._get_page(), features='html.parser')
+        return html
+
+    async def get_auctions(self) -> List[Auction]:
+        html = await self._get_page()
+        soup = BeautifulSoup(markup=html, features='html.parser')
 
         auctions = []
 
@@ -59,7 +59,10 @@ class BuyeeYahoo(AuctionExtractor):
             _url_ext = auction.select_one('div.itemCard__itemName>a')['href'].split('?')[0]
             link = f"https://buyee.jp{_url_ext}"
             auction_id = _url_ext.split('/')[-1]
-            image_link = auction.select_one('img.g-thumbnail__image')['data-src'].split('?')[0]
+            try:
+                image_link = auction.select_one('img.g-thumbnail__image')['data-src'].split('?')[0]
+            except KeyError:
+                image_link = auction.select_one('img.g-thumbnail__image')['src'].split('?')[0]
             _auction_price = auction.select('div.g-priceDetails')[0].get_text(separator=' ', strip=True)
             try:
                 _auction_days_left = auction.select_one('li.itemCard__infoItem>span.g-text--attention').text

@@ -2,8 +2,9 @@ from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
+from playwright.async_api import Browser
 
-from auction_rss_api.app.dependencies import Translate, TranslateLanguage
+from auction_rss_api.app.dependencies import Translate, TranslateLanguage, get_browser
 from auction_rss_api.auction_extractors.bonhams import Bonhams
 from auction_rss_api.auction_extractors.buyee_mercari import BuyeeMercari
 from auction_rss_api.auction_extractors.buyee_rakuma import BuyeeRakuma
@@ -59,42 +60,83 @@ def bonhams_rss(search_term: str) -> RSSResponse:
     return site.search()
 
 
-@router.get(path='/buyee_mercari')
-def buyee_mercari_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
+@router.get("/buyee_mercari")
+async def buyee_mercari_rss(
+        search_term: str,
+        translate: Translate = Depends(),
+        browser: Browser = Depends(get_browser),
+) -> RSSResponse:
+    transformers = []
+
     if translate.translate_titles:
-        site = BuyeeMercari(
-            search_term=search_term,
-            transformers=[translate.translate_from(language=TranslateLanguage.JAPANESE)]
+        transformers.append(
+            translate.translate_from(language=TranslateLanguage.JAPANESE)
         )
-    else:
-        site = BuyeeMercari(search_term=search_term)
-    return site.search()
+
+    site = BuyeeMercari(
+        search_term=search_term,
+        transformers=transformers,
+        browser=browser,
+    )
+
+    return await site.search()
 
 
-@router.get(path='/buyee__rakuma', include_in_schema=False)  # For backwards compatibility
-@router.get(path='/buyee_rakuma')
-def buyee_rakuma_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
+@router.get("/buyee_rakuma")
+async def buyee_rakuma_rss(
+        search_term: str,
+        translate: Translate = Depends(),
+        browser: Browser = Depends(get_browser),
+) -> RSSResponse:
+    transformers = []
+
     if translate.translate_titles:
-        site = BuyeeRakuma(
-            search_term=search_term,
-            transformers=[translate.translate_from(language=TranslateLanguage.JAPANESE)]
+        transformers.append(
+            translate.translate_from(language=TranslateLanguage.JAPANESE)
         )
-    else:
-        site = BuyeeRakuma(search_term=search_term)
-    return site.search()
+
+    site = BuyeeRakuma(
+        search_term=search_term,
+        transformers=transformers,
+        browser=browser,
+    )
+
+    return await site.search()
 
 
-@router.get(path='/buyee__yahoo', include_in_schema=False)  # For backwards compatibility
-@router.get(path='/buyee_yahoo')
-def buyee_yahoo_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
+@router.get("/buyee_yahoo")
+async def buyee_yahoo_rss(
+        search_term: str,
+        translate: Translate = Depends(),
+        browser: Browser = Depends(get_browser),
+) -> RSSResponse:
+    transformers = []
+
     if translate.translate_titles:
-        site = BuyeeYahoo(
-            search_term=search_term,
-            transformers=[translate.translate_from(language=TranslateLanguage.JAPANESE)]
+        transformers.append(
+            translate.translate_from(language=TranslateLanguage.JAPANESE)
         )
-    else:
-        site = BuyeeYahoo(search_term=search_term)
-    return site.search()
+
+    site = BuyeeYahoo(
+        search_term=search_term,
+        transformers=transformers,
+        browser=browser,
+    )
+
+    return await site.search()
+
+
+# @router.get(path='/buyee__yahoo', include_in_schema=False)  # For backwards compatibility
+# @router.get(path='/buyee_yahoo')
+# def buyee_yahoo_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
+#     if translate.translate_titles:
+#         site = BuyeeYahoo(
+#             search_term=search_term,
+#             transformers=[translate.translate_from(language=TranslateLanguage.JAPANESE)]
+#         )
+#     else:
+#         site = BuyeeYahoo(search_term=search_term)
+#     return site.search()
 
 
 @router.get(path='/catawiki')
