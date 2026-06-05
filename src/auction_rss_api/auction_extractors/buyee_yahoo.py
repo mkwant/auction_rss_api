@@ -40,6 +40,7 @@ class BuyeeYahoo(AuctionExtractorAsync):
         await page.set_extra_http_headers(headers)
 
         try:
+            await page.goto(url="https://buyee.jp")
             await page.goto(url=f"{url}?{urlencode(params)}", wait_until="networkidle")
             html = await page.content()
 
