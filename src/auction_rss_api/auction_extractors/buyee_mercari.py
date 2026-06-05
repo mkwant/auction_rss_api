@@ -33,6 +33,7 @@ class BuyeeMercari(AuctionExtractorAsync):
         }
 
         page = await self.browser.new_page()
+        await page.goto(url="https://buyee.jp", timeout=3)
         await page.set_extra_http_headers(headers)
 
         # Debug
