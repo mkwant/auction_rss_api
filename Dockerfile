@@ -30,7 +30,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY src /app/src
 
 # Install Playwright browsers
-RUN python -m playwright install chromium
+RUN /app/.venv/bin/python -m playwright install chromium
 
 # Run the app
 CMD ["/app/.venv/bin/fastapi", "run", "src/auction_rss_api/main.py", "--port", "80", "--host", "0.0.0.0"]
