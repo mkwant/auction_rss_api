@@ -43,6 +43,7 @@ class BuyeeMercari(AuctionExtractorAsync):
             await page.close()
 
         soup = BeautifulSoup(markup=html, features='html.parser')
+        print(soup.prettify())
 
         items = soup.select('ul.item-lists>li.list')
         for item in items:
