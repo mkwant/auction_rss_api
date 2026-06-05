@@ -49,8 +49,6 @@ class Vinted(AuctionExtractor):
         auctions = []
 
         for item in self._get_page():
-            from rich import print
-            print(item)
             _currency = item['price']['currency_code'].capitalize()
             _amount = float(item['price']['amount'])
             _service_fee_currency = item['service_fee']['currency_code'].capitalize()
