@@ -7,7 +7,7 @@ from typing import Awaitable, Callable, List
 
 import nest_asyncio2
 from fastapi_rss import RSSResponse
-from playwright.async_api import Browser
+from playwright.async_api import BrowserContext
 from pydantic import BaseModel, ConfigDict, Field
 
 from auction_rss_api.auction_transformers.html_linebreaks_in_desc import html_linebreaks_in_desc
@@ -145,7 +145,7 @@ class AuctionExtractorAsync(AuctionExtractor, ABC):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    browser: Browser
+    browser: BrowserContext
 
     @abstractmethod
     async def get_auctions(self) -> List[Auction]:

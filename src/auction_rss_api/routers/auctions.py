@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
-from playwright.async_api import Browser
+from playwright.async_api import BrowserContext
 
 from auction_rss_api.app.dependencies import Translate, TranslateLanguage, get_browser
 from auction_rss_api.auction_extractors.bonhams import Bonhams
@@ -64,7 +64,7 @@ def bonhams_rss(search_term: str) -> RSSResponse:
 async def buyee_mercari_rss(
         search_term: str,
         translate: Translate = Depends(),
-        browser: Browser = Depends(get_browser),
+        browser: BrowserContext = Depends(get_browser),
 ) -> RSSResponse:
     transformers = []
 
@@ -108,7 +108,7 @@ async def buyee_rakuma_rss(
 async def buyee_yahoo_rss(
         search_term: str,
         translate: Translate = Depends(),
-        browser: Browser = Depends(get_browser),
+        browser: Context = Depends(get_browser),
 ) -> RSSResponse:
     transformers = []
 
