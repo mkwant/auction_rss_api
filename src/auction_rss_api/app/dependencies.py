@@ -4,6 +4,7 @@ from functools import partial
 from typing import Any, Coroutine
 
 import httpx
+from fastapi import Request
 
 from auction_rss_api.auction_transformers.translator import AzureTranslator, translate_auction
 from auction_rss_api.models.auction import Auction
@@ -28,3 +29,7 @@ class Translate:
             translate_to=TranslateLanguage.ENGLISH,
             translate_from=language.value
         )
+
+
+async def get_browser(request: Request):
+    return request.app.state.browser

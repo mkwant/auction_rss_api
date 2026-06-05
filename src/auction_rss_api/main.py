@@ -6,6 +6,7 @@ from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 
 from auction_rss_api import __version__
+from auction_rss_api.app.lifespan import lifespan
 from auction_rss_api.app.logs import setup_logging
 from auction_rss_api.app.middleware import AddNoIndex
 from auction_rss_api.app.settings import settings
@@ -28,7 +29,8 @@ app = FastAPI(
     title='AuctionRSS',
     version=__version__,
     description='This API returns RSS feeds for the search results of auction sites, '
-                'online record stores and concert venues.'
+                'online record stores and concert venues.',
+    lifespan=lifespan,
 )
 
 logger.info(f'Starting application (version {__version__})...')
