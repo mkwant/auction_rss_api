@@ -33,7 +33,6 @@ class BuyeeMercari(AuctionExtractorAsync):
         }
 
         page = await self.browser.new_page()
-        await page.goto(url="https://buyee.jp", timeout=3)
         await page.set_extra_http_headers(headers)
 
         # Debug
@@ -51,6 +50,8 @@ class BuyeeMercari(AuctionExtractorAsync):
         print(f"{webgl_vendor=}")
 
         try:
+            await page.goto(url="https://buyee.jp")
+            await page.wait_for_timeout(3000)
             await page.goto(url=f"{link}?{urlencode(params)}", wait_until="networkidle")
             html = await page.content()
 
