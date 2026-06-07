@@ -145,7 +145,7 @@ class AuctionExtractorAsync(AuctionExtractor, ABC):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    browser: BrowserContext
+    browser: BrowserContext | None = None
 
     @abstractmethod
     async def get_auctions(self) -> List[Auction]:
