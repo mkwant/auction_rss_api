@@ -12,6 +12,9 @@ from auction_rss_api.auction_extractors.buyee_yahoo import BuyeeYahoo
 from auction_rss_api.auction_extractors.catawiki import CataWiki
 from auction_rss_api.auction_extractors.christies import Christies
 from auction_rss_api.auction_extractors.delcampe import Delcampe
+from auction_rss_api.auction_extractors.doorzo_mercari import DoorzoMercari
+from auction_rss_api.auction_extractors.doorzo_rakuma import DoorzoRakuma
+from auction_rss_api.auction_extractors.doorzo_yahoo import DoorzoYahoo
 from auction_rss_api.auction_extractors.ebay import Ebay, SiteId
 from auction_rss_api.auction_extractors.ewbank import Ewbank
 from auction_rss_api.auction_extractors.gottahaverockandroll import GottaHaveRockAndRoll
@@ -142,6 +145,42 @@ def christies_rss(search_term: str) -> RSSResponse:
 @router.get(path='/delcampe')
 def delcampe_rss(search_term: str) -> RSSResponse:
     site = Delcampe(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/doorzo_mercari')
+def doorzo_mercari_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
+    transformers = []
+
+    if translate.translate_titles:
+        transformers.append(
+            translate.translate_from(language=TranslateLanguage.JAPANESE)
+        )
+    site = DoorzoMercari(search_term=search_term, transformers=transformers)
+    return site.search()
+
+
+@router.get(path='/doorzo_rakuma')
+def doorzo_rakuma_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
+    transformers = []
+
+    if translate.translate_titles:
+        transformers.append(
+            translate.translate_from(language=TranslateLanguage.JAPANESE)
+        )
+    site = DoorzoRakuma(search_term=search_term, transformers=transformers)
+    return site.search()
+
+
+@router.get(path='/doorzo_yahoo')
+def doorzo_yahoo_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
+    transformers = []
+
+    if translate.translate_titles:
+        transformers.append(
+            translate.translate_from(language=TranslateLanguage.JAPANESE)
+        )
+    site = DoorzoYahoo(search_term=search_term, transformers=transformers)
     return site.search()
 
 
