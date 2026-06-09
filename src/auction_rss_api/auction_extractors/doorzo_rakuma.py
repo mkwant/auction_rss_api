@@ -1,9 +1,10 @@
+from functools import cached_property
 from typing import List
 
 import httpx
 
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractor, logger
 
 
 class DoorzoRakuma(AuctionExtractor):
@@ -14,6 +15,26 @@ class DoorzoRakuma(AuctionExtractor):
     @property
     def site_desc(self) -> str:
         return f"Doorzo (Rakuma)"
+
+    @cached_property
+    def exchange_rate(self) -> float | int:
+        params = {
+            'n': 'Sig.Front.Front.GetCurrencyExchangeRate',
+            'from': 'INTERNATIONAL',
+            'isNew': '15',
+            'language': 'en',
+            'currency': 'EUR',
+        }
+
+        r = httpx.get(url='https://sig.doorzo.com/', params=params)
+        r.raise_for_status()
+        try:
+            rate = r.json()['data']['exchange']
+        except Exception as e:
+            logger.warn(f"Error getting exchange rate: {e}")
+            rate = 0
+
+        return rate
 
     def get_auctions(self) -> List[Auction]:
         url = "https://sig.doorzo.com/"
@@ -39,9 +60,9 @@ class DoorzoRakuma(AuctionExtractor):
         for item in items:
             auction_id = str(item['Asin'])
             link = f'https://www.doorzo.com/en/mall/rakuma/detail/{item['Url']}'
-            image_link = item['ImageUrl']
+            image_link = item['ImageUrl'].replace('/m/', '/l/')
             title = item['Name']
-            description = f"JPY {item['JPYPrice']}"
+            description = f"JPY {item['JPYPrice']} (Eur {self.exchange_rate * item['JPYPrice']:.2f})"
 
             auctions.append(
                 Auction(

@@ -1,9 +1,10 @@
+from functools import cached_property
 from typing import List
 
 import httpx
 
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractor, logger
 
 
 class DoorzoYahoo(AuctionExtractor):
@@ -14,6 +15,26 @@ class DoorzoYahoo(AuctionExtractor):
     @property
     def site_desc(self) -> str:
         return "Doorzo (Yahoo)"
+
+    @cached_property
+    def exchange_rate(self) -> float | int:
+        params = {
+            'n': 'Sig.Front.Front.GetCurrencyExchangeRate',
+            'from': 'INTERNATIONAL',
+            'isNew': '15',
+            'language': 'en',
+            'currency': 'EUR',
+        }
+
+        r = httpx.get(url='https://sig.doorzo.com/', params=params)
+        r.raise_for_status()
+        try:
+            rate = r.json()['data']['exchange']
+        except Exception as e:
+            logger.warn(f"Error getting exchange rate: {e}")
+            rate = 0
+
+        return rate
 
     def get_auctions(self) -> List[Auction]:
         params = {
@@ -48,10 +69,10 @@ class DoorzoYahoo(AuctionExtractor):
             image_link = item['ImageUrl'].split('?')[0]
             title = item['Name']
             seller = item['SellerName']
-            description = f"Remaining Time: {item['RemainingTime']}\nBid Price: {item['BidJPYPriceStr']} YEN"
+            description = f"Bid Price: JPY {item['BidJPYPriceStr']} (Eur {self.exchange_rate * item['BidJPYPrice']:.2f})"
 
             if item['BuyNowPriceStr'] != '0':
-                description += f"\nBuy Now: {item['BuyNowPriceStr']} YEN"
+                description += f"\nBuy Now: JPY {item['BuyNowPriceStr']} (Eur {self.exchange_rate * item['BuyNowPrice']:.2f}))"
 
             auctions.append(
                 Auction(
