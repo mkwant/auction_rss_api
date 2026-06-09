@@ -69,10 +69,10 @@ class DoorzoYahoo(AuctionExtractor):
             image_link = item['ImageUrl'].split('?')[0]
             title = item['Name']
             seller = item['SellerName']
-            description = f"Bid Price: JPY {item['BidJPYPriceStr']} (Eur {self.exchange_rate * item['BidJPYPrice']:.2f})"
+            description = f"Bid Price: JPY {item['BidJPYPrice']:,} (Eur {self.exchange_rate * item['BidJPYPrice']:.2f})"
 
             if item['BuyNowPriceStr'] != '0':
-                description += f"\nBuy Now: JPY {item['BuyNowPriceStr']} (Eur {self.exchange_rate * item['BuyNowPrice']:.2f}))"
+                description += f"\nBuy Now: JPY {item['BuyNowPrice']:,} (Eur {self.exchange_rate * item['BuyNowPrice']:.2f})"
 
             auctions.append(
                 Auction(

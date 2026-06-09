@@ -62,7 +62,7 @@ class DoorzoRakuma(AuctionExtractor):
             link = f'https://www.doorzo.com/en/mall/rakuma/detail/{item['Url']}'
             image_link = item['ImageUrl'].replace('/m/', '/l/')
             title = item['Name']
-            description = f"JPY {item['JPYPrice']} (Eur {self.exchange_rate * item['JPYPrice']:.2f})"
+            description = f"JPY {item['JPYPrice']:,} (Eur {self.exchange_rate * item['JPYPrice']:.2f})"
 
             auctions.append(
                 Auction(
