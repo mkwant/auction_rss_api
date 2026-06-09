@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
-from playwright.async_api import BrowserContext
+from playwright.async_api import Browser, BrowserContext
 
 from auction_rss_api.app.dependencies import Translate, TranslateLanguage, get_browser
 from auction_rss_api.auction_extractors.bonhams import Bonhams
@@ -86,7 +86,7 @@ async def buyee_mercari_rss(
 async def buyee_rakuma_rss(
         search_term: str,
         translate: Translate = Depends(),
-        browser: Browser = Depends(get_browser),
+        browser: BrowserContext = Depends(get_browser),
 ) -> RSSResponse:
     transformers = []
 
@@ -108,7 +108,7 @@ async def buyee_rakuma_rss(
 async def buyee_yahoo_rss(
         search_term: str,
         translate: Translate = Depends(),
-        browser: Context = Depends(get_browser),
+        browser: BrowserContext = Depends(get_browser),
 ) -> RSSResponse:
     transformers = []
 
@@ -124,19 +124,6 @@ async def buyee_yahoo_rss(
     )
 
     return await site.search()
-
-
-# @router.get(path='/buyee__yahoo', include_in_schema=False)  # For backwards compatibility
-# @router.get(path='/buyee_yahoo')
-# def buyee_yahoo_rss(search_term: str, translate: Translate = Depends()) -> RSSResponse:
-#     if translate.translate_titles:
-#         site = BuyeeYahoo(
-#             search_term=search_term,
-#             transformers=[translate.translate_from(language=TranslateLanguage.JAPANESE)]
-#         )
-#     else:
-#         site = BuyeeYahoo(search_term=search_term)
-#     return site.search()
 
 
 @router.get(path='/catawiki')
