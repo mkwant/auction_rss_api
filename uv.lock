@@ -50,7 +50,7 @@ wheels = [
 
 [[package]]
 name = "auction-rss-api"
-version = "1.63.18"
+version = "1.63.19"
 source = { editable = "." }
 dependencies = [
     { name = "asgi-correlation-id" },
