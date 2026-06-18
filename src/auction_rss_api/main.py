@@ -45,5 +45,5 @@ app.include_router(redirect.router)
 app.add_middleware(middleware_class=AddNoIndex)  # noqa
 app.add_middleware(middleware_class=CorrelationIdMiddleware)  # noqa
 
-routes = {x.name for x in app.routes if x.name.endswith('_rss')}  # noqa
+routes = {x.name for x in app.routes if hasattr(x, "name") and  x.name.endswith('_rss')}  # noqa
 logger.info(f'Total feeds: {len(routes)}')
