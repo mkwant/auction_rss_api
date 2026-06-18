@@ -37,10 +37,10 @@ class TradeMe(AuctionExtractor):
 
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         json_str = soup.select_one('script#frend-state').text
-
         json_parsed = json.loads(json_str)
-        search_result = next(iter(json_parsed))
-        items = json_parsed[search_result]['b']['list']
+
+        items = json_parsed['NGRX_STATE']['listing']['cachedSearchResults']['entities']
+        items = [items[item]['item'] for item in items]
         for item in items:
             item_id = str(item['listingId'])
             title = item['title']
