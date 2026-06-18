@@ -4,6 +4,7 @@ from pathlib import Path
 import truststore
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
+from fastapi.routing import _IncludedRouter
 
 from auction_rss_api import __version__
 from auction_rss_api.app.lifespan import lifespan
@@ -45,5 +46,10 @@ app.include_router(redirect.router)
 app.add_middleware(middleware_class=AddNoIndex)  # noqa
 app.add_middleware(middleware_class=CorrelationIdMiddleware)  # noqa
 
-routes = {x.name for x in app.routes if hasattr(x, "name") and  x.name.endswith('_rss')}  # noqa
+# Calculate and log number of rss feeds
+routes = []
+my_routers = [x for x in app.routes if isinstance(x, _IncludedRouter)]
+for router in my_routers:
+    routes.extend(router.original_router.routes)
+routes = [x for x in routes if x.name.endswith('_rss')]
 logger.info(f'Total feeds: {len(routes)}')
