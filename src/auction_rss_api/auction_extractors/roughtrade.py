@@ -9,6 +9,7 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 class RoughTrade(AuctionExtractor):
     available_only: bool = False
+    exclusives_only: bool = False
 
     @property
     def search_link(self) -> str:
@@ -21,11 +22,15 @@ class RoughTrade(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0'}
 
+        if self.search_term is None:
+            self.search_term = ''
+
         json_data = {
             'requests': [
                 {
                     'indexName': 'shopify_prod_products_newest_listed',
                     'params': {
+                        'facetFilters': [],
                         'hitsPerPage': 80,
                         'page': 0,
                         'query': self.search_term,
@@ -33,6 +38,9 @@ class RoughTrade(AuctionExtractor):
                 }
             ],
         }
+
+        if self.exclusives_only:
+            json_data['requests'][0]['params']['facetFilters'] = ['meta.custom.exclusive:Rough Trade Exclusive']
 
         r = httpx.post(
             url='https://www.roughtrade.com/api/algolia/search',
@@ -45,7 +53,11 @@ class RoughTrade(AuctionExtractor):
         for item in items:
             unique_id = str(item['id'])
             title = f"{item['title']} ({item['option1']})"
-            link = f'https://www.roughtrade.com/en-de/product/{item['artists'][0]['handle']}/{item['handle']}'
+
+            try:
+                link = f'https://www.roughtrade.com/en-de/product/{item['artists'][0]['handle']}/{item['handle']}'
+            except IndexError:
+                link = f'https://www.roughtrade.com/en-de/product/{item['product_type'].lower().replace(' ', '-')}/{item['handle']}'
             image_link = item['image']
             created_at = datetime.fromisoformat(item['created_at'])
 

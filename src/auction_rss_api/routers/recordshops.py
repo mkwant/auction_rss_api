@@ -333,8 +333,8 @@ def rockaway_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/roughtrade')
-def roughtrade_rss(search_term: str, available_only: bool = False) -> RSSResponse:
-    site = RoughTrade(search_term=search_term, available_only=available_only)
+def roughtrade_rss(search_term: str | None = None, available_only: bool = False, exclusives_only: bool = False) -> RSSResponse:
+    site = RoughTrade(search_term=search_term, available_only=available_only, exclusives_only=exclusives_only)
     return site.search()
 
 
