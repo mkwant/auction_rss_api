@@ -4,7 +4,7 @@ from pathlib import Path
 import truststore
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
-from fastapi.routing import _IncludedRouter
+from fastapi.routing import _IncludedRouter  # noqa
 
 from auction_rss_api import __version__
 from auction_rss_api.app.lifespan import lifespan
