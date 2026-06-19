@@ -52,7 +52,7 @@ class RoughTrade(AuctionExtractor):
         items = r.json()['results'][0]['hits']
         for item in items:
             unique_id = str(item['id'])
-            title = f"{item['title']} ({item['option1']})"
+            title = f"{item['product_type']} - {item['title']} ({item['option1']})"
 
             try:
                 link = f'https://www.roughtrade.com/en-de/product/{item['artists'][0]['handle']}/{item['handle']}'
