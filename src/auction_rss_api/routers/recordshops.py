@@ -45,6 +45,7 @@ from auction_rss_api.auction_extractors.recordmecca import RecordMecca
 from auction_rss_api.auction_extractors.redeye import RedEye
 from auction_rss_api.auction_extractors.rockabuy import RockaBuy
 from auction_rss_api.auction_extractors.rockaway import Rockaway
+from auction_rss_api.auction_extractors.roughtrade import RoughTrade
 from auction_rss_api.auction_extractors.slcd import SLCD
 from auction_rss_api.auction_extractors.soisong import Soisong
 from auction_rss_api.auction_extractors.tokyomusicjapan import TokyoMusicJapan
@@ -328,6 +329,12 @@ def rockabuy_rss(search_term: str) -> RSSResponse:
 @router.get(path='/rockaway')
 def rockaway_rss(search_term: str) -> RSSResponse:
     site = Rockaway(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/roughtrade')
+def roughtrade_rss(search_term: str, available_only: bool = False) -> RSSResponse:
+    site = RoughTrade(search_term=search_term, available_only=available_only)
     return site.search()
 
 
