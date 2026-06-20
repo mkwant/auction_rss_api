@@ -54,6 +54,7 @@ from auction_rss_api.auction_extractors.tracks import Tracks
 from auction_rss_api.auction_extractors.vandabowie import VandaBowie
 from auction_rss_api.auction_extractors.vandacollection import VandaCollection
 from auction_rss_api.auction_extractors.variaworld import Variaworld
+from auction_rss_api.auction_extractors.vinylalert import VinylAlert
 from auction_rss_api.auction_extractors.vinyleers import Vinyleers
 from auction_rss_api.auction_extractors.vinylmania import VinylmaniaExtractor
 from auction_rss_api.auction_extractors.waaghals import Waaghals
@@ -339,16 +340,19 @@ def rockaway_rss(search_term: str) -> RSSResponse:
     return site.search()
 
 
-@router.get(path='/roughtrade')
-def roughtrade_rss(search_term: str | None = None, available_only: bool = False,
-                   exclusives_only: bool = False) -> RSSResponse:
-    site = RoughTrade(search_term=search_term, available_only=available_only, exclusives_only=exclusives_only)
-    return site.search()
-
-
 @router.get(path='/slcd')
 def slcd_rss(search_term: str) -> RSSResponse:
     site = SLCD(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/roughtrade')
+def roughtrade_rss(
+        search_term: str | None = None,
+        available_only: bool = False,
+        exclusives_only: bool = False,
+) -> RSSResponse:
+    site = RoughTrade(search_term=search_term, available_only=available_only, exclusives_only=exclusives_only)
     return site.search()
 
 
@@ -385,6 +389,12 @@ def vandacollection_rss(category: str = 'THES394093') -> RSSResponse:
 @router.get(path='/variaworld')
 def variaworld_rss(search_term: str) -> RSSResponse:
     site = Variaworld(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/vinylalert')
+def vinylalert_rss(search_term: str | None = None) -> RSSResponse:
+    site = VinylAlert(search_term=search_term)
     return site.search()
 
 
