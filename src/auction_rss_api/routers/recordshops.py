@@ -38,6 +38,7 @@ from auction_rss_api.auction_extractors.memorabiliauk import MemorabiliaUk
 from auction_rss_api.auction_extractors.montreuxjazzshop import MontreuxJazzShop
 from auction_rss_api.auction_extractors.musichug import MusicHug
 from auction_rss_api.auction_extractors.musicstack import MusicStack
+from auction_rss_api.auction_extractors.newburycomics import NewBuryComics
 from auction_rss_api.auction_extractors.platomania import PlatoMania
 from auction_rss_api.auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_rss_api.auction_extractors.rarevinyl import RareVinyl
@@ -290,6 +291,12 @@ def musicstack_rss(search_term: str) -> RSSResponse:
     return site.search()
 
 
+@router.get(path='/newburycomics')
+def newburycomics_rss() -> RSSResponse:
+    site = NewBuryComics()
+    return site.search()
+
+
 @router.get(path='/platomania')
 def platomania_rss(search_term: str) -> RSSResponse:
     site = PlatoMania(search_term=search_term)
@@ -333,7 +340,8 @@ def rockaway_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/roughtrade')
-def roughtrade_rss(search_term: str | None = None, available_only: bool = False, exclusives_only: bool = False) -> RSSResponse:
+def roughtrade_rss(search_term: str | None = None, available_only: bool = False,
+                   exclusives_only: bool = False) -> RSSResponse:
     site = RoughTrade(search_term=search_term, available_only=available_only, exclusives_only=exclusives_only)
     return site.search()
 
