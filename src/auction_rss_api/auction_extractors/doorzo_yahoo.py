@@ -36,6 +36,12 @@ class DoorzoYahoo(AuctionExtractor):
 
         return rate
 
+    def get_buyee_link(self, doorzo_link: str) -> str:
+        hex_url = doorzo_link.split('/')[-1]
+        original_url = bytes.fromhex(hex_url).decode('utf-8')
+        buyee_id = original_url.split('/')[-1]
+        return f'https://buyee.jp/item/jdirectitems/auction/{buyee_id}'
+
     def get_auctions(self) -> List[Auction]:
         params = {
             'n': 'Sig.Front.SubSite.AppYahoo.Search',
@@ -66,6 +72,7 @@ class DoorzoYahoo(AuctionExtractor):
         for item in r.json()['data']['list']:
             auction_id = item['Asin']
             link = f'https://www.doorzo.com/en/mall/yahoo/detail/{item['Url']}'
+            buyee_link = self.get_buyee_link(doorzo_link=link)
             image_link = item['ImageUrl'].split('?')[0]
             title = item['Name']
             seller = item['SellerName']
@@ -73,6 +80,8 @@ class DoorzoYahoo(AuctionExtractor):
 
             if item['BuyNowPriceStr'] != '0':
                 description += f"\nBuy Now: JPY {item['BuyNowPrice']:,} (Eur {self.exchange_rate * item['BuyNowPrice']:.2f})"
+
+            description += f"\n\n<a href='{buyee_link}'>Buyee</a>"
 
             auctions.append(
                 Auction(

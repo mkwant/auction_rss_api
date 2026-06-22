@@ -36,6 +36,12 @@ class DoorzoMercari(AuctionExtractor):
 
         return rate
 
+    def get_buyee_link(self, doorzo_link: str) -> str:
+        hex_url = doorzo_link.split('/')[-1]
+        original_url = bytes.fromhex(hex_url).decode('utf-8')
+        buyee_id = original_url.split('/')[-2]
+        return f'https://buyee.jp/mercari/item/{buyee_id}'
+
     def get_auctions(self) -> List[Auction]:
         url = "https://sig.doorzo.com/"
 
@@ -60,9 +66,10 @@ class DoorzoMercari(AuctionExtractor):
         for item in items:
             auction_id = str(item['Asin'])
             link = f'https://www.doorzo.com/en/mall/mercari/detail/{item['Url']}'
+            buyee_link = self.get_buyee_link(doorzo_link=link)
             image_link = item['ImageUrl'].replace('/small/', '/large/')
             title = item['Name']
-            description = f"JPY {item['JPYPrice']:,} (Eur {self.exchange_rate * item['JPYPrice']:.2f})"
+            description = f'JPY {item['JPYPrice']:,} (Eur {self.exchange_rate * item['JPYPrice']:.2f})\n\n<a href="{buyee_link}">Buyee</a>'
 
             auctions.append(
                 Auction(
