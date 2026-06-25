@@ -107,7 +107,19 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features='html.parser')
 
-        script = soup.select_one('script#web-pixels-manager-setup').text
+        script = next(
+            (
+                s.get_text()
+                for s in soup.select("script")
+                if '"productVariants"' in s.get_text()
+                   and '"events":"' in s.get_text()
+            ),
+            None,
+        )
+
+        if script is None:
+            raise ValueError("Could not find Shopify product data")
+
         json_str = script.split('searchResult\\":')[1].replace('}]]"});})();', '')
 
         json_str = re.sub(pattern=r'\\"', repl='"', string=json_str)  # Replace escaped quotes with actual quotes
