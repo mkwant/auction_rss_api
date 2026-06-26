@@ -71,6 +71,7 @@ class Tradera(AuctionExtractor):
                     if bracket_count == 0:
                         array_end = i + 1
                         array_str = payload[array_start:array_end]
+                        array_str = array_str.encode('latin1').decode('utf-8')  # Fix encoding
                         try:
                             return json.loads(array_str)
                         except json.JSONDecodeError as e:
@@ -97,8 +98,8 @@ class Tradera(AuctionExtractor):
                             if depth == 0:
                                 end = i + 1
                                 break
-
-                    obj = json.loads(payload[start:end])
+                    json_str = payload[start:end].encode('latin1').decode('utf-8')  # Fix encoding
+                    obj = json.loads(json_str)
                     return obj["actions"][0]["payload"]["result"]["items"]
 
                 except Exception:
