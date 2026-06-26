@@ -1,6 +1,6 @@
 [project]
 name = "auction-rss-api"
-version = "1.66.3"
+version = "1.66.4"
 description = "This API returns RSS feeds for the search results of auction sites, online record stores and concert venues."
 readme = "README.md"
 requires-python = ">=3.13"
