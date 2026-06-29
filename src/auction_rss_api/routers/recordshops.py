@@ -40,6 +40,7 @@ from auction_rss_api.auction_extractors.musichug import MusicHug
 from auction_rss_api.auction_extractors.musicstack import MusicStack
 from auction_rss_api.auction_extractors.newburycomics import NewBuryComics
 from auction_rss_api.auction_extractors.platomania import PlatoMania
+from auction_rss_api.auction_extractors.platomania_exclusives import PlatomaniaExclusives
 from auction_rss_api.auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_rss_api.auction_extractors.rarevinyl import RareVinyl
 from auction_rss_api.auction_extractors.recordmecca import RecordMecca
@@ -301,6 +302,12 @@ def newburycomics_rss() -> RSSResponse:
 @router.get(path='/platomania')
 def platomania_rss(search_term: str) -> RSSResponse:
     site = PlatoMania(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/platomania_exclusives')
+def platomania_exclusives_rss() -> RSSResponse:
+    site = PlatomaniaExclusives()
     return site.search()
 
 
