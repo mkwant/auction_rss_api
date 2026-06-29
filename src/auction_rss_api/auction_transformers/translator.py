@@ -6,7 +6,7 @@ from typing import Optional
 import httpx
 import truststore
 from asgi_correlation_id import correlation_id
-from cashews import cache
+from diskcache import Cache, JSONDisk
 
 from auction_rss_api.app.settings import settings
 from auction_rss_api.models.auction import Auction
@@ -15,9 +15,6 @@ truststore.inject_into_ssl()  # Use OS trust store
 
 # Setting up logging
 logger = logging.getLogger(__name__)
-
-# Setting up the translation cache
-cache.setup(settings_url="disk://?directory=/.translation_cache")
 
 
 class Translator(ABC):
@@ -37,6 +34,8 @@ class AzureTranslator(Translator):
     base_url = 'https://api.cognitive.microsofttranslator.com'
     endpoint = 'translate'
 
+    CACHE_TTL = timedelta(days=90).total_seconds()
+
     def __init__(
             self,
             client: httpx.AsyncClient,
@@ -48,8 +47,19 @@ class AzureTranslator(Translator):
         self.ms_translate_api_key = ms_translate_api_key
         self.ms_translate_api_location = ms_translate_api_location
 
-    @cache(key="{text}:{translate_from}:{translate_to}", ttl=timedelta(days=90))
+        self.cache = Cache(
+            directory="/.translation_cache",
+            disk=JSONDisk,
+        )
+
     async def translate(self, text: str, translate_from: str, translate_to: str) -> str:
+        cache_key = f"{text}:{translate_from}:{translate_to}"
+
+        cached = self.cache.get(cache_key)
+        if cached is not None:
+            logger.debug(f"Translation cache hit, {cache_key=}")
+            return cached
+
         headers = {
             'Ocp-Apim-Subscription-Key': self.ms_translate_api_key,
             'Ocp-Apim-Subscription-Region': self.ms_translate_api_location,
@@ -79,6 +89,13 @@ class AzureTranslator(Translator):
             result = r.json()[0]['translations'][0]['text']
         except Exception:
             raise ConnectionError(f'{r.json()}')
+
+        self.cache.set(
+            key=cache_key,
+            value=result,
+            expire=self.CACHE_TTL,
+        )
+
         logger.debug(f"Translated '{text}' to '{result}' ({translate_from=}, {translate_to=})")
         return result
 
@@ -112,7 +129,6 @@ async def translate_auction(
     auction.title = translated_title
     auction.description = f"{auction.description}\n\nOriginal title: '{original_title}'"
     return auction
-
 
 # azure_translator = AzureTranslator(client=httpx.AsyncClient())
 # translate_from_jp = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='ja')
