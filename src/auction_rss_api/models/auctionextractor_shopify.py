@@ -130,6 +130,11 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
         for item in items:
             auction_id = item['product']['id']
             title = item['product']['title']
+
+            # Skip unrelated items
+            if self.search_term.lower() not in title.lower():
+                continue
+
             link = f'https://{self.domain}{item['product']['url']}'
             seller = item['product']['vendor']
 
