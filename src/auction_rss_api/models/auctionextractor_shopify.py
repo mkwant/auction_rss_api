@@ -131,7 +131,6 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
             auction_id = item['product']['id']
             title = item['product']['title']
 
-            # Skip unrelated items
             if self.search_term.lower() not in title.lower():
                 continue
 
