@@ -87,7 +87,7 @@ class PPLRepertoireClient:
     """
 
     def __init__(self) -> None:
-        self.client = httpx.AsyncClient(headers=HEADERS, follow_redirects=True, timeout=10)
+        self.client = httpx.AsyncClient(headers=HEADERS, follow_redirects=True, timeout=20)
         self.window_id: Optional[str] = None
         self.view_state: Optional[str] = None
         self.last_query: dict = {}
