@@ -268,7 +268,7 @@ class PPLRepertoireClient:
         app (e.g. other searches running under asyncio.gather), it's just
         not internally parallel.
         """
-        rows = await self.search(artist, title, isrc)
+        rows = await self.search(artist=artist, title=title, isrc=isrc)
         all_rows = list(rows)
         while len(rows) == PAGE_SIZE:
             rows = await self.next_page()
