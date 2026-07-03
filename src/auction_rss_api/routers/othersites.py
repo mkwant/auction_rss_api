@@ -7,6 +7,7 @@ from auction_rss_api.auction_extractors.bowiewonderworld import BowieWonderWorld
 from auction_rss_api.auction_extractors.illustrateddbdiscography import IllustratedDBDiscography
 from auction_rss_api.auction_extractors.indebuurt import InDeBuurt
 from auction_rss_api.auction_extractors.justanothercollection import JustAnotherCollection
+from auction_rss_api.auction_extractors.ppl import PPLRepertoireSearch
 from auction_rss_api.auction_extractors.redhandfiles import RedHandFiles
 from auction_rss_api.routers.logger import LoggedRoute
 
@@ -50,6 +51,12 @@ def indebuurt_rss(city: str) -> RSSResponse:
 @router.get(path='/justanothercollection')
 def justanothercollection_rss() -> RSSResponse:
     site = JustAnotherCollection()
+    return site.search()
+
+
+@router.get(path='/ppl')
+def ppl_repertoire_search_rss(artist: str = "", title: str = "", isrc: str = "") -> RSSResponse:
+    site = PPLRepertoireSearch(artist=artist, title=title, isrc=isrc)
     return site.search()
 
 
