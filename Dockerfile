@@ -1,18 +1,15 @@
 FROM python:3.14-slim
 
-# Install uv.
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Set timezone
-ENV TZ=Europe/Amsterdam
-ENV PIP_ROOT_USER_ACTION=ignore
-ENV PYTHONPATH=/app/src
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
+ENV TZ=Europe/Amsterdam \
+    PIP_ROOT_USER_ACTION=ignore \
+    PYTHONPATH=/app/src \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
 
 WORKDIR /app
 
-# Install system dependencies for Playwright
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget curl ca-certificates fonts-liberation libnss3 libatk1.0-0 libatk-bridge2.0-0 \
     libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 \
@@ -20,17 +17,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxcb1 libx11-xcb1 libxshmfence1 libxrender1 libxext6 xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY pyproject.toml pyproject.toml
-COPY uv.lock uv.lock
-RUN --mount=type=cache,target=/root/.cache/pip \
-    uv sync --frozen --no-cache
+# Third-party deps only — stable across a version-only release
+COPY requirements.txt requirements.txt
+RUN uv venv .venv \
+    && uv pip install --python .venv/bin/python -r requirements.txt
 
-# Install Playwright browsers
-RUN /app/.venv/bin/python -m playwright install chromium
+# Depends only on playwright already being installed above — also stable
+RUN .venv/bin/python -m playwright install chromium
 
-# Copy the application
+# These DO change every release, but installing your own package on top
+# of an already-populated venv is fast — no network calls needed
+COPY pyproject.toml uv.lock ./
 COPY src /app/src
+RUN uv sync --frozen --no-cache
 
-# Run the app
 CMD ["/app/.venv/bin/fastapi", "run", "src/auction_rss_api/main.py", "--port", "80", "--host", "0.0.0.0"]
