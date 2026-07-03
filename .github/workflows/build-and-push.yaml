@@ -48,8 +48,8 @@ jobs:
           platforms: ${{ matrix.platform }}
           tags: |
             ghcr.io/${{ github.repository }}:${{ github.ref_name }}-${{ matrix.suffix }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache-${{ matrix.suffix }}
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache-${{ matrix.suffix }},mode=max
 
   manifest:
     name: Create multi-arch manifest
