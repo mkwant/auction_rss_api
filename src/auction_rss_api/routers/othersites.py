@@ -55,9 +55,9 @@ def justanothercollection_rss() -> RSSResponse:
 
 
 @router.get(path='/ppl')
-def ppl_repertoire_search_rss(artist: str = "", title: str = "", isrc: str = "") -> RSSResponse:
+async def ppl_repertoire_search_rss(artist: str = "", title: str = "", isrc: str = "") -> RSSResponse:
     site = PPLRepertoireSearch(artist=artist, title=title, isrc=isrc)
-    return site.search()
+    return await site.search()
 
 
 @router.get(path='/redhandfiles')

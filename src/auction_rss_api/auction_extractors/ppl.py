@@ -1,11 +1,13 @@
+import asyncio
 import re
-from typing import List
+import time
+from typing import List, Optional
 
 import httpx
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractor, AuctionExtractorAsync
 
 BASE = "https://repsearch.ppluk.com/ars/faces/pages/audioSearch.jspx"
 PAGE_SIZE = 15  # observed range: 0-14, then 15-29, etc.
@@ -68,20 +70,43 @@ def _table_event_xml(**kv) -> str:
 
 
 class PPLRepertoireClient:
-    """Keeps the session/ViewState/window-id state across searches and pages."""
+    """
+    Async client that keeps the session/ViewState/window-id state across
+    searches and pages.
+
+    IMPORTANT: javax.faces.ViewState is a single-use, server-rotated token
+    -- each response hands back the token the *next* request must use. That
+    makes pagination within one search inherently sequential: you cannot
+    know the request for page 3 until page 2's response has come back and
+    handed you its ViewState. So `search_all()` awaits pages one at a time.
+
+    What *is* safe to parallelize is multiple independent
+    PPLRepertoireClient instances (i.e. separate searches/sessions) -- see
+    `search_many()` below, or just run several `search_all()` calls under
+    `asyncio.gather`.
+    """
 
     def __init__(self) -> None:
-        self.client = httpx.Client(headers=HEADERS, follow_redirects=True, timeout=10)
-        self.window_id = None
-        self.view_state = None
-        self.last_query = {}
-        self._headers_cache = []
+        self.client = httpx.AsyncClient(headers=HEADERS, follow_redirects=True, timeout=10)
+        self.window_id: Optional[str] = None
+        self.view_state: Optional[str] = None
+        self.last_query: dict = {}
+        self._headers_cache: PplRowHeader = []
         self._current_range = (0, PAGE_SIZE - 1)
+
+    async def __aenter__(self) -> "PPLRepertoireClient":
+        return self
+
+    async def __aexit__(self, *exc_info) -> None:
+        await self.close()
+
+    async def close(self) -> None:
+        await self.client.aclose()
 
     # ---- bootstrap -------------------------------------------------
 
-    def _bootstrap(self) -> None:
-        stub_resp = self.client.get(url=BASE, headers={"Referer": BASE})
+    async def _bootstrap(self) -> None:
+        stub_resp = await self.client.get(url=BASE, headers={"Referer": BASE})
         stub_resp.raise_for_status()
         m = _LOOPBACK_RE.search(stub_resp.text)
         if not m:
@@ -111,7 +136,7 @@ class PPLRepertoireClient:
             "_afrMFS": 0,
             "_afrMFO": 0,
         }
-        resp = self.client.get(url=BASE, params=params, headers={"Referer": BASE})
+        resp = await self.client.get(url=BASE, params=params, headers={"Referer": BASE})
         resp.raise_for_status()
         self._update_state(resp.text)
 
@@ -133,9 +158,9 @@ class PPLRepertoireClient:
 
     # ---- search / pagination ---------------------------------------
 
-    def search(self, artist: str = "", title: str = "", isrc: str = "") -> PplRows:
+    async def search(self, artist: str = "", title: str = "", isrc: str = "") -> PplRows:
         if self.view_state is None:
-            self._bootstrap()
+            await self._bootstrap()
 
         self.last_query = {"artist": artist, "title": title, "isrc": isrc}
         data = self._base_form_fields()
@@ -145,7 +170,9 @@ class PPLRepertoireClient:
                 "event.pt1:search_button": _table_event_xml(type="action"),
             }
         )
-        resp = self.client.post(url=BASE, data=data, headers={"Referer": BASE, "Origin": "https://repsearch.ppluk.com"})
+        resp = await self.client.post(
+            url=BASE, data=data, headers={"Referer": BASE, "Origin": "https://repsearch.ppluk.com"}
+        )
         resp.raise_for_status()
         self._update_state(resp.text)
         rows, headers = _parse_results_and_headers(resp.text)
@@ -154,7 +181,7 @@ class PPLRepertoireClient:
         self._current_range = (0, PAGE_SIZE - 1)
         return rows
 
-    def get_page(self, new_start: int, new_end: int) -> PplRows:
+    async def get_page(self, new_start: int, new_end: int) -> PplRows:
         if self.view_state is None:
             raise RuntimeError("Call search() before paginating.")
 
@@ -175,7 +202,7 @@ class PPLRepertoireClient:
                 "oracle.adf.view.rich.PROCESS": "pt1:searchResultsTable",
             }
         )
-        resp = self.client.post(
+        resp = await self.client.post(
             url=BASE,
             data=data,
             headers={
@@ -225,27 +252,120 @@ class PPLRepertoireClient:
             rows = [dict(zip(self._headers_cache, r)) for r in rows]
         return rows
 
-    def next_page(self) -> PplRows:
+    async def next_page(self) -> PplRows:
         old_start, old_end = self._current_range
         page_len = old_end - old_start + 1
-        return self.get_page(new_start=old_end + 1, new_end=old_end + page_len)
+        return await self.get_page(new_start=old_end + 1, new_end=old_end + page_len)
 
-    def search_all(self, artist: str = "", title: str = "", isrc: str = "") -> PplRows:
-        """Search and keep paginating until a short/empty page comes back."""
-        rows = self.search(artist=artist, title=title, isrc=isrc)
+    async def search_all(self, artist: str = "", title: str = "", isrc: str = "") -> PplRows:
+        """
+        Search and keep paginating until a short/empty page comes back.
+
+        Pages are awaited sequentially -- and must be, since each page
+        request depends on the ViewState token returned by the previous
+        one. There is no way to fetch page N+1 before page N's response
+        has arrived. This is still non-blocking for the rest of an async
+        app (e.g. other searches running under asyncio.gather), it's just
+        not internally parallel.
+        """
+        rows = await self.search(artist, title, isrc)
         all_rows = list(rows)
         while len(rows) == PAGE_SIZE:
-            rows = self.next_page()
+            rows = await self.next_page()
             if not rows:
                 break
             all_rows.extend(rows)
         return all_rows
 
 
-class PPLRepertoireSearch(AuctionExtractor):
+async def search_all_concurrent(
+    artist: str = "",
+    title: str = "",
+    isrc: str = "",
+    concurrency: int = 8,
+) -> PplRows:
+    """
+    Fetch every page of one search using several independent sessions in
+    parallel instead of walking pages one at a time in a single session.
+
+    This only works because direct offset jumps were verified against the
+    live site to return the actual rows at that offset (not just page 1
+    again) -- the per-request cap is on *width* (max 15 rows), not on
+    requiring sequential stepping. So worker `i` can bootstrap its own
+    session and go straight for pages i, i+concurrency, i+2*concurrency,
+    ... without ever touching the pages in between.
+
+    Trade-off: each worker pays its own bootstrap cost (2 GETs) plus one
+    forced page-0 search (the initial search POST always returns page 0,
+    regardless of what you actually want -- there's no way to make the
+    first request return a different offset). For `concurrency` workers
+    that's `concurrency - 1` wasted "page 0" fetches. Worth it as long as
+    the number of pages saved by parallelism outweighs that overhead --
+    true for anything more than a couple of pages, and increasingly so
+    the more pages there are.
+
+    Be mindful this multiplies session/request volume against the server;
+    keep `concurrency` modest (single digits to low tens) rather than
+    trying to open one session per page.
+    """
+    stop_event = asyncio.Event()
+    results: dict[int, PplRows] = {}
+
+    async def worker(worker_id: int) -> None:
+        async with PPLRepertoireClient() as client:
+            page0 = await client.search(artist=artist, title=title, isrc=isrc)
+            if worker_id == 0:
+                results[0] = page0
+            if len(page0) < PAGE_SIZE:
+                stop_event.set()
+                return
+
+            offset_index = worker_id
+            if offset_index == 0:
+                offset_index += concurrency
+
+            while not stop_event.is_set():
+                start = offset_index * PAGE_SIZE
+                end = start + PAGE_SIZE - 1
+                page = await client.get_page(start, end)
+                if not page:
+                    stop_event.set()
+                    break
+                results[offset_index] = page
+                if len(page) < PAGE_SIZE:
+                    stop_event.set()
+                    break
+                offset_index += concurrency
+
+    await asyncio.gather(*(worker(i) for i in range(concurrency)))
+
+    all_rows: PplRows = []
+    for idx in sorted(results):
+        all_rows.extend(results[idx])
+    return all_rows
+
+
+async def search_many(queries: list[dict]) -> list[PplRows]:
+    """
+    Run several independent searches concurrently, each in its own
+    session. Unlike pages within a single search, separate searches don't
+    share any server-side state, so this genuinely parallelizes.
+
+    queries: e.g. [{"artist": "David Bowie"}, {"isrc": "USJT12500320"}]
+    """
+
+    async def _one(q: dict) -> PplRows:
+        async with PPLRepertoireClient() as client:
+            return await client.search_all(**q)
+
+    return await asyncio.gather(*(_one(q) for q in queries))
+
+
+class PPLRepertoireSearch(AuctionExtractorAsync):
     artist: str = ""
     title: str = ""
     isrc: str = ""
+    concurrency: int = 8
 
     @property
     def search_link(self) -> str:
@@ -255,16 +375,23 @@ class PPLRepertoireSearch(AuctionExtractor):
     def site_desc(self) -> str:
         return "PPL Repertoire Search"
 
-    def get_auctions(self) -> List[Auction]:
-        client = PPLRepertoireClient()
-        rows = client.search_all(artist=self.artist, title=self.title, isrc=self.isrc)
+    async def get_auctions(self) -> List[Auction]:
+        start_time = time.time()
+        rows = await search_all_concurrent(
+            artist=self.artist, title=self.title, isrc=self.isrc, concurrency=self.concurrency
+        )
 
         auctions = []
 
         for row in rows:
             unique_id = row["ISRC"]
             title = f"{row['Artist Name']} - {row['Recording Title']}"
-            description = f"ISRC: {row['ISRC']}\nRightsholder: {row['Recording Rightsholder']}\nRelease date: {row['Release Date']}\nDuration: {row['Duration']}"
+            description = (
+                f"ISRC: {row['ISRC']}\n"
+                f"Rightsholder: {row['Recording Rightsholder']}\n"
+                f"Release date: {row['Release Date']}\n"
+                f"Duration: {row['Duration']}"
+            )
 
             auctions.append(
                 Auction(
@@ -274,5 +401,9 @@ class PPLRepertoireSearch(AuctionExtractor):
                     description=description,
                 )
             )
+
+        end_time = time.time()
+        duration = end_time - start_time
+        print(duration)
 
         return auctions
