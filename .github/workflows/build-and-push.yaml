@@ -77,3 +77,4 @@ jobs:
             -t ghcr.io/${{ github.repository }}:${{ github.ref_name }} \
             -t ghcr.io/${{ github.repository }}:latest \
             ghcr.io/${{ github.repository }}:${{ github.ref_name }}-amd64 \
+            ghcr.io/${{ github.repository }}:${{ github.ref_name }}-arm64
