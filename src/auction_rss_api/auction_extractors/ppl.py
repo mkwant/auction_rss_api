@@ -279,10 +279,10 @@ class PPLRepertoireClient:
 
 
 async def search_all_concurrent(
-    artist: str = "",
-    title: str = "",
-    isrc: str = "",
-    concurrency: int = 8,
+        artist: str = "",
+        title: str = "",
+        isrc: str = "",
+        concurrency: int = 8,
 ) -> PplRows:
     """
     Fetch every page of one search using several independent sessions in
@@ -376,7 +376,6 @@ class PPLRepertoireSearch(AuctionExtractorAsync):
         return "PPL Repertoire Search"
 
     async def get_auctions(self) -> List[Auction]:
-        start_time = time.time()
         rows = await search_all_concurrent(
             artist=self.artist, title=self.title, isrc=self.isrc, concurrency=self.concurrency
         )
@@ -401,9 +400,5 @@ class PPLRepertoireSearch(AuctionExtractorAsync):
                     description=description,
                 )
             )
-
-        end_time = time.time()
-        duration = end_time - start_time
-        print(duration)
 
         return auctions
