@@ -23,7 +23,7 @@ RUN uv venv .venv \
     && uv pip install --python .venv/bin/python -r requirements.txt
 
 # Depends only on playwright already being installed above — also stable
-RUN .venv/bin/python -m playwright install chromium
+RUN .venv/bin/python -m playwright install --only-shell chromium
 
 # These DO change every release, but installing your own package on top
 # of an already-populated venv is fast — no network calls needed
