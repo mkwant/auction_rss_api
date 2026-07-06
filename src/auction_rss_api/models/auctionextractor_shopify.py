@@ -5,7 +5,6 @@ from typing import List
 
 import cloudscraper
 import dateparser
-import httpx
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -103,7 +102,8 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
             'q': self.search_term,
             'sort_by': 'created',
         }
-        r = httpx.get(url=url, params=params, follow_redirects=True, timeout=10.0)
+        scraper = cloudscraper.create_scraper()
+        r = scraper.get(url=url, params=params, timeout=10.0)
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features='html.parser')
 
