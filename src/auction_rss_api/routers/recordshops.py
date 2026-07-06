@@ -50,6 +50,7 @@ from auction_rss_api.auction_extractors.rockaway import Rockaway
 from auction_rss_api.auction_extractors.roughtrade import RoughTrade
 from auction_rss_api.auction_extractors.slcd import SLCD
 from auction_rss_api.auction_extractors.soisong import Soisong
+from auction_rss_api.auction_extractors.thehague3345 import TheHague3345
 from auction_rss_api.auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_rss_api.auction_extractors.tracks import Tracks
 from auction_rss_api.auction_extractors.vandabowie import VandaBowie
@@ -68,6 +69,12 @@ router = APIRouter(
     default_response_class=RSSResponse,
     tags=['Record shops']
 )
+
+
+@router.get(path='/3345')
+def thehague3345_rss(search_term: str) -> RSSResponse:
+    site = TheHague3345(search_term=search_term)
+    return site.search()
 
 
 @router.get(path='/anonne')
