@@ -45,7 +45,11 @@ class BandcampFaves(AuctionExtractor):
             except AttributeError:
                 title = _title
 
-            link = base_url + item.select_one('a')['href']
+            stub = item.select_one('a')['href']
+            if base_url in stub:
+                link = stub
+            else:
+                link = base_url + item.select_one('a')['href']
 
             try:
                 image_link = item.select_one('img')['data-original']
