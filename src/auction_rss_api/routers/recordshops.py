@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi_rss import RSSResponse
 
+from auction_rss_api.app.dependencies import Translate, TranslateLanguage
 from auction_rss_api.auction_extractors.anonne import Anonne
 from auction_rss_api.auction_extractors.artunlimited import ArtunLimited
 from auction_rss_api.auction_extractors.atlasrecords import AtlasRecords
@@ -176,14 +177,26 @@ def discords_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/diskunion')
-def diskunion_rss(artist_id: str) -> RSSResponse:
-    site = DiskUnion(search_term=artist_id)
+def diskunion_rss(artist_id: str, translate: Translate = Depends()) -> RSSResponse:
+    if translate.translate_titles:
+        site = DiskUnion(
+            search_term=artist_id,
+            transformers=[translate.translate_from(language=TranslateLanguage.JAPANESE)]
+        )
+    else:
+        site = DiskUnion(search_term=artist_id)
     return site.search()
 
 
 @router.get(path='/diskunion_used')
-def diskunion_used_rss(artist_id: str) -> RSSResponse:
-    site = DiskUnionUsed(search_term=artist_id)
+def diskunion_used_rss(artist_id: str, translate: Translate = Depends()) -> RSSResponse:
+    if translate.translate_titles:
+        site = DiskUnionUsed(
+            search_term=artist_id,
+            transformers=[translate.translate_from(language=TranslateLanguage.JAPANESE)]
+        )
+    else:
+        site = DiskUnionUsed(search_term=artist_id)
     return site.search()
 
 

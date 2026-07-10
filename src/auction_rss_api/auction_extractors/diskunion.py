@@ -29,7 +29,11 @@ class DiskUnion(AuctionExtractor):
             link = 'https://diskunion.net' + item.select_one('a')['href']
             image_link = 'https:' + item.select_one('img')['src']
             unique_id = link.split('/')[-1]
-            title = item.select_one('img')['alt']
+
+            _artist = item.select_one('h2.searchAll__artist>a').text.strip()
+            _title = item.select_one('h2.searchAll__name>a').text.strip()
+            title = f"{_artist} - {_title}"
+
             try:
                 _price = item.select_one('p.u-priceNormal').text.strip()
             except AttributeError:

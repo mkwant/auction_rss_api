@@ -28,10 +28,12 @@ class DiskUnionUsed(AuctionExtractor):
             link = 'https://diskunion.net' + item.select_one('a')['href']
             image_link = 'https:' + item.select_one('img')['src']
             unique_id = link.split('/')[-1]
-            title = item.select_one('img')['alt']
+
+            _artist = item.select_one('h3.subGenreResult__artist').text.strip()
+            _title = item.select_one('h2.subGenreResult__name').text.strip()
+            title = f"{_artist} - {_title}"
 
             _price = item.select_one("p[class^='u-priceNormal']").text.strip()
-
             _desc = item.select_one('p.subGenreResult__other').text.strip()
             _desc2 = item.select_one('p.searchAll__itemDesc').text.strip()
 
