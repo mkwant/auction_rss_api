@@ -14,7 +14,7 @@ class DiskUnionUsed(AuctionExtractor):
 
     @property
     def site_desc(self) -> str:
-        return "DiskUnion"
+        return "DiskUnion Used"
 
     def get_auctions(self) -> List[Auction]:
         r = httpx.get(url=self.search_link, timeout=10.0)
