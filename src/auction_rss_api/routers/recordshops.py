@@ -17,6 +17,8 @@ from auction_rss_api.auction_extractors.davidtibet import DavidTibet
 from auction_rss_api.auction_extractors.deezer import Deezer
 from auction_rss_api.auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_rss_api.auction_extractors.discords import Discords
+from auction_rss_api.auction_extractors.diskunion import DiskUnion
+from auction_rss_api.auction_extractors.diskunion_used import DiskUnionUsed
 from auction_rss_api.auction_extractors.eil import EIL
 from auction_rss_api.auction_extractors.evilgreed import EvilGreed
 from auction_rss_api.auction_extractors.foetus import Foetus
@@ -170,6 +172,18 @@ async def discogs_wantlist_rss(username: str) -> RSSResponse:
 @router.get(path='/discords')
 def discords_rss(search_term: str) -> RSSResponse:
     site = Discords(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/diskunion')
+def diskunion_rss(artist_id: str) -> RSSResponse:
+    site = DiskUnion(search_term=artist_id)
+    return site.search()
+
+
+@router.get(path='/diskunion_used')
+def diskunion_used_rss(artist_id: str) -> RSSResponse:
+    site = DiskUnionUsed(search_term=artist_id)
     return site.search()
 
 
