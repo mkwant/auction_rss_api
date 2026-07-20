@@ -9,6 +9,7 @@ from auction_rss_api.auction_extractors.audiophileusa import AudiophileUSA
 from auction_rss_api.auction_extractors.backstage import BackStage
 from auction_rss_api.auction_extractors.bandcamp import Bandcamp
 from auction_rss_api.auction_extractors.bandcamp_faves import BandcampFaves
+from auction_rss_api.auction_extractors.bloodrecords import BloodRecords
 from auction_rss_api.auction_extractors.boilerroom import BoilerRoom
 from auction_rss_api.auction_extractors.cashensgap import CashensGap
 from auction_rss_api.auction_extractors.cdandlp import CdAndLp
@@ -122,6 +123,12 @@ def bandcamp_faves_rss(username: str) -> RSSResponse:
     return site.search()
 
 
+@router.get(path='/bloodrecords')
+def bloodrecords_rss(search_term: str | None = None, collection: str | None = None) -> RSSResponse:
+    site = BloodRecords(search_term=search_term, collection=collection)
+    return site.search()
+
+
 @router.get(path='/boilerroom')
 def boilerroom_rss(search_term: str) -> RSSResponse:
     site = BoilerRoom(search_term=search_term)
@@ -153,7 +160,7 @@ def davidbowie_rss() -> RSSResponse:
 
 
 @router.get(path='/davidtibet')
-def davidtibet_rss(search_term: str) -> RSSResponse:
+def davidtibet_rss(search_term: str | None = None) -> RSSResponse:
     site = DavidTibet(search_term=search_term)
     return site.search()
 
@@ -207,7 +214,9 @@ def eil_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/evilgreed')
-def evilgreed_rss(collection: str) -> RSSResponse:
+def evilgreed_rss(collection: str | None = None) -> RSSResponse:
+    if collection is not None:
+        collection = collection.lower().replace(' ', '-')
     site = EvilGreed(search_term=None, collection=collection)
     return site.search()
 
@@ -452,7 +461,7 @@ def vinylmania_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/younggod')
-def younggod_rss(search_term: str, search_in_desc: bool = False) -> RSSResponse:
+def younggod_rss(search_term: str | None = None, search_in_desc: bool = False) -> RSSResponse:
     site = YoungGod(search_term=search_term, search_in_desc=search_in_desc)
     return site.search()
 

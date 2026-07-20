@@ -5,9 +5,9 @@ class Waaghals(ShopifyExtractor):
     collection: str
 
     @property
-    def site_desc(self) -> str:
-        return f"Waaghals ({self.collection})"
+    def domain(self) -> str:
+        return f"shop.waaghals.com"
 
     @property
-    def domain(self) -> str:
-        return f"shop.waaghals.com/collections/{self.collection.lower().replace(' ', '-')}"
+    def site_desc(self) -> str:
+        return f"Waaghals"

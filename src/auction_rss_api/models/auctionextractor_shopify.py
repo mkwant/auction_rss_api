@@ -14,6 +14,7 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 class ShopifyExtractor(AuctionExtractor, ABC):
     """A base class for Shopify sites. Extracts the first 250 items from a Shopify site."""
     search_in_desc: bool = False
+    collection: str | None = None
 
     @property
     @abstractmethod
@@ -23,7 +24,10 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
     @property
     def search_link(self) -> str:
+        if self.collection is not None:
+            return f"https://{self.domain}/collections/{self.collection}/search?q={self.search_term}"
         return f"https://{self.domain}/search?q={self.search_term}"
+
 
     def get_auctions(self) -> List[Auction]:
         headers = {
@@ -32,7 +36,10 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
         auctions = []
 
-        url = f'https://{self.domain}/products.json?limit=250'
+        if self.collection is not None:
+            url = f'https://{self.domain}/collections/{self.collection}/products.json?limit=250'
+        else:
+            url = f'https://{self.domain}/products.json?limit=250'
         scraper = cloudscraper.create_scraper()
         r = scraper.get(url=url, headers=headers)
         r.raise_for_status()
