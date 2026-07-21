@@ -40,7 +40,7 @@ class RoughTrade(AuctionExtractor):
         }
 
         if self.exclusives_only:
-            json_data['requests'][0]['params']['facetFilters'] = ['meta.custom.exclusive:Rough Trade Exclusive']
+            json_data['requests'][0]['params']['facetFilters'] = ['attributes.exclusive:Rough Trade Exclusive']
 
         r = httpx.post(
             url='https://www.roughtrade.com/api/algolia/search',
@@ -51,28 +51,34 @@ class RoughTrade(AuctionExtractor):
         auctions = []
         items = r.json()['results'][0]['hits']
         for item in items:
-            unique_id = str(item['id'])
-            title = f"{item['product_type']} - {item['title']} ({item['option1']})"
+            unique_id = str(item['variant']['id'])
+
+            _artist = item['product']['artist_primary']
+            _title = item['product']['title']
+            _variant = item['variant']['title']
+            title = f"{_artist} - {_title} ({_variant})"
 
             try:
-                link = f'https://www.roughtrade.com/en-de/product/{item['artists'][0]['handle']}/{item['handle']}'
+                # link = f'https://www.roughtrade.com/en-de/product/{item['artists'][0]['handle']}/{item['product']['handle']}'
+                link = f'https://www.roughtrade.com/en-de/product/{item['product']['artist_primary']}/{item['product']['handle']}'
             except IndexError:
-                link = f'https://www.roughtrade.com/en-de/product/{item['product_type'].lower().replace(' ', '-')}/{item['handle']}'
-            image_link = item['image']
-            created_at = datetime.fromisoformat(item['created_at'])
+                link = f'https://www.roughtrade.com/en-de/product/{item['product']['product_type'].lower().replace(' ', '-')}/{item['product']['handle']}'
 
-            _price = f"Eur {item['market_pricing']['eur']['price']}"
+            image_link = item['variant']['image']
+
+            created_at = item['product']['published_at']
+
+            try:
+                _price = f"Eur {item['market_pricing']['eur']['price']}"
+            except KeyError:
+                continue
             if item['is_pre_order']:
-                _price = f"PREORDER ({item['meta']['custom']['release_date']}): {_price}"
+                _price = f"PREORDER ({item['availability']['release_date']}): {_price}"
 
-            if not item['inventory_available']:
+            if not item['availability']['inventory_available']:
                 _price = f"SOLD OUT: {_price}"
 
-                # Skip if available_only is set and item is not available
-                if self.available_only:
-                    continue
-
-            _desc = item['body_html_safe'].strip()
+            _desc = item['product']['description_text'].strip()
 
             description = f"{_price}\n\n{_desc}"
 
