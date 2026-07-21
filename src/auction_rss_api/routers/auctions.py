@@ -303,8 +303,8 @@ def tracksauctions_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/trademe')
-def trademe_rss(search_term: str) -> RSSResponse:
-    site = TradeMe(search_term=search_term)
+def trademe_rss(search_term: str, category: str | None = None) -> RSSResponse:
+    site = TradeMe(search_term=search_term, category=category)
     return site.search()
 
 

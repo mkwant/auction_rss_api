@@ -9,8 +9,12 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 class TradeMe(AuctionExtractor):
+    category: str | None = None
+
     @property
     def search_link(self) -> str:
+        if self.category is not None:
+            return f"https://www.trademe.co.nz/a/marketplace/{self.category}/search?search_string=bowie&sort_order=expirydesc&condition=used"
         return f"https://www.trademe.co.nz/a/search?search_string={self.search_term}&sort_order=expirydesc&condition=used"
 
     @property
@@ -22,14 +26,8 @@ class TradeMe(AuctionExtractor):
 
         cookies = {'trademeclientid': '1c161f2a-eb21-472f-9004-8f5e90252a5b'}
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0'}
-        params = {
-            'search_string': self.search_term,
-            'sort_order': 'expirydesc',
-            'condition': 'used',
-        }
         r = httpx.get(
-            url='https://www.trademe.co.nz/a/search',
-            params=params,
+            url=self.search_link,
             cookies=cookies,
             headers=headers,
         )
