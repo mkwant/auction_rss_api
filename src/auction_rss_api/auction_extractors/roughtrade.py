@@ -34,6 +34,7 @@ class RoughTrade(AuctionExtractor):
                         'hitsPerPage': 80,
                         'page': 0,
                         'query': self.search_term,
+                        'filters': 'markets.european_union.available:true',
                     },
                 }
             ],
@@ -59,10 +60,9 @@ class RoughTrade(AuctionExtractor):
             title = f"{_artist} - {_title} ({_variant})"
 
             try:
-                # link = f'https://www.roughtrade.com/en-de/product/{item['artists'][0]['handle']}/{item['product']['handle']}'
-                link = f'https://www.roughtrade.com/en-de/product/{item['product']['artist_primary']}/{item['product']['handle']}'
+                link = f'https://www.roughtrade.com/en-de/product/{item['taxonomy']['artists'][0]['handle']}/{item['product']['handle']}'
             except IndexError:
-                link = f'https://www.roughtrade.com/en-de/product/{item['product']['product_type'].lower().replace(' ', '-')}/{item['product']['handle']}'
+                link = f'https://www.roughtrade.com/en-de/product/music/{item['product']['handle']}'
 
             image_link = item['variant']['image']
 
