@@ -23,7 +23,7 @@ class LiveAuctioneers(AuctionExtractor):
         params = {'keyword': self.search_term, 'sort': '-publishDate', 'status': 'online', 'pageSize': 48}
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0'}
 
-        r = httpx.get(url=url, params=params, headers=headers)
+        r = httpx.get(url=url, params=params, headers=headers, timeout=10.0)
         r.raise_for_status()
 
         soup = BeautifulSoup(markup=r.text, features='html.parser')
