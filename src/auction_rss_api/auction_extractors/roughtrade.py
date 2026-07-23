@@ -13,7 +13,14 @@ class RoughTrade(AuctionExtractor):
 
     @property
     def search_link(self) -> str:
-        return f"https://www.roughtrade.com/en-de/search?q={self.search_term}&sortBy=newest_listed"
+        if self.exclusives_only:
+            base_url = 'https://www.roughtrade.com/en-de/collection/exclusive'
+        else:
+            base_url = 'https://www.roughtrade.com/en-de/search'
+        url =  f"{base_url}?sortBy=newest_listed"
+        if self.search_term is not None:
+            url = f"{url}&q={self.search_term}"
+        return url
 
     @property
     def site_desc(self) -> str:
@@ -22,8 +29,8 @@ class RoughTrade(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0'}
 
-        if self.search_term is None:
-            self.search_term = ''
+        # Quote search terms to disable fuzzy search
+        search_term = ' '.join([f"\"{x}\"" for x in self.search_term.split()] if self.search_term else [''])
 
         json_data = {
             'requests': [
@@ -33,7 +40,7 @@ class RoughTrade(AuctionExtractor):
                         'facetFilters': [],
                         'hitsPerPage': 80,
                         'page': 0,
-                        'query': self.search_term,
+                        'query': search_term,
                         'filters': 'markets.european_union.available:true',
                     },
                 }
@@ -46,7 +53,8 @@ class RoughTrade(AuctionExtractor):
         r = httpx.post(
             url='https://www.roughtrade.com/api/algolia/search',
             headers=headers,
-            json=json_data
+            json=json_data,
+            timeout=10.0,
         )
 
         auctions = []
@@ -63,16 +71,18 @@ class RoughTrade(AuctionExtractor):
                 link = f'https://www.roughtrade.com/en-de/product/{item['taxonomy']['artists'][0]['handle']}/{item['product']['handle']}'
             except IndexError:
                 link = f'https://www.roughtrade.com/en-de/product/music/{item['product']['handle']}'
-
             image_link = item['variant']['image']
 
             created_at = item['product']['published_at']
 
             try:
-                _price = f"Eur {item['market_pricing']['eur']['price']}"
+                _price = f"Eur {item['markets']['european_union']['price']}"
             except KeyError:
                 continue
-            if item['is_pre_order']:
+
+            is_pre_order = any(c["label"] == "Pre-Orders" for c in item['taxonomy']['collections'])
+
+            if is_pre_order:
                 _price = f"PREORDER ({item['availability']['release_date']}): {_price}"
 
             if not item['availability']['inventory_available']:
