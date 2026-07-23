@@ -85,8 +85,8 @@ class RoughTrade(AuctionExtractor):
             if is_pre_order:
                 _price = f"PREORDER ({item['availability']['release_date']}): {_price}"
 
-            if not item['availability']['inventory_available']:
-                _price = f"SOLD OUT: {_price}"
+            if not is_pre_order and not item['availability']['inventory_available']:
+                _price = f"NOTIFY ME: {_price}"
 
             _desc = item['product']['description_text'].strip()
 
