@@ -15,7 +15,7 @@ class Doornroosje(AuctionExtractor):
 
     @property
     def search_link(self) -> str:
-        return 'https://www.doornroosje.nl/?confirmed-only=true'
+        return 'https://www.doornroosje.nl'
 
     @property
     def site_desc(self) -> str:
@@ -31,60 +31,68 @@ class Doornroosje(AuctionExtractor):
             'data[event-location]': self.search_term,
             'data[month]': '',
             'data[hide-cancelled]': 'false',
-            'data[confirmed-only]': 'true',
+            'data[confirmed-only]': 'false',
             'search': ''
         }
+
         r = requests.post(url=url, data=data)
         html = r.json()['program_html']
         soup = BeautifulSoup(html, features='html.parser')
 
-        events = soup.select('a.c-program__item')
-        for event in events:
-            link = event['href']
-            _event_name = event.select_one('span.c-program__title--main').text.strip()
-
-            # Get event date and the year from a few levels up, parse and combine the two
-            _event_date = ' '.join(event.select_one('div.c-program__date').get_text().strip().split())
+        # Iterate over each month separately
+        for program in soup.select('div.c-program'):
+            month_text = program.select_one('h2.c-program__month').text.strip()
 
             try:
-                _event_year = dateparser.parse(event.parent.parent.select_one('h2.c-program__month').text).year
+                event_year = dateparser.parse(month_text).year
             except AttributeError:
-                _event_year = datetime.datetime.now().year
+                event_year = datetime.datetime.now().year
 
-            _event_date = dateparser.parse(_event_date)
+            current_date = None
 
-            try:
-                _event_date = _event_date.replace(year=_event_year)
-            except AttributeError:
-                # If there are two events with the same date, for the 2nd date the data can't be extracted.
-                # Using a dummy date in that case
-                _event_date = date(year=_event_year, month=1, day=1)
-            _event_info = event.select('div.c-program__info')
+            for event in program.select('a.c-program__item'):
+                link = event['href']
+                event_name = event.select_one('span.c-program__title--main').text.strip()
 
-            _event_location = [
-                info for info in _event_info if
-                "c-program__info--subtitle" not in info['class'] and
-                "c-program__info--highlighted" not in info['class']
-            ]
+                # Same-date events have an empty date div, so reuse the previous one
+                date_text = ' '.join(event.select_one('div.c-program__date').stripped_strings)
+                if date_text:
+                    parsed = dateparser.parse(date_text)
+                    if parsed is not None:
+                        current_date = parsed.replace(year=event_year)
 
-            if _event_location:
-                _event_location_name = _event_location[0].text.strip()
-                title = f'{_event_date:%a %Y-%m-%d} [{_event_location_name}]: {_event_name}'
-            else:
-                title = f'{_event_date:%a %Y-%m-%d}: {_event_name}'
-            try:
-                description = event.select_one('div.c-program__info--subtitle').text.strip()
-            except AttributeError:
-                description = ''
+                # Should never happen, but keep a fallback
+                if current_date is None:
+                    current_date = date(year=event_year, month=1, day=1)
 
-            auction_id = hashlib.md5(link.encode('utf-8')).hexdigest()
+                event_info = event.select('div.c-program__info')
 
-            auctions.append(
-                Auction(**{
-                    'title': title,
-                    'auction_id': auction_id,
-                    'description': description,
-                    'link': link
-                }))
+                event_location = [
+                    info for info in event_info
+                    if "c-program__info--subtitle" not in info.get('class', [])
+                    and "c-program__info--highlighted" not in info.get('class', [])
+                ]
+
+                if event_location:
+                    event_location_name = event_location[0].text.strip()
+                    title = f'{current_date:%a %Y-%m-%d} [{event_location_name}]: {event_name}'
+                else:
+                    title = f'{current_date:%a %Y-%m-%d}: {event_name}'
+
+                try:
+                    description = event.select_one('div.c-program__info--subtitle').text.strip()
+                except AttributeError:
+                    description = ''
+
+                auction_id = hashlib.md5(link.encode('utf-8')).hexdigest()
+
+                auctions.append(
+                    Auction(
+                        title=title,
+                        auction_id=auction_id,
+                        description=description,
+                        link=str(link),
+                    )
+                )
 
         return auctions
