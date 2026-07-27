@@ -53,6 +53,7 @@ from auction_rss_api.auction_extractors.rockabuy import RockaBuy
 from auction_rss_api.auction_extractors.rockaway import Rockaway
 from auction_rss_api.auction_extractors.roughtrade import RoughTrade
 from auction_rss_api.auction_extractors.slcd import SLCD
+from auction_rss_api.auction_extractors.snowrecords import SnowRecords
 from auction_rss_api.auction_extractors.soisong import Soisong
 from auction_rss_api.auction_extractors.thehague3345 import TheHague3345
 from auction_rss_api.auction_extractors.tokyomusicjapan import TokyoMusicJapan
@@ -403,6 +404,12 @@ def roughtrade_rss(
         exclusives_only: bool = False,
 ) -> RSSResponse:
     site = RoughTrade(search_term=search_term, available_only=available_only, exclusives_only=exclusives_only)
+    return site.search()
+
+
+@router.get(path='/snowrecords')
+def snowrecords_rss(search_term: str) -> RSSResponse:
+    site = SnowRecords(search_term=search_term)
     return site.search()
 
 
