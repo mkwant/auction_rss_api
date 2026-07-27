@@ -4,6 +4,7 @@ from fastapi_rss import RSSResponse
 from auction_rss_api.auction_extractors.amatterofconcrete import AMatterOfConcrete
 from auction_rss_api.auction_extractors.beeldengeluid import BeeldEnGeluid
 from auction_rss_api.auction_extractors.bowiewonderworld import BowieWonderWorld
+from auction_rss_api.auction_extractors.gelderlander import Gelderlander
 from auction_rss_api.auction_extractors.illustrateddbdiscography import IllustratedDBDiscography
 from auction_rss_api.auction_extractors.indebuurt import InDeBuurt
 from auction_rss_api.auction_extractors.justanothercollection import JustAnotherCollection
@@ -33,6 +34,12 @@ def beeldengeluid_rss(search_term: str) -> RSSResponse:
 @router.get(path='/bowiewonderworld')
 def bowiewonderworld_rss() -> RSSResponse:
     site = BowieWonderWorld()
+    return site.search()
+
+
+@router.get(path='/gelderlander')
+def gelderlander_rss(city: str) -> RSSResponse:
+    site = Gelderlander(search_term=city)
     return site.search()
 
 
