@@ -12,6 +12,7 @@ from auction_rss_api.auction_extractors.tilburg013 import Tilburg013
 from auction_rss_api.auction_extractors.tivoli_presale import TivoliPresale
 from auction_rss_api.auction_extractors.tivolivredenburg import TivoliVredenburg
 from auction_rss_api.auction_extractors.vera import Vera
+from auction_rss_api.auction_extractors.willemeen import WillemEen
 from auction_rss_api.routers.logger import LoggedRoute
 
 router = APIRouter(
@@ -84,4 +85,10 @@ def tivolivredenburgpresale_rss(presale_id: str) -> RSSResponse:
 @router.get(path='/vera')
 def vera_rss() -> RSSResponse:
     site = Vera()
+    return site.search()
+
+
+@router.get(path='/willemeen')
+def willemeen_rss() -> RSSResponse:
+    site = WillemEen()
     return site.search()
