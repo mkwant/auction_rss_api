@@ -43,6 +43,7 @@ from auction_rss_api.auction_extractors.montreuxjazzshop import MontreuxJazzShop
 from auction_rss_api.auction_extractors.musichug import MusicHug
 from auction_rss_api.auction_extractors.musicstack import MusicStack
 from auction_rss_api.auction_extractors.newburycomics import NewBuryComics
+from auction_rss_api.auction_extractors.obscuurrecords import ObscuurRecords
 from auction_rss_api.auction_extractors.platomania import PlatoMania
 from auction_rss_api.auction_extractors.platomania_exclusives import PlatomaniaExclusives
 from auction_rss_api.auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
@@ -340,6 +341,12 @@ def musicstack_rss(search_term: str) -> RSSResponse:
 @router.get(path='/newburycomics')
 def newburycomics_rss() -> RSSResponse:
     site = NewBuryComics()
+    return site.search()
+
+
+@router.get(path='/obscuurrecords')
+def obscuurrecords_rss(search_term: str) -> RSSResponse:
+    site = ObscuurRecords(search_term=search_term)
     return site.search()
 
 
