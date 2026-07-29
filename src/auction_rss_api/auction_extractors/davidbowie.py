@@ -8,4 +8,4 @@ class DavidBowie(ShopifyExtractor):
 
     @property
     def site_desc(self) -> str:
-        return "DavidBowie"
+        return "DavidBowie Official Store"
