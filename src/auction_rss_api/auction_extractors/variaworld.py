@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List
+from urllib.parse import parse_qs, urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -35,7 +36,7 @@ class Variaworld(AuctionExtractor):
 
         for auction in self._get_auctions():
             link = 'https://www.variaworld.nl' + auction['href']
-            auction_id = link.split('?at=')[1]
+            auction_id = parse_qs(urlparse(link).query)['at'][0]
             image = auction.select_one('div.overzichtfotobox_2')
             image_link = f"https://www.variaworld.nl{image.select_one('img')['src']}"
             _artist_name = auction.select_one('div.koptekst').text.strip()
