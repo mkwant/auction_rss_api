@@ -157,7 +157,7 @@ def dais_rss(search_term: str, search_in_desc: bool = False) -> RSSResponse:
 
 @router.get(path='/davidbowie')
 def davidbowie_rss() -> RSSResponse:
-    site = DavidBowie()
+    site = DavidBowie(collection="new-arrivals")
     return site.search()
 
 
