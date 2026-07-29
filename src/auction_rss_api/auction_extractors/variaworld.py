@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 from urllib.parse import parse_qs, urlparse
 
-import requests
+import httpx
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
@@ -23,10 +23,9 @@ class Variaworld(AuctionExtractor):
                 f'&zoek_at=a&m_sr=lig&startpagina=1')
 
     def _get_auctions(self) -> ResultSet:
-        url = (f'https://www.variaworld.nl/alles/m_ge=[j;m;u]&ts=1&zoek={self.search_term}'
-               f'&zoek_at=a&m_sr=lig&startpagina=1')
-        r = requests.get(url)
-        soup = BeautifulSoup(r.content, features='html.parser')
+        r = httpx.get(self.search_link)
+        r.raise_for_status()
+        soup = BeautifulSoup(markup=r.content, features='html.parser')
 
         site_auctions = soup.select('a.overzichtbox_2')
         return site_auctions
@@ -36,17 +35,16 @@ class Variaworld(AuctionExtractor):
 
         for auction in self._get_auctions():
             link = 'https://www.variaworld.nl' + auction['href']
-            auction_id = parse_qs(urlparse(link).query)['at'][0]
+            auction_id = str(parse_qs(urlparse(link).query)['at'][0])
             image = auction.select_one('div.overzichtfotobox_2')
             image_link = f"https://www.variaworld.nl{image.select_one('img')['src']}"
+
             _artist_name = auction.select_one('div.koptekst').text.strip()
             _item_name, _item_type = auction.select('div.tekst')
             _item_name = _item_name.text.strip()
             _item_type = _item_type.text.strip()
-            try:
-                _item_price = auction.select_one('span.div_kleur_prijs_1').text.strip()
-            except AttributeError:
-                _item_price = auction.select_one('span.div_kleur_prijs_2').text.strip()
+            _item_price = auction.select_one('span[class^="div_kleur_prijs_"]').text.strip()
+
             title = f"{_artist_name} - '{_item_name}' ({_item_type})"
             description = '\n'.join([_artist_name, _item_name, _item_type, _item_price])
             start_date = auction.select_one('div.overzicht_datum_ingebracht').text.strip().split('\n')[0]
