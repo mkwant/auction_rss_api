@@ -399,6 +399,16 @@ def rockaway_rss(search_term: str) -> RSSResponse:
     return site.search()
 
 
+@router.get(path='/roughtrade')
+def roughtrade_rss(
+        search_term: str | None = None,
+        available_only: bool = False,
+        exclusives_only: bool = False,
+) -> RSSResponse:
+    site = RoughTrade(search_term=search_term, available_only=available_only, exclusives_only=exclusives_only)
+    return site.search()
+
+
 @router.get(path='/skeletunes')
 def skeletunes_rss(search_term: str) -> RSSResponse:
     site = Skeletunes(search_term=search_term)
@@ -408,16 +418,6 @@ def skeletunes_rss(search_term: str) -> RSSResponse:
 @router.get(path='/slcd')
 def slcd_rss(search_term: str) -> RSSResponse:
     site = SLCD(search_term=search_term)
-    return site.search()
-
-
-@router.get(path='/roughtrade')
-def roughtrade_rss(
-        search_term: str | None = None,
-        available_only: bool = False,
-        exclusives_only: bool = False,
-) -> RSSResponse:
-    site = RoughTrade(search_term=search_term, available_only=available_only, exclusives_only=exclusives_only)
     return site.search()
 
 
