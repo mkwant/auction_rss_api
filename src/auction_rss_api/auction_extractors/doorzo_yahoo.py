@@ -26,7 +26,7 @@ class DoorzoYahoo(AuctionExtractor):
             'currency': 'EUR',
         }
 
-        r = httpx.get(url='https://sig.doorzo.com/', params=params)
+        r = httpx.get(url='https://sig.doorzo.com/', params=params, timeout=10.0)
         r.raise_for_status()
         try:
             rate = r.json()['data']['exchange']
