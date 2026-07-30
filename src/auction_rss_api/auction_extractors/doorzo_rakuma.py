@@ -51,7 +51,7 @@ class DoorzoRakuma(AuctionExtractor):
             'orderBy': 'created_desc',
         }
 
-        r = httpx.get(url=url, params=params)
+        r = httpx.get(url=url, params=params, timeout=10.0)
         r.raise_for_status()
 
         items = r.json()['data']['items']

@@ -64,7 +64,7 @@ class DoorzoYahoo(AuctionExtractor):
             'sort': 'new',
         }
 
-        r = httpx.post(url='https://sig.doorzo.com/', params=params, json=payload)
+        r = httpx.post(url='https://sig.doorzo.com/', params=params, json=payload, timeout=10.0)
         r.raise_for_status()
 
         auctions = []
