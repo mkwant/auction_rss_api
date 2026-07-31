@@ -33,15 +33,13 @@ class Gelderlander(AuctionExtractor):
         for item in items:
             item = item['item']
 
+            unique_id = hashlib.md5(item['url'].encode()).hexdigest()
             title = item['name']
 
-            is_free = item['isAccessibleForFree'] == 'True'
-            if is_free:
+            if item['isAccessibleForFree'] == 'True':
                 link = item['url']
             else:
                 link = f"https://archive.is/?run=1&url={quote(item['url'], safe='')}"
-
-            unique_id = hashlib.md5(link.encode()).hexdigest()
 
             image_link = item['image'][0]['url']
             author = item['author'][0]['name']
