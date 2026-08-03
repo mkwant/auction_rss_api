@@ -298,7 +298,7 @@ def kent_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/kontaktaudio')
-def kontaktaudio_rss(search_term: str) -> RSSResponse:
+def kontaktaudio_rss(search_term: str | None = None) -> RSSResponse:
     site = KontaktAudio(search_term=search_term)
     return site.search()
 

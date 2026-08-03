@@ -9,7 +9,7 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 class KontaktAudio(AuctionExtractor):
-    search_term: str
+    search_term: str | None
 
     @property
     def site_desc(self) -> str:
@@ -35,8 +35,9 @@ class KontaktAudio(AuctionExtractor):
             title = item.select_one('h3.woocommerce-loop-product__title').get_text(strip=True)
             description = item.select_one('span.amount').get_text(strip=True)
 
-            if self.search_term.lower() not in title.lower():
-                continue
+            if self.search_term is not None:
+                if self.search_term.lower() not in title.lower():
+                    continue
 
             auctions.append(
                 Auction(
