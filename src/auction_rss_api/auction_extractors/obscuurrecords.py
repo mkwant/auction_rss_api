@@ -17,7 +17,7 @@ class ObscuurRecords(AuctionExtractor):
         return "ObscuurRecords"
 
     def get_auctions(self) -> List[Auction]:
-        r = httpx.get(self.search_link)
+        r = httpx.get(url=self.search_link, timeout=10.0)
         r.raise_for_status()
 
         auctions = []
