@@ -10,4 +10,6 @@ class NewBuryComics(ShopifyExtractor):
 
     @property
     def site_desc(self) -> str:
+        if self.collection:
+            return f"NewBuryComics (collection {self.collection})"
         return "NewBuryComics"
