@@ -41,7 +41,7 @@ class ShopifyExtractor(AuctionExtractor, ABC):
         else:
             url = f'https://{self.domain}/products.json?limit=250'
         scraper = cloudscraper.create_scraper()
-        r = scraper.get(url=url, headers=headers)
+        r = scraper.get(url=url, headers=headers, timeout=10.0)
         r.raise_for_status()
 
         try:
