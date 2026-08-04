@@ -1,7 +1,8 @@
-from auction_rss_api.models.auctionextractor_shopify import ShopifySearchExtractor
+from auction_rss_api.models.auctionextractor_shopify import ShopifyExtractor, ShopifySearchExtractor
 
 
-class AtlasRecords(ShopifySearchExtractor):
+class AtlasRecords(ShopifyExtractor):
+
     @property
     def domain(self) -> str:
         return "atlasrecords.co.uk"
