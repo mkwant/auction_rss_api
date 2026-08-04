@@ -8,4 +8,6 @@ class BloodRecords(ShopifyExtractor):
 
     @property
     def site_desc(self) -> str:
+        if self.collection:
+            return f"Blood Records (collection: {self.collection})"
         return "Blood Records"

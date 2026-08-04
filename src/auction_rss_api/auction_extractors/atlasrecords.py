@@ -9,4 +9,6 @@ class AtlasRecords(ShopifyExtractor):
 
     @property
     def site_desc(self) -> str:
+        if self.collection:
+            return f"AtlasRecords (collection '{self.collection}')"
         return "AtlasRecords"

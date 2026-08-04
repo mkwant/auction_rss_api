@@ -97,8 +97,8 @@ def artunlimited_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/atlasrecords')
-def atlasrecords_rss(search_term: str) -> RSSResponse:
-    site = AtlasRecords(collection=search_term)
+def atlasrecords_rss(collection: str | None = None, search_term: str | None = None) -> RSSResponse:
+    site = AtlasRecords(collection=collection, search_term=search_term)
     return site.search()
 
 
