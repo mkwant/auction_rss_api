@@ -29,7 +29,9 @@ class Vinyleers(AuctionExtractor):
             'sort_by': 'created-descending',
         }
         r = httpx.get(url=url, params=params)
-        soup = BeautifulSoup(r.text, features="html.parser")
+        r.raise_for_status()
+
+        soup = BeautifulSoup(markup=r.text, features="html.parser")
         items = soup.select('div.product-block script')
         items = [item.text.strip().lstrip('console.log("Product Object:", ').rstrip(');') for item in items]
         items = [json.loads(item) for item in items]
