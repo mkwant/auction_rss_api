@@ -73,7 +73,10 @@ class AuctionExtractor(BaseModel):
         A description for the RSS feed.
         """
         if not hasattr(self, "_feed_desc"):
-            self._feed_desc = f"Search results for query '{self.search_term}' on {self.site_desc}"  # noqa
+            if self.search_term is None:
+                self._feed_desc = f"Results from {self.site_desc}"
+            else:
+                self._feed_desc = f"Search results for query '{self.search_term}' on {self.site_desc}"  # noqa
         return self._feed_desc
 
     @feed_description.setter
