@@ -24,6 +24,7 @@ from auction_rss_api.auction_extractors.diskunion import DiskUnion
 from auction_rss_api.auction_extractors.diskunion_used import DiskUnionUsed
 from auction_rss_api.auction_extractors.eil import EIL
 from auction_rss_api.auction_extractors.evilgreed import EvilGreed
+from auction_rss_api.auction_extractors.firstclassmemorabilia import FirstClassMemorabilia
 from auction_rss_api.auction_extractors.foetus import Foetus
 from auction_rss_api.auction_extractors.hhv import HHV
 from auction_rss_api.auction_extractors.hmv_jp import HMVJapan
@@ -228,6 +229,12 @@ def evilgreed_rss(collection: str | None = None) -> RSSResponse:
     if collection is not None:
         collection = collection.lower().replace(' ', '-')
     site = EvilGreed(search_term=None, collection=collection)
+    return site.search()
+
+
+@router.get(path='/firstclassmemorabilia')
+def firstclassmemorabilia_rss(search_term: str) -> RSSResponse:
+    site = FirstClassMemorabilia(search_term=search_term)
     return site.search()
 
 
