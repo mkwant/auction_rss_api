@@ -18,16 +18,16 @@ class VandaCollection(AuctionExtractor):
     def site_desc(self) -> str:
         return 'V&A Collection'
 
-    @staticmethod
-    def get_item_page(page: int) -> dict:
+    def get_item_page(self, page: int) -> dict:
         url = 'https://api.vam.ac.uk/v2/objects/search'
 
         params = {
-            'id_category': 'THES394093',
+            'id_category': self.search_term,
             'page_size': 100,
             'order_by': 'place',
             'order_sort': 'asc',
-            'page': page
+            'page': page,
+            'response_format': 'prettyjson',
         }
         r = requests.get(url=url, params=params)
         r.raise_for_status()
@@ -55,7 +55,6 @@ class VandaCollection(AuctionExtractor):
 
         records = self.get_all_records()
         for record in records[:self.FEED_LENGTH]:
-            _title = record['_primaryTitle']
             _date = record['_primaryDate']
             _object_type = record['objectType']
 
@@ -65,9 +64,13 @@ class VandaCollection(AuctionExtractor):
                 _author = None
 
             if _author:
-                title = f'{_title} | {_object_type} ({_author}, {_date})'
+                title = f'{_object_type} ({_author}, {_date})'
             else:
-                title = f'{_title} | {_object_type} ({_date})'
+                title = f'{_object_type} ({_date})'
+
+            _title = record['_primaryTitle']
+            if _title is not "":
+                title = f'{_title} | {title}'
 
             auction_id = record['systemNumber']
             link = f'https://collections.vam.ac.uk/item/{auction_id}/'
