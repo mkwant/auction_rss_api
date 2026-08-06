@@ -11,6 +11,7 @@ from auction_rss_api.auction_extractors.bandcamp import Bandcamp
 from auction_rss_api.auction_extractors.bandcamp_faves import BandcampFaves
 from auction_rss_api.auction_extractors.bloodrecords import BloodRecords
 from auction_rss_api.auction_extractors.boilerroom import BoilerRoom
+from auction_rss_api.auction_extractors.bowiewebstore import BowieWebStore
 from auction_rss_api.auction_extractors.cashensgap import CashensGap
 from auction_rss_api.auction_extractors.cdandlp import CdAndLp
 from auction_rss_api.auction_extractors.dais import Dais
@@ -135,6 +136,12 @@ def bloodrecords_rss(search_term: str | None = None, collection: str | None = No
 @router.get(path='/boilerroom')
 def boilerroom_rss(search_term: str) -> RSSResponse:
     site = BoilerRoom(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/bowiewebstore')
+def boilerroom_rss() -> RSSResponse:
+    site = BowieWebStore()
     return site.search()
 
 
