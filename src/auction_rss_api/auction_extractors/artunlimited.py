@@ -24,8 +24,9 @@ class ArtunLimited(AuctionExtractor):
             "q": self.search_term,
             "limit": 80,
         }
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0'}
 
-        r = httpx.get(url=url, params=params)
+        r = httpx.get(url=url, params=params, headers=headers)
         r.raise_for_status()
 
         soup = BeautifulSoup(markup=r.text, features="html.parser")
