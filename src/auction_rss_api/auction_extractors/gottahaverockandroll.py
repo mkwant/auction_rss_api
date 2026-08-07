@@ -1,6 +1,6 @@
 from typing import List
 
-import httpx
+import curl_cffi
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -18,7 +18,7 @@ class GottaHaveRockAndRoll(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
         auctions = []
-
+fix
         url = 'https://www.gottahaverockandroll.com/catalog.aspx'
         params = {
             'searchby': '3',
@@ -26,10 +26,10 @@ class GottaHaveRockAndRoll(AuctionExtractor):
         }
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0'}
 
-        r = httpx.post(url=url, params=params, headers=headers, timeout=10.0)
+        r = curl_cffi.post(url=url, params=params, headers=headers, timeout=10.0, impersonate='firefox')
         r.raise_for_status()
 
-        soup = BeautifulSoup(r.text, features="html.parser")
+        soup = BeautifulSoup(markup=r.text, features="html.parser")
         items = soup.select('div.lot')
         for item in items:
 
