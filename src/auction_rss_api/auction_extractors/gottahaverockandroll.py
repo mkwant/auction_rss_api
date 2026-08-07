@@ -18,7 +18,7 @@ class GottaHaveRockAndRoll(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
         auctions = []
-fix
+
         url = 'https://www.gottahaverockandroll.com/catalog.aspx'
         params = {
             'searchby': '3',
