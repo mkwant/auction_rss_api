@@ -15,6 +15,7 @@ from auction_rss_api.auction_extractors.delcampe import Delcampe
 from auction_rss_api.auction_extractors.doorzo_mercari import DoorzoMercari
 from auction_rss_api.auction_extractors.doorzo_rakuma import DoorzoRakuma
 from auction_rss_api.auction_extractors.doorzo_yahoo import DoorzoYahoo
+from auction_rss_api.auction_extractors.easyliveauction import EasyLiveAuction
 from auction_rss_api.auction_extractors.ebay import Ebay, SiteId
 from auction_rss_api.auction_extractors.ewbank import Ewbank
 from auction_rss_api.auction_extractors.gottahaverockandroll import GottaHaveRockAndRoll
@@ -195,6 +196,12 @@ def ebay_rss(
         site_id=site_id.value,
         only_locally_listed_items=only_locally_listed_items
     )
+    return site.search()
+
+
+@router.get(path='/easyliveauction')
+def easyliveauction_rss(search_term: str) -> RSSResponse:
+    site = EasyLiveAuction(search_term=search_term)
     return site.search()
 
 
