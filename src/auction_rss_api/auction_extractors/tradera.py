@@ -1,6 +1,5 @@
 import codecs
 import json
-import re
 from typing import List, Literal
 
 import dateutil
@@ -24,31 +23,54 @@ class Tradera(AuctionExtractor):
 
     @staticmethod
     def extract_flight_payloads(html: str) -> list[str]:
-        pushes = re.findall(
-            pattern=r"self\.__next_f\.push\(\[(.*?)\]\)",
-            string=html,
-            flags=re.S,
-        )
+        """Extract and decode Next.js React Flight payloads from HTML."""
+        marker = 'self.__next_f.push(['
+        payloads = []
 
-        decoded_payloads = []
+        pos = 0
 
-        for p in pushes:
-            first_quote = p.find('"')
-            last_quote = p.rfind('"')
+        while True:
+            start = html.find(marker, pos)
+            if start == -1:
+                break
 
-            if first_quote == -1 or last_quote == -1:
-                continue
+            # The payload has the form: self.__next_f.push([1,"..."]), find the first quoted argument after the marker.
+            string_start = html.find('"', start + len(marker))
+            if string_start == -1:
+                break
 
-            raw = p[first_quote + 1:last_quote]
+            i = string_start + 1
+            escaped = False
+
+            while i < len(html):
+                char = html[i]
+
+                if escaped:
+                    escaped = False
+                elif char == '\\':
+                    escaped = True
+                elif char == '"':
+                    break
+
+                i += 1
+
+            if i >= len(html):
+                break
+
+            raw = html[string_start + 1:i]
 
             try:
-                decoded = codecs.decode(raw, "unicode_escape")
-            except Exception:
-                continue
+                # Decode the JavaScript string escaping.
+                decoded = codecs.decode(obj=raw, encoding='unicode_escape')
+            except UnicodeDecodeError:
+                # Fallback for unexpected unicode sequences.
+                decoded = raw
 
-            decoded_payloads.append(decoded)
+            payloads.append(decoded)
 
-        return decoded_payloads
+            pos = i + 1
+
+        return payloads
 
     @staticmethod
     def extract_currencies(payloads: list[str]) -> list[dict]:
@@ -131,9 +153,7 @@ class Tradera(AuctionExtractor):
             headers=headers
         )
         r.raise_for_status()
-
         payloads = self.extract_flight_payloads(r.text)
-
         items = self.extract_items(payloads)
         currencies = self.extract_currencies(payloads)
 
