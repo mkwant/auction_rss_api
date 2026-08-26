@@ -2,6 +2,7 @@ import hashlib
 import re
 from typing import List
 
+import curl_cffi
 import httpx
 from bs4 import BeautifulSoup
 
@@ -19,7 +20,8 @@ class EasyLiveAuction(AuctionExtractor):
         return "EasyLiveAuction"
 
     def get_auctions(self) -> List[Auction]:
-        r = httpx.get(url=self.search_link)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:154.0) Gecko/20100101 Firefox/154.0'}
+        r = curl_cffi.get(url=self.search_link, headers=headers, impersonate='firefox')
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features="html.parser")
 
