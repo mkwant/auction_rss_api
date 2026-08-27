@@ -3,7 +3,6 @@ import re
 from typing import List
 
 import curl_cffi
-import httpx
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
