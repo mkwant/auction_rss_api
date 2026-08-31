@@ -36,16 +36,13 @@ class HMVJapan(AuctionExtractor):
                 auction_id = product.select_one('button.js-favoritBtn')['data-sku']
             except TypeError:
                 auction_id = product.select_one('div.favoritBtn>a.favorit')['data-async'].split(':')[1].rstrip(';')
-                # print(auction_id)
-                # print(product.prettify())
-                # print('-' * 30)
 
             _price = product.select_one('div.price').text.strip()
             _release_date = product.select_one('div.other').text.strip()
 
             description = f"{_price}\n\n{_release_date}"
 
-            link = product.select_one('h3.title>a')['href']
+            link = str(product.select_one('h3.title>a')['href'])
             if not link.startswith('https'):
                 link = 'https://www.hmv.co.jp' + link
 
