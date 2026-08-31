@@ -32,7 +32,13 @@ class HMVJapan(AuctionExtractor):
             _artist = product.select_one('p.name').text.strip()
             _title = product.select_one('h3.title').text.strip()
             title = f"{_artist} - {_title}"
-            auction_id = product.select_one('button.js-favoritBtn')['data-sku']
+            try:
+                auction_id = product.select_one('button.js-favoritBtn')['data-sku']
+            except TypeError:
+                auction_id = product.select_one('div.favoritBtn>a.favorit')['data-async'].split(':')[1].rstrip(';')
+                # print(auction_id)
+                # print(product.prettify())
+                # print('-' * 30)
 
             _price = product.select_one('div.price').text.strip()
             _release_date = product.select_one('div.other').text.strip()
@@ -40,6 +46,9 @@ class HMVJapan(AuctionExtractor):
             description = f"{_price}\n\n{_release_date}"
 
             link = product.select_one('h3.title>a')['href']
+            if not link.startswith('https'):
+                link = 'https://www.hmv.co.jp' + link
+
             image_link = product.select_one('img')['src'].replace('/190/', '/400/')
 
             auctions.append(
