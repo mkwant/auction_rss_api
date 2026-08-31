@@ -30,6 +30,7 @@ class TradeMe(AuctionExtractor):
             url=self.search_link,
             cookies=cookies,
             headers=headers,
+            timeout=10.0,
         )
         r.raise_for_status()
 
