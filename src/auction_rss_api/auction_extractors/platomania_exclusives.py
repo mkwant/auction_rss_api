@@ -18,7 +18,7 @@ class PlatomaniaExclusives(AuctionExtractor):
         return 'Platomania Exclusives'
 
     def get_auctions(self) -> List[Auction]:
-        r = httpx.get(url=self.search_link)
+        r = httpx.get(url=self.search_link, timeout=10.0)
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         items = soup.select('article.article')
