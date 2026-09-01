@@ -3,8 +3,8 @@ import json
 from datetime import datetime
 from typing import List
 
+import curl_cffi
 import dateparser
-import requests
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -21,58 +21,135 @@ class Kleinanzeigen(AuctionExtractor):
         return 'Kleinanzeigen'
 
     def get_auctions(self) -> List[Auction]:
-        r = requests.get(url=self.search_link)
-        soup = BeautifulSoup(html.unescape(r.text), features='html.parser')
-        items = soup.select('ul.itemlist>li.ad-listitem')
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:154.0) Gecko/20100101 Firefox/154.0'}
+
+        r = curl_cffi.get(url=self.search_link, headers=headers, impersonate='firefox')
+        r.raise_for_status()
+
+        soup = BeautifulSoup(markup=html.unescape(r.text), features='html.parser')
+
+        items = soup.select('article[data-adid]')
 
         auctions = []
 
         for item in items:
+            auction_id = item.get('data-adid')
+            href = item.get('data-href')
 
-            try:
-                auction_id = item.select_one('article')['data-adid']
-            except TypeError:
+            if not auction_id or not href:
                 continue
 
-            link = 'https://www.kleinanzeigen.de' + item.select_one('article')['data-href']
+            link = f'https://www.kleinanzeigen.de{href}'
 
-            try:
-                image_link = item.select_one('img')['srcset'].replace('$_35', '$_59')
-            except TypeError:
-                image_link = 'https://www.kleinanzeigen.de/liberty/liberty-js/placeholder-logo.svg'
+            data = {}
 
-            # Get title from embedded json first, if that fails from span.ellipsis and if that fails from a.ellipsis
-            try:
-                title = json.loads(item.select_one('script').text)['title']
-            except (TypeError, AttributeError):
+            script = item.select_one(
+                'script[type="application/ld+json"]'
+            )
+
+            if script and script.string:
                 try:
-                    title = item.select_one('span.ellipsis').text.strip()
-                except AttributeError:
-                    title = item.select_one('a.ellipsis').text.strip()
+                    data = json.loads(script.string)
+                except json.JSONDecodeError:
+                    pass
 
-            try:
-                _description_text = item.select_one('meta[itemprop="description"]')['content']
-            except TypeError:
-                _description_text = item.select_one('p.aditem-main--middle--description').text.strip()
-            _price = item.select_one('p.aditem-main--middle--price-shipping--price').text.strip()
-            description = f'{_description_text}\n\n{_price}'
-            seller = item.select_one('div.aditem-main--top--left').text.strip()
+            # Title
+            title = data.get('title')
 
-            _start_date = item.select_one('div.aditem-main--top--right').text.strip()
-            if _start_date:
-                start_date = dateparser.parse(_start_date, languages=['de'])
-            else:
-                start_date = datetime.now()
+            if not title:
+                title_element = item.select_one('h3 a')
 
+                if title_element:
+                    title = title_element.get_text(strip=True)
+
+            if not title:
+                continue
+
+            # Description
+            description_text = data.get('description')
+
+            if not description_text:
+                description_element = item.select_one('p')
+
+                if description_element:
+                    description_text = description_element.get_text(
+                        " ",
+                        strip=True,
+                    )
+
+            # Image
+            image_link = data.get('contentUrl')
+
+            if not image_link:
+                image = item.select_one('img')
+
+                if image:
+                    image_link = (
+                            image.get('srcset')
+                            or image.get('src')
+                    )
+
+            if not image_link:
+                image_link = (
+                    'https://www.kleinanzeigen.de/'
+                    'liberty/liberty-js/placeholder-logo.svg'
+                )
+
+            image_link = image_link.replace(
+                '$_35.AUTO',
+                '$_59.AUTO',
+            ).replace(
+                '$_35',
+                '$_59',
+            )
+
+            text = item.get_text('\n', strip=True)
+            lines = [
+                line.strip()
+                for line in text.splitlines()
+                if line.strip()
+            ]
+
+            start_date = datetime.now()
+
+            if len(lines) >= 3:
+                date_text = lines[2]
+
+                parsed_date = dateparser.parse(
+                    date_text,
+                    languages=['de'],
+                    settings={
+                        'RELATIVE_BASE': datetime.now(),
+                    },
+                )
+
+                if parsed_date:
+                    start_date = parsed_date
+
+            price = ''
+
+            for line in reversed(lines):
+                if '€' in line:
+                    price = line
+                    break
+
+            description = description_text or ''
+
+            if price:
+                description = (
+                    f'{description}\n\n{price}'
+                    if description
+                    else price
+                )
             auctions.append(
-                Auction(**{
-                    'title': title,
-                    'auction_id': auction_id,
-                    'description': description,
-                    'link': link,
-                    'image_link': image_link,
-                    'seller': seller,
-                    'start_date': start_date
-                }))
+                Auction(
+                    title=title,
+                    auction_id=auction_id,
+                    description=description,
+                    link=link,
+                    image_link=image_link,
+                    start_date=start_date,
+                )
+            )
 
         return auctions
