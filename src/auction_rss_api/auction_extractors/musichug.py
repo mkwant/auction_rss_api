@@ -10,10 +10,7 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 class MusicHug(AuctionExtractor):
     @property
     def search_link(self) -> str:
-        return (
-            "https://www.musikhug.ch/de/search/Section1.htm"
-            f"?query={self.search_term}"
-        )
+        return f"https://www.musikhug.ch/de/search/Section1.htm?query={self.search_term}"
 
     @property
     def site_desc(self) -> str:
