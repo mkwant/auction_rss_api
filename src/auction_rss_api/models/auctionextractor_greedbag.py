@@ -29,8 +29,9 @@ class GreedbagExtractor(AuctionExtractor, ABC):
     def get_auctions(self) -> List[Auction]:
         auctions = []
 
-        r = requests.get(self.search_link)
-        soup = BeautifulSoup(r.content, features="html.parser")
+        r = requests.get(url=self.search_link, timeout=10.0)
+        r.raise_for_status()
+        soup = BeautifulSoup(markup=r.content, features="html.parser")
 
         products = soup.select('div.hproduct')
         for product in products:
