@@ -23,6 +23,7 @@ from auction_rss_api.auction_extractors.discogs_wantlist import DiscogsWantlist
 from auction_rss_api.auction_extractors.discords import Discords
 from auction_rss_api.auction_extractors.diskunion import DiskUnion
 from auction_rss_api.auction_extractors.diskunion_used import DiskUnionUsed
+from auction_rss_api.auction_extractors.doornroosje_merch import DoornroosjeMerch
 from auction_rss_api.auction_extractors.eil import EIL
 from auction_rss_api.auction_extractors.evilgreed import EvilGreed
 from auction_rss_api.auction_extractors.firstclassmemorabilia import FirstClassMemorabilia
@@ -199,6 +200,12 @@ async def discogs_wantlist_rss(username: str) -> RSSResponse:
 @router.get(path='/discords')
 def discords_rss(search_term: str) -> RSSResponse:
     site = Discords(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/doornroosjemerch')
+def doornroosjemerch_rss() -> RSSResponse:
+    site = DoornroosjeMerch()
     return site.search()
 
 
