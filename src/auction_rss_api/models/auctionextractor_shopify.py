@@ -1,10 +1,12 @@
 import json
 import re
 from abc import ABC, abstractmethod
+from functools import cached_property
 from typing import List
 
 import cloudscraper
 import dateparser
+import requests
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -15,6 +17,13 @@ class ShopifyExtractor(AuctionExtractor, ABC):
     """A base class for Shopify sites. Extracts the first 250 items from a Shopify site."""
     search_in_desc: bool = False
     collection: str | None = None
+
+    @cached_property
+    def scraper(self) -> cloudscraper.CloudScraper:
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0'}
+        scraper = cloudscraper.create_scraper()
+        scraper.headers.update(headers)
+        return scraper
 
     @property
     @abstractmethod
@@ -28,20 +37,30 @@ class ShopifyExtractor(AuctionExtractor, ABC):
             return f"https://{self.domain}/collections/{self.collection}/search?q={self.search_term}"
         return f"https://{self.domain}/search?q={self.search_term}"
 
+    @cached_property
+    def currency(self) -> str:
+        currency_url = f'https://{self.domain}/cart.js'
+
+        try:
+            response = self.scraper.get(url=currency_url)
+            response.raise_for_status()
+            return response.json()['currency']
+
+        except requests.RequestException as e:
+            print(f'Failed to retrieve currency from {currency_url}: {e}')
+        except (ValueError, KeyError) as e:
+            print(f'Invalid currency response from {currency_url}: {e}')
+
+        return '$'
 
     def get_auctions(self) -> List[Auction]:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0'
-        }
-
         auctions = []
 
         if self.collection is not None:
             url = f'https://{self.domain}/collections/{self.collection}/products.json?limit=250'
         else:
             url = f'https://{self.domain}/products.json?limit=250'
-        scraper = cloudscraper.create_scraper()
-        r = scraper.get(url=url, headers=headers, timeout=10.0)
+        r = self.scraper.get(url=url, timeout=10.0)
         r.raise_for_status()
 
         try:
@@ -71,8 +90,8 @@ class ShopifyExtractor(AuctionExtractor, ABC):
                 image_link = None
             start_date = dateparser.parse(product['created_at'])
 
-            _variants = '\n'.join([f"${x['price']} - {x['title']}" for x in product['variants']])
-            description = f"{_variants}\n\n{product['body_html']}"
+            _variants = '\n'.join([f"{self.currency} {x['price']} - {x['title']}" for x in product['variants']])
+            description = f"{_variants}\n\n{product['body_html']}".replace(' - Default Title', '')
 
             auctions.append(
                 Auction(
