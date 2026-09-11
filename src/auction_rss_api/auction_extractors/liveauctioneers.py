@@ -21,10 +21,13 @@ class LiveAuctioneers(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         url = 'https://www.liveauctioneers.com/search/'
         params = {'keyword': self.search_term, 'sort': '-publishDate', 'status': 'online', 'pageSize': 48}
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0'}
 
         r = httpx.get(url=url, params=params, headers=headers, timeout=10.0)
         r.raise_for_status()
+
+        if 'Incapsula_Resource' in r.text:
+            raise RuntimeError('LiveAuctioneers blocked the request with Incapsula')
 
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         script = [x for x in soup.select('script') if x.text.startswith('window.__data')][0]
