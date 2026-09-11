@@ -1,9 +1,11 @@
 import codecs
 import json
+import re
 from typing import List, Literal
 
-import dateutil
+import dateparser
 import httpx
+from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -26,7 +28,6 @@ class Tradera(AuctionExtractor):
         """Extract and decode Next.js React Flight payloads from HTML."""
         marker = 'self.__next_f.push(['
         payloads = []
-
         pos = 0
 
         while True:
@@ -34,7 +35,6 @@ class Tradera(AuctionExtractor):
             if start == -1:
                 break
 
-            # The payload has the form: self.__next_f.push([1,"..."]), find the first quoted argument after the marker.
             string_start = html.find('"', start + len(marker))
             if string_start == -1:
                 break
@@ -60,14 +60,11 @@ class Tradera(AuctionExtractor):
             raw = html[string_start + 1:i]
 
             try:
-                # Decode the JavaScript string escaping.
-                decoded = codecs.decode(obj=raw, encoding='unicode_escape')
+                decoded = codecs.decode(raw, encoding='unicode_escape')
             except UnicodeDecodeError:
-                # Fallback for unexpected unicode sequences.
                 decoded = raw
 
             payloads.append(decoded)
-
             pos = i + 1
 
         return payloads
@@ -85,55 +82,87 @@ class Tradera(AuctionExtractor):
                 continue
 
             bracket_count = 0
+
             for i in range(array_start, len(payload)):
                 if payload[i] == '[':
                     bracket_count += 1
                 elif payload[i] == ']':
                     bracket_count -= 1
+
                     if bracket_count == 0:
                         array_end = i + 1
                         array_str = payload[array_start:array_end]
-                        array_str = array_str.encode('latin1').decode('utf-8')  # Fix encoding
+                        array_str = array_str.encode('latin1').decode('utf-8')
+
                         try:
                             return json.loads(array_str)
-                        except json.JSONDecodeError as e:
-                            print(f"JSON decode error: {e}")
+                        except json.JSONDecodeError:
                             continue
+
         return []
 
     @staticmethod
-    def extract_items(payloads: list[str]) -> list[dict]:
-        for payload in payloads:
-            if "discover/receiveSearchResults" in payload:
-                try:
-                    start = payload.find('"actions"')
-                    start = payload.rfind("{", 0, start)
+    def extract_items(html: str) -> list[dict]:
+        """Extract auction data from the server-rendered search result cards."""
+        soup = BeautifulSoup(html, 'html.parser')
+        items = []
 
-                    depth = 0
-                    end = None
+        for card in soup.select('[data-item-card-id]'):
+            item_id = card.get('data-item-card-id')
+            item_type = card.get('data-item-type')
+            link_element = card.select_one('a[data-testid="item-card-image"]')
+            title_element = card.select_one('.item-card-module-scss-module__ihfzoa__title a')
+            image_element = card.select_one('img[data-testid="item-card-image"]')
 
-                    for i in range(start, len(payload)):
-                        if payload[i] == "{":
-                            depth += 1
-                        elif payload[i] == "}":
-                            depth -= 1
-                            if depth == 0:
-                                end = i + 1
-                                break
-                    json_str = payload[start:end].encode('latin1').decode('utf-8')  # Fix encoding
-                    obj = json.loads(json_str)
-                    return obj["actions"][0]["payload"]["result"]["items"]
+            if not image_element:
+                image_element = card.select_one('img.item-card-image-module-scss-module__BeJPHq__primaryImage')
 
-                except Exception:
-                    continue
+            time_element = card.select_one('[id$="-time"]')
+            price_element = card.select_one('[data-testid="price"]')
 
-        return []
+            if not item_id or not link_element or not title_element:
+                continue
+
+            image_url = None
+            if image_element:
+                image_url = image_element.get('src')
+
+            end_date = None
+            if time_element:
+                end_text = time_element.get_text(separator=' ', strip=True)
+                end_text = re.sub(pattern='^Ending time\s*', repl='', string=end_text)
+                end_date = dateparser.parse(end_text)
+
+            price = None
+            if price_element:
+                price_text = price_element.get_text(' ', strip=True)
+
+                # EUR 8.82 -> 8.82
+                match = re.search(pattern='([\d.,]+)', string=price_text.replace('\xa0', ' '))
+
+                if match:
+                    price = float(
+                        match.group(1).replace(',', '')
+                    )
+
+            items.append({
+                'itemId': int(item_id),
+                'itemType': item_type,
+                'shortDescription': title_element.get_text(separator=' ', strip=True),
+                'itemUrl': link_element.get('href'),
+                'imageUrl': image_url,
+                'endDate': end_date,
+                'price': price,
+            })
+
+        return items
 
     def _get_json_data(self) -> dict:
         url = 'https://www.tradera.com/en/search'
+
         params = {
             'q': self.search_term,
-            'sortBy': 'AddedOn'
+            'sortBy': 'AddedOn',
         }
 
         cookies = {
@@ -143,67 +172,62 @@ class Tradera(AuctionExtractor):
         }
 
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) Gecko/20100101 Firefox/152.0'
+            'User-Agent': (
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) '
+                'Gecko/20100101 Firefox/152.0'
+            )
         }
 
         r = httpx.get(
             url=url,
             params=params,
             cookies=cookies,
-            headers=headers
+            headers=headers,
         )
         r.raise_for_status()
+
         payloads = self.extract_flight_payloads(r.text)
-        items = self.extract_items(payloads)
-        currencies = self.extract_currencies(payloads)
 
         return {
-            "items": items,
-            "currencies": currencies
+            'items': self.extract_items(r.text),
+            'currencies': self.extract_currencies(payloads),
         }
 
     def get_auctions(self) -> List[Auction]:
         data = self._get_json_data()
 
-        currency_map = {c["code"]: c for c in data["currencies"]}
+        currency_map = {
+            c['code']: c
+            for c in data['currencies']
+        }
+
         currency = currency_map[self.currency]
 
         auctions = []
 
-        for item in data["items"]:
+        for item in data['items']:
             auction_id = str(item['itemId'])
             title = item['shortDescription']
-            image_link = item['imageUrlTemplate'].replace('{format}', 'large-fit')
-            link = item['itemUrl'].replace('tradera.com/', 'tradera.com/en/')
-            start_date = dateutil.parser.isoparse(item['startDate'])
-            seller = item['sellerAlias']
+            end_date = item['endDate']
+            image_link = item['imageUrl']
+            link = item['itemUrl']
+            if link.startswith('/'):
+                link = f'https://www.tradera.com{link}'
 
-            # Add seller rating to seller if it exists
-            try:
-                _seller_rating = item['sellerDsrAverage']
-                seller += f" ({_seller_rating:.1f})"
-            except KeyError:
-                pass
+            price = item['price']
 
-            # Build description from pricing info
-            _price_auction = (f"{currency['symbolPrefix'] or currency['symbolSuffix']}"
-                              f"{item['price'] * currency['rate']:.2f} ({item['totalBids']} bids, ending "
-                              f"{dateutil.parser.isoparse(item['endDate']):%d-%m-%Y %H:%M})")
-            _price_bin = (f"{currency['symbolPrefix'] or currency['symbolSuffix']}"
-                          f"{item['buyNowPrice'] * currency['rate']:.2f} Buy It Now")
-            _shipping_options = '\n'.join([(f"- {x['type']}: {currency['symbolPrefix'] or currency['symbolSuffix']}"
-                                            f"{x['cost'] * currency['rate']:.2f}")
-                                           for x in item['shippingOptions']])
-            _price_shipping = f"\nShipping options:\n{_shipping_options}"
+            if price is not None:
+                symbol = (
+                        currency['symbolPrefix']
+                        or currency['symbolSuffix']
+                )
 
-            type_desc_mapping = {
-                'Auction': [_price_auction, _price_shipping],
-                'AuctionBin': [_price_auction, _price_bin, _price_shipping],
-                'PureBin': [_price_bin, _price_shipping],
-                'ShopItem': [_price_bin, _price_shipping]
-            }
-
-            description = '\n'.join(type_desc_mapping.get(item['itemType'], []))
+                if item['itemType'] == 'Auction':
+                    description = f'{symbol}{price:.2f} (ending {end_date:%d-%m-%Y %H:%M})'
+                else:
+                    description = f'{symbol}{price:.2f}'
+            else:
+                description = ''
 
             auctions.append(
                 Auction(
@@ -212,8 +236,7 @@ class Tradera(AuctionExtractor):
                     description=description,
                     link=link,
                     image_link=image_link,
-                    seller=seller,
-                    start_date=start_date
                 )
             )
+
         return auctions
