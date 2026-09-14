@@ -63,6 +63,7 @@ from auction_rss_api.auction_extractors.skeletunes import Skeletunes
 from auction_rss_api.auction_extractors.slcd import SLCD
 from auction_rss_api.auction_extractors.snowrecords import SnowRecords
 from auction_rss_api.auction_extractors.soisong import Soisong
+from auction_rss_api.auction_extractors.subpop import SubpopExclusives
 from auction_rss_api.auction_extractors.thehague3345 import TheHague3345
 from auction_rss_api.auction_extractors.tokyomusicjapan import TokyoMusicJapan
 from auction_rss_api.auction_extractors.tracks import Tracks
@@ -472,6 +473,12 @@ def snowrecords_rss(search_term: str) -> RSSResponse:
 @router.get(path='/soisong')
 def soisong_rss() -> RSSResponse:
     site = Soisong()
+    return site.search()
+
+
+@router.get(path='/subpop_exclusives')
+def subpop_rss() -> RSSResponse:
+    site = SubpopExclusives()
     return site.search()
 
 
