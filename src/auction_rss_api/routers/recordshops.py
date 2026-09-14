@@ -75,6 +75,7 @@ from auction_rss_api.auction_extractors.vinylalert import VinylAlert
 from auction_rss_api.auction_extractors.vinyleers import Vinyleers
 from auction_rss_api.auction_extractors.vinylmania import VinylmaniaExtractor
 from auction_rss_api.auction_extractors.waaghals import Waaghals
+from auction_rss_api.auction_extractors.waxpoetics import WaxPoetics
 from auction_rss_api.auction_extractors.woodenchild import WoodenChild
 from auction_rss_api.auction_extractors.younggod import YoungGod
 from auction_rss_api.routers.logger import LoggedRoute
@@ -546,6 +547,12 @@ def younggod_rss(search_term: str | None = None, search_in_desc: bool = False) -
 @router.get(path='/waaghals')
 def waaghals_rss(collection: str) -> RSSResponse:
     site = Waaghals(collection=collection)
+    return site.search()
+
+
+@router.get(path='/waxpoetics')
+def waxpoetics_rss(search_term: str) -> RSSResponse:
+    site = WaxPoetics(search_term=search_term)
     return site.search()
 
 
