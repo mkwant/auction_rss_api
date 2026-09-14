@@ -30,7 +30,8 @@ class DinkedEditions(AuctionExtractor):
             image_link = item['assetUrl']
             title = f"{item['title']} ({item['categories'][0]})"
             published_date = dateparser.parse(str(item['publishOn']))
-            description = item['body']
+            description = item['excerpt']
+            author = item['author']['displayName']
 
             auctions.append(
                 Auction(
@@ -40,6 +41,7 @@ class DinkedEditions(AuctionExtractor):
                     title=title,
                     description=description,
                     start_date=published_date,
+                    seller=author,
                 )
             )
 
