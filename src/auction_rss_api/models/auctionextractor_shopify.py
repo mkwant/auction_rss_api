@@ -73,11 +73,17 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
                 # If search_in_desc, search in description as well
                 if self.search_in_desc:
-                    if (self.search_term.lower() not in product['vendor'].lower() and
-                            self.search_term.lower() not in product['body_html'].lower()):
+                    if (
+                            self.search_term.lower() not in product['vendor'].lower() and
+                            self.search_term.lower() not in product['body_html'].lower() and
+                            self.search_term.lower() not in product['title'].lower()
+                    ):
                         continue
                 if not self.search_in_desc:
-                    if self.search_term.lower() not in product['vendor'].lower():
+                    if (
+                            self.search_term.lower() not in product['vendor'].lower() and
+                            self.search_term.lower() not in product['title'].lower()
+                    ):
                         continue
 
             title = f"{product['vendor']} - {product['title']}"
