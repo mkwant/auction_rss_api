@@ -43,11 +43,7 @@ class SubpopExclusives(AuctionExtractor):
         auctions = []
 
         for item in items:
-            try:
-                unique_id = str(item['id'])
-            except KeyError:
-                print(item.prettify())
-                exit(0)
+            unique_id = str(item['id'])
             link = 'https://europe.subpop.com' + item.select_one('a')['href']
             image_link = item.select_one('div.product-image-box img')['src'].replace("/l/", "/b/")
 
