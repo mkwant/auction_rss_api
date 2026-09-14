@@ -53,6 +53,7 @@ from auction_rss_api.auction_extractors.platomania import PlatoMania
 from auction_rss_api.auction_extractors.platomania_exclusives import PlatomaniaExclusives
 from auction_rss_api.auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
 from auction_rss_api.auction_extractors.rarevinyl import RareVinyl
+from auction_rss_api.auction_extractors.raymondorecords import RaymondoRecords
 from auction_rss_api.auction_extractors.recordmecca import RecordMecca
 from auction_rss_api.auction_extractors.redeye import RedEye
 from auction_rss_api.auction_extractors.rockabuy import RockaBuy
@@ -407,6 +408,12 @@ def pleasuresofpasttimes_rss(search_term: str) -> RSSResponse:
 @router.get(path='/rarevinyl')
 def rarevinyl_rss(search_term: str) -> RSSResponse:
     site = RareVinyl(search_term=search_term)
+    return site.search()
+
+
+@router.get(path='/raymondorecords')
+def raymondorecords_rss(collection: str | None = None, search_term: str | None = None) -> RSSResponse:
+    site = RaymondoRecords(collection=collection, search_term=search_term)
     return site.search()
 
 
