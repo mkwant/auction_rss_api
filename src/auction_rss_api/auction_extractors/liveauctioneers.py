@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import List
 
 import httpx
-from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -12,50 +11,48 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 class LiveAuctioneers(AuctionExtractor):
     @property
     def search_link(self) -> str:
-        return f'https://www.liveauctioneers.com/search/?keyword={self.search_term}&pageSize=48&sort=-publishDate&status=online'
+        return f"https://www.liveauctioneers.com/search/?keyword={self.search_term}&pageSize=48&sort=-publishDate&status=online"
 
     @property
     def site_desc(self) -> str:
         return "LiveAuctioneers"
 
     def get_auctions(self) -> List[Auction]:
-        url = 'https://www.liveauctioneers.com/search/'
-        params = {'keyword': self.search_term, 'sort': '-publishDate', 'status': 'online', 'pageSize': 48}
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0'}
+        parameters = {
+            "page": 1,
+            "pageSize": 48,
+            "searchTerm": self.search_term,
+            "sort": "-publishDate",
+            "status": "online",
+        }
 
-        r = httpx.get(url=url, params=params, headers=headers, timeout=10.0)
+        r = httpx.get(
+            url="https://search-party-prod.liveauctioneers.com/search/v4/web",
+            params={
+                "parameters": json.dumps(parameters, separators=(",", ":")),
+                "useAuctionHouseSearchFiltering": "true",
+            },
+            timeout=10.0,
+        )
         r.raise_for_status()
 
-        if 'Incapsula_Resource' in r.text:
-            raise RuntimeError('LiveAuctioneers blocked the request with Incapsula')
-
-        soup = BeautifulSoup(markup=r.text, features='html.parser')
-        script = [x for x in soup.select('script') if x.text.startswith('window.__data')][0]
-        json_str = \
-            script.text.lstrip('window.__data=').replace('undefined', 'null').split(';window.__amplitude')[0]
-
-        json_parsed = json.loads(json_str)
-        items = json_parsed['itemSummary']['byId']
+        items = r.json()["payload"]["items"]
 
         auctions = []
 
-        for auction_id in items:
-            item = items[auction_id]
-            link = f'https://www.liveauctioneers.com/item/{auction_id}_{item["slugWithLocation"]}'
-            image_link = f'https://p1.liveauctioneers.com/{item['sellerId']}/{item['catalogId']}/{auction_id}_1_x.jpg'
-            title = item['title']
-            _catalog = item['catalogTitle']
-            _currency = item['currency']
-            _low_bid_estimate = item['lowBidEstimate']
-            _high_bid_estimate = item['highBidEstimate']
-            _start_price = item['startPrice']
-            _desc = item['shortDescription']
-            _start_time = datetime.fromtimestamp(item['saleStartTs'])
-
-            description = (f"Start time: {_start_time}\nEstimate: {_currency} {_low_bid_estimate}-{_high_bid_estimate}"
-                           f"\nStart bid: {_currency} {_start_price}\n\n{_desc}\n\n{_catalog}")
-
-            seller = item['sellerName']
+        for item in items:
+            auction_id = str(item["itemId"])
+            link = f"https://www.liveauctioneers.com/item/{auction_id}_{item['slugWithLocation']}"
+            image_link = f"https://p1.liveauctioneers.com/{item['sellerId']}/{item['catalogId']}/{auction_id}_1_x.jpg"
+            start_time = datetime.fromtimestamp(item["saleStartTs"])
+            description = (
+                f"Start time: {start_time}\n"
+                f"Estimate: {item['currency']} "
+                f"{item['lowBidEstimate']}-{item['highBidEstimate']}\n"
+                f"Start bid: {item['currency']} {item['startPrice']}\n\n"
+                f"{item['shortDescription']}\n\n"
+                f"{item['catalogTitle']}"
+            )
 
             auctions.append(
                 Auction(
@@ -63,10 +60,13 @@ class LiveAuctioneers(AuctionExtractor):
                     description=description,
                     image_link=image_link,
                     link=link,
-                    title=title,
-                    seller=seller
+                    title=item["title"],
+                    seller=item["sellerName"],
                 )
             )
 
-        auctions = sorted(auctions, key=lambda auction: auction.auction_id, reverse=True)
-        return auctions
+        return sorted(
+            auctions,
+            key=lambda auction: auction.auction_id,
+            reverse=True,
+        )
