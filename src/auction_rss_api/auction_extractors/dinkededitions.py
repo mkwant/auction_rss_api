@@ -17,7 +17,7 @@ class DinkedEditions(AuctionExtractor):
         return "DinkedEditions"
 
     def get_auctions(self) -> List[Auction]:
-        r = httpx.get(url=f"{self.search_link}?format=json")
+        r = httpx.get(url=f"{self.search_link}?format=json", timeout=10.0)
         r.raise_for_status()
 
         items = r.json()['items']
