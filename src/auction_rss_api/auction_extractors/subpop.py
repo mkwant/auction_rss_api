@@ -45,7 +45,7 @@ class SubpopExclusives(AuctionExtractor):
         for item in items:
             unique_id = str(item['id'])
             link = 'https://europe.subpop.com' + item.select_one('a')['href']
-            image_link = item.select_one('div.product-image-box img')['src'].replace("/l/", "/b/")
+            image_link = item.select_one('div.product-image-box img')['src'].replace("/s/", "/b/").replace("/l/", "/b/")
 
             _artist = item.select_one('dd.artist').text.strip()
             _title = item.select_one('dd.release-title').text.strip()
