@@ -15,6 +15,7 @@ class SubpopExclusives(AuctionExtractor):
         return "Subpop Exclusives"
 
     def get_auctions(self) -> list[Auction]:
+        return []
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             context = browser.new_context()
