@@ -43,7 +43,7 @@ class Foetus(AuctionExtractor):
                 print(e)
                 image_link = item.select_one('img.product_image')['src']
 
-            _cat_nr = item.select_one('small').text.strip()
+            _cat_nr = item.select_one('a')['name']
             _desc_1 = item.select_one('div.wpsc_description').text.strip()
 
             try:
