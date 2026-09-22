@@ -324,6 +324,7 @@ def tradera_rss(search_term: str, currency: Literal['DKK', 'EUR', 'GBP', 'JPY', 
 
 
 @router.get(path='/vinted.nl')
-def vinted_rss(search_term: str, catalog_id: Optional[int] = None, search_title_only: bool = True) -> RSSResponse:
+def vinted_rss(search_term: str, catalog_id: Optional[list[int]] = Query(None),
+               search_title_only: bool = True) -> RSSResponse:
     site = Vinted(search_term=search_term, catalog_id=catalog_id, search_title_only=search_title_only)
     return site.search()

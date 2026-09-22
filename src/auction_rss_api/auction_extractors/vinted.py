@@ -10,18 +10,21 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 class Vinted(AuctionExtractor):
     search_term: str
-    catalog_id: Optional[int] = None
+    catalog_id: Optional[list[int]] = None
     search_title_only: bool = True
 
     @property
     def site_desc(self) -> str:
+        if self.catalog_id is not None:
+            return f"Vinted (catalog: {', '.join([str(x) for x in self.catalog_id])})"
         return "Vinted"
 
     @property
     def search_link(self) -> str:
         url = f"https://www.vinted.nl/catalog?search_text={self.search_term}&order=newest_first"
         if self.catalog_id is not None:
-            url += f"&catalog[]={self.catalog_id}"
+            for catalog_id in self.catalog_id:
+                url += f"&catalog[]={catalog_id}"
         return url
 
     def _get_page(self) -> List[dict]:
