@@ -3,7 +3,7 @@ from enum import StrEnum
 from functools import partial
 from typing import Any, Coroutine
 
-import httpx
+import httpx2
 from fastapi import Request
 
 from auction_rss_api.auction_transformers.translator import AzureTranslator, translate_auction
@@ -25,7 +25,7 @@ class Translate:
     def translate_from(language: TranslateLanguage) -> partial[Coroutine[Any, Any, Auction]]:
         return partial(
             translate_auction,
-            translator=AzureTranslator(client=httpx.AsyncClient()),
+            translator=AzureTranslator(client=httpx2.AsyncClient()),
             translate_to=TranslateLanguage.ENGLISH,
             translate_from=language.value
         )

@@ -2,7 +2,7 @@ import datetime
 import json
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -28,7 +28,7 @@ class Vinyleers(AuctionExtractor):
             'q': self.search_term,
             'sort_by': 'created-descending',
         }
-        r = httpx.get(url=url, params=params)
+        r = httpx2.get(url=url, params=params)
         r.raise_for_status()
 
         soup = BeautifulSoup(markup=r.text, features="html.parser")

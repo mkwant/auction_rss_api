@@ -1,6 +1,6 @@
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup, Comment
 
 from auction_rss_api.models.auction import Auction
@@ -19,7 +19,7 @@ class Foetus(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         auctions = []
 
-        r = httpx.get(url=self.search_link)
+        r = httpx2.get(url=self.search_link)
 
         soup = BeautifulSoup(markup=r.text, features="html.parser")
         items = soup.select(selector='div.default_product_display')

@@ -1,6 +1,6 @@
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -26,7 +26,7 @@ class Imusic(AuctionExtractor):
             'combined': self.search_term,
             'sort': 'releaseDateDesc',
         }
-        r = httpx.get(url=url, params=params, timeout=10)
+        r = httpx2.get(url=url, params=params, timeout=10)
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         items = soup.select('div.media')

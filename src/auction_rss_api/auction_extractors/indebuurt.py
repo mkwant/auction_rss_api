@@ -4,7 +4,7 @@ import time
 from typing import List
 
 import dateparser
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -20,14 +20,14 @@ class InDeBuurt(AuctionExtractor):
     def site_desc(self) -> str:
         return "InDeBuurt"
 
-    def fetch_page(self) -> httpx.Response:
+    def fetch_page(self) -> httpx2.Response:
         max_attempts = 10
         for attempt in range(max_attempts):
             try:
-                r = httpx.get(url=self.search_link, timeout=3.0)
+                r = httpx2.get(url=self.search_link, timeout=3.0)
 
                 if r.status_code == 503:
-                    raise httpx.HTTPStatusError(
+                    raise httpx2.HTTPStatusError(
                         message="503 Service Unavailable",
                         request=r.request,
                         response=r,
@@ -35,7 +35,7 @@ class InDeBuurt(AuctionExtractor):
 
                 return r
 
-            except (httpx.TimeoutException, httpx.HTTPStatusError):
+            except (httpx2.TimeoutException, httpx2.HTTPStatusError):
                 if attempt == max_attempts - 1:
                     raise
 

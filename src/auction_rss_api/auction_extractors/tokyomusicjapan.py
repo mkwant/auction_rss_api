@@ -1,6 +1,6 @@
 from typing import List
 
-import httpx
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -19,7 +19,7 @@ class TokyoMusicJapan(AuctionExtractor):
 
     def _get_auctions(self) -> list:
         url = 'https://www.tokyomusicjapan.com/service/api/ArtistSearch?artist=new&currency=USD&isGeneral=true'
-        r = httpx.get(url=url, verify=False, timeout=10.0)
+        r = httpx2.get(url=url, verify=False, timeout=10.0)
         r.raise_for_status()
         items = [x for x in r.json() if self.search_term.lower() in x['Artist'].lower()]
         return items

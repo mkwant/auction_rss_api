@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List
 
 import cloudscraper
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction

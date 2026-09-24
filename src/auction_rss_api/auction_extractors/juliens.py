@@ -1,7 +1,7 @@
 import datetime
 from typing import List, TypeVar
 
-import httpx
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -33,7 +33,7 @@ class JuliensAuctions(AuctionExtractor):
             "limit": 100,
         }
 
-        r = httpx.get(
+        r = httpx2.get(
             url='https://api.juliensauctions.com/rest/v1/lot_campaign_view',
             params=params,
             headers=headers,

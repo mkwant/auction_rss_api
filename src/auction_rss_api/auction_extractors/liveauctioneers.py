@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from typing import List
 
-import httpx
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -26,7 +26,7 @@ class LiveAuctioneers(AuctionExtractor):
             "status": "online",
         }
 
-        r = httpx.get(
+        r = httpx2.get(
             url="https://search-party-prod.liveauctioneers.com/search/v4/web",
             params={
                 "parameters": json.dumps(parameters, separators=(",", ":")),

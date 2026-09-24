@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from datetime import timedelta
 from typing import Optional
 
-import httpx
+import httpx2
 import truststore
 from asgi_correlation_id import correlation_id
 from cashews import cache
@@ -39,7 +39,7 @@ class AzureTranslator(Translator):
 
     def __init__(
             self,
-            client: httpx.AsyncClient,
+            client: httpx2.AsyncClient,
             ms_translate_api_key: str = settings.MS_TRANSLATE_API_KEY,
             ms_translate_api_location: str = settings.MS_TRANSLATE_API_LOCATION
     ) -> None:
@@ -114,6 +114,6 @@ async def translate_auction(
     return auction
 
 
-# azure_translator = AzureTranslator(client=httpx.AsyncClient())
+# azure_translator = AzureTranslator(client=httpx2.AsyncClient())
 # translate_from_jp = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='ja')
 # translate_from_es = partial(translate_auction, translator=azure_translator, translate_to='en', translate_from='es')

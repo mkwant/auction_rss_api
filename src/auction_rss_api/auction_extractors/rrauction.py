@@ -1,6 +1,6 @@
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -23,7 +23,7 @@ class RRAuction(AuctionExtractor):
         params = {'str': self.search_term}
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0'}
 
-        r = httpx.get(url=url, headers=headers, params=params)
+        r = httpx2.get(url=url, headers=headers, params=params)
         r.raise_for_status()
 
         soup = BeautifulSoup(r.text, features='html.parser')

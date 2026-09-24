@@ -1,7 +1,7 @@
 from functools import cached_property
 from typing import List
 
-import httpx
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor, logger
@@ -26,7 +26,7 @@ class DoorzoYahoo(AuctionExtractor):
             'currency': 'EUR',
         }
 
-        r = httpx.get(url='https://sig.doorzo.com/', params=params, timeout=10.0)
+        r = httpx2.get(url='https://sig.doorzo.com/', params=params, timeout=10.0)
         r.raise_for_status()
         try:
             rate = r.json()['data']['exchange']
@@ -64,7 +64,7 @@ class DoorzoYahoo(AuctionExtractor):
             'sort': 'new',
         }
 
-        r = httpx.post(url='https://sig.doorzo.com/', params=params, json=payload, timeout=10.0)
+        r = httpx2.post(url='https://sig.doorzo.com/', params=params, json=payload, timeout=10.0)
         r.raise_for_status()
 
         auctions = []

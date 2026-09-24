@@ -1,6 +1,6 @@
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -21,7 +21,7 @@ class VandaBowie(AuctionExtractor):
 
         auctions = []
 
-        r = httpx.get(url=url)
+        r = httpx2.get(url=url)
         soup = BeautifulSoup(r.text, 'html.parser')
 
         items = soup.select('div.b-product')

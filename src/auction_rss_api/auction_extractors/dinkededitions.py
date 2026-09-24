@@ -1,7 +1,7 @@
 from typing import List
 
 import dateparser
-import httpx
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -17,7 +17,7 @@ class DinkedEditions(AuctionExtractor):
         return "DinkedEditions"
 
     def get_auctions(self) -> List[Auction]:
-        r = httpx.get(url=f"{self.search_link}?format=json", timeout=10.0)
+        r = httpx2.get(url=f"{self.search_link}?format=json", timeout=10.0)
         r.raise_for_status()
 
         items = r.json()['items']

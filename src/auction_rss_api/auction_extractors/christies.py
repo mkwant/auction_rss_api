@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-import httpx
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -31,7 +31,7 @@ class Christies(AuctionExtractor):
             'datasourceId': '182f8bb2-d729-4a38-b539-7cf1a901cf2e',
         }
 
-        r = httpx.get(url='https://apim.christies.com/search-client', params=params, headers=headers)
+        r = httpx2.get(url='https://apim.christies.com/search-client', params=params, headers=headers)
 
         auctions = []
 

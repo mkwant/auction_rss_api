@@ -1,6 +1,6 @@
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -21,7 +21,7 @@ class BackStage(AuctionExtractor):
 
         data = {'ckeyword': self.search_term}
 
-        r = httpx.post(url=self.search_link, data=data)
+        r = httpx2.post(url=self.search_link, data=data)
         r.raise_for_status()
 
         soup = BeautifulSoup(r.text, features="html.parser")

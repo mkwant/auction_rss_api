@@ -1,7 +1,7 @@
 from typing import List
 
 import dateparser
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -19,7 +19,7 @@ class LastDodo(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
         auctions = []
-        response = httpx.get(url=self.search_link)
+        response = httpx2.get(url=self.search_link)
         soup = BeautifulSoup(response.text, features='html.parser')
 
         items = soup.select('div.card-item')

@@ -3,7 +3,7 @@ from datetime import datetime
 from enum import Enum
 from typing import List
 
-import httpx
+import httpx2
 import pytz
 
 from auction_rss_api.app.settings import settings
@@ -32,7 +32,7 @@ class Ebay(AuctionExtractor):
 
     @property
     def token(self) -> str:
-        client = httpx.Client()
+        client = httpx2.Client()
 
         oauth_creds = base64.b64encode(f'{settings.EBAY_APP_ID}:{settings.EBAY_APP_SECRET}'.encode())
 
@@ -80,7 +80,7 @@ class Ebay(AuctionExtractor):
         }
         api_endpoint = 'https://api.ebay.com/buy/browse/v1/item_summary/search'
 
-        r = httpx.get(url=api_endpoint, headers=headers, params=params)
+        r = httpx2.get(url=api_endpoint, headers=headers, params=params)
 
         for item in r.json()['itemSummaries']:
             auction_id = item['itemId'].split('|')[1]

@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -26,7 +26,7 @@ class TradeMe(AuctionExtractor):
 
         cookies = {'trademeclientid': '1c161f2a-eb21-472f-9004-8f5e90252a5b'}
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0'}
-        r = httpx.get(
+        r = httpx2.get(
             url=self.search_link,
             cookies=cookies,
             headers=headers,

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-import httpx
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -50,7 +50,7 @@ class RoughTrade(AuctionExtractor):
         if self.exclusives_only:
             json_data['requests'][0]['params']['facetFilters'] = ['attributes.exclusive:Rough Trade Exclusive']
 
-        r = httpx.post(
+        r = httpx2.post(
             url='https://www.roughtrade.com/api/algolia/search',
             headers=headers,
             json=json_data,

@@ -1,7 +1,7 @@
 from hashlib import md5
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -19,7 +19,7 @@ class TivoliPresale(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
         auctions = []
-        r = httpx.get(self.search_link)
+        r = httpx2.get(self.search_link)
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         fields = soup.select('div.special-offer-content>div')

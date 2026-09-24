@@ -2,7 +2,7 @@ import hashlib
 from typing import List
 
 import dateparser
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -19,7 +19,7 @@ class Skeletunes(AuctionExtractor):
         return "Skeletunes"
 
     def get_auctions(self) -> List[Auction]:
-        r = httpx.get(url=self.search_link)
+        r = httpx2.get(url=self.search_link)
         r.raise_for_status()
 
         auctions = []

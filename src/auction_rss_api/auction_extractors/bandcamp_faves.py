@@ -2,7 +2,7 @@ import asyncio
 import json
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -19,7 +19,7 @@ class BandcampFaves(AuctionExtractor):
         return 'Bandcamp faves'
 
     @staticmethod
-    async def get_bandcamp_merch(subdomain: str, client: httpx.AsyncClient) -> list[Auction]:
+    async def get_bandcamp_merch(subdomain: str, client: httpx2.AsyncClient) -> list[Auction]:
         """Given a subdomain, scrape the merch items."""
         auctions = []
 
@@ -77,7 +77,7 @@ class BandcampFaves(AuctionExtractor):
 
     def get_followed_subdomains(self) -> list[str]:
         """Get the subdomains of the artist the user is following."""
-        r = httpx.get(self.search_link)
+        r = httpx2.get(self.search_link)
         soup = BeautifulSoup(r.content, features='html.parser')
         pagedata = soup.select_one('div#pagedata')['data-blob']
         json_data = json.loads(pagedata)
@@ -88,7 +88,7 @@ class BandcampFaves(AuctionExtractor):
     async def get_faves_merch(self) -> list[Auction]:
         """Get merch of all followed subdomains."""
         tasks = []
-        client = httpx.AsyncClient(follow_redirects=True)
+        client = httpx2.AsyncClient(follow_redirects=True)
 
         for subdomain in self.get_followed_subdomains():
             tasks.append(asyncio.create_task(self.get_bandcamp_merch(subdomain=subdomain, client=client)))

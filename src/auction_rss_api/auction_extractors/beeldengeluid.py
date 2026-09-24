@@ -1,7 +1,7 @@
 import asyncio
 from typing import List
 
-import httpx
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -18,7 +18,7 @@ class BeeldEnGeluid(AuctionExtractor):
     def site_desc(self) -> str:
         return "BeeldEnGeluid Schatkamer"
 
-    async def fetch_page(self, client: httpx.AsyncClient, offset: int) -> dict:
+    async def fetch_page(self, client: httpx2.AsyncClient, offset: int) -> dict:
         url = "https://schatkamer.beeldengeluid.nl/api/media/bff/search"
         params = {
             "query": self.search_term,
@@ -34,7 +34,7 @@ class BeeldEnGeluid(AuctionExtractor):
         return response.json()
 
     async def fetch_all_pages(self) -> list[dict]:
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx2.AsyncClient(timeout=30) as client:
             # First request to determine total amount
             first_page = await self.fetch_page(client=client, offset=0)
 

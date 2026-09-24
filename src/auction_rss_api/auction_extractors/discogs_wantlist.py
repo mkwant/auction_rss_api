@@ -2,7 +2,7 @@ import asyncio
 import itertools
 from typing import Any
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -26,7 +26,7 @@ class DiscogsWantlist(AuctionExtractorAsync):
         return f'https://www.discogs.com/wantlist?page=1&limit=250&user={self.search_term}'
 
     @staticmethod
-    async def _get_offer_page(client: httpx.AsyncClient, item_id: int) -> str:
+    async def _get_offer_page(client: httpx2.AsyncClient, item_id: int) -> str:
         url = f"https://www.discogs.com/sell/release/{item_id}"
         params = {'sort': 'listed,desc'}
         response = await client.get(url=url, params=params)
@@ -66,7 +66,7 @@ class DiscogsWantlist(AuctionExtractorAsync):
             })
         return item_list
 
-    async def _get_wantlist(self, client: httpx.AsyncClient) -> list[int]:
+    async def _get_wantlist(self, client: httpx2.AsyncClient) -> list[int]:
         """Get a users wantlist in the form of a list of item id's."""
         url = 'https://www.discogs.com/wantlist'
         params = {
@@ -92,7 +92,7 @@ class DiscogsWantlist(AuctionExtractorAsync):
 
     async def get_auctions(self) -> list[Auction]:
 
-        async with httpx.AsyncClient(headers=self.headers, follow_redirects=True) as client:
+        async with httpx2.AsyncClient(headers=self.headers, follow_redirects=True) as client:
             wantlist = await self._get_wantlist(client)
             offer_pages = await asyncio.gather(*
                                                [

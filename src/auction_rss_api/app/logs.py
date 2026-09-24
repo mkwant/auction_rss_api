@@ -43,8 +43,8 @@ def setup_logging(
         ])
 
     if not packages_to_suppress:
-        packages_to_suppress = ['urllib3', 'suds', 'google.auth.transport.requests', 'gspread_dataframe', 'httpx',
-                                'httpcore', 'asyncio', 'tzlocal']
+        packages_to_suppress = ['urllib3', 'suds', 'google.auth.transport.requests', 'gspread_dataframe', 'httpx2',
+                                'httpcore2', 'asyncio', 'tzlocal']
     for package in packages_to_suppress:
         logging.getLogger(package).setLevel(logging.CRITICAL)
 

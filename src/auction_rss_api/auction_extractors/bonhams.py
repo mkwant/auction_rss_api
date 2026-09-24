@@ -2,7 +2,7 @@ import datetime
 import json
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -31,7 +31,7 @@ class Bonhams(AuctionExtractor):
             'query': self.search_term,
             'sortBy': 'lots_virtual_sort_hammertime_desc',
         }
-        r = httpx.get(url=url, params=params, timeout=10.0)
+        r = httpx2.get(url=url, params=params, timeout=10.0)
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features="html.parser")
         json_str = soup.select_one('script[type="application/json"]').text.strip()

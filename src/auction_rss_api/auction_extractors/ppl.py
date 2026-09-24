@@ -3,7 +3,7 @@ import re
 import time
 from typing import List, Optional
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -87,7 +87,7 @@ class PPLRepertoireClient:
     """
 
     def __init__(self) -> None:
-        self.client = httpx.AsyncClient(headers=HEADERS, follow_redirects=True, timeout=20)
+        self.client = httpx2.AsyncClient(headers=HEADERS, follow_redirects=True, timeout=20)
         self.window_id: Optional[str] = None
         self.view_state: Optional[str] = None
         self.last_query: dict = {}

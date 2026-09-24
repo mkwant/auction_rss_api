@@ -4,7 +4,7 @@ import re
 from typing import List, Literal
 
 import dateparser
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -130,7 +130,7 @@ class Tradera(AuctionExtractor):
             end_date = None
             if time_element:
                 end_text = time_element.get_text(separator=' ', strip=True)
-                end_text = re.sub(pattern='^Ending time\s*', repl='', string=end_text)
+                end_text = re.sub(pattern=r'^Ending time\s*', repl='', string=end_text)
                 end_date = dateparser.parse(end_text)
 
             price = None
@@ -138,7 +138,7 @@ class Tradera(AuctionExtractor):
                 price_text = price_element.get_text(' ', strip=True)
 
                 # EUR 8.82 -> 8.82
-                match = re.search(pattern='([\d.,]+)', string=price_text.replace('\xa0', ' '))
+                match = re.search(pattern=r'([\d.,]+)', string=price_text.replace('\xa0', ' '))
 
                 if match:
                     price = float(
@@ -178,7 +178,7 @@ class Tradera(AuctionExtractor):
             )
         }
 
-        r = httpx.get(
+        r = httpx2.get(
             url=url,
             params=params,
             cookies=cookies,

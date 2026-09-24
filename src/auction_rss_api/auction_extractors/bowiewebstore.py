@@ -1,7 +1,7 @@
 import hashlib
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -18,7 +18,7 @@ class BowieWebStore(AuctionExtractor):
         return 'BowieWebStore'
 
     def get_auctions(self) -> List[Auction]:
-        r = httpx.get(self.search_link)
+        r = httpx2.get(self.search_link)
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         items = soup.select('div.product-card')
 

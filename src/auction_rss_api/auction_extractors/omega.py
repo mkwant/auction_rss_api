@@ -2,7 +2,7 @@ import hashlib
 import re
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -22,7 +22,7 @@ def _solve_pow(nonce: str, difficulty: int) -> int:
         solution += 1
 
 
-def _pass_bpbc_challenge(client: httpx.Client, url: str, html: str) -> bool:
+def _pass_bpbc_challenge(client: httpx2.Client, url: str, html: str) -> bool:
     """Detects and solves the bpbc proof-of-work gate. Returns True if a
     challenge was present and solved (caller should re-GET the page)."""
     m_nonce = re.search(r'var nonce = "([^"]+)"', html)
@@ -35,7 +35,7 @@ def _pass_bpbc_challenge(client: httpx.Client, url: str, html: str) -> bool:
 
     solution = _solve_pow(nonce, difficulty)
 
-    verify_url = httpx.URL(url).copy_merge_params({"bpbc_verify": "1"})
+    verify_url = httpx2.URL(url).copy_merge_params({"bpbc_verify": "1"})
     resp = client.post(
         verify_url,
         data={
@@ -63,7 +63,7 @@ class Omega(AuctionExtractor):
 
         headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0"}
 
-        with httpx.Client(headers=headers, follow_redirects=True, timeout=30) as client:
+        with httpx2.Client(headers=headers, follow_redirects=True, timeout=30) as client:
             r = client.get(self.search_link)
 
             if _pass_bpbc_challenge(client=client, url=self.search_link, html=r.text):

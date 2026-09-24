@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 from urllib.parse import parse_qs, urlparse
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
@@ -23,7 +23,7 @@ class Variaworld(AuctionExtractor):
                 f'&zoek_at=a&m_sr=lig&startpagina=1')
 
     def _get_auctions(self) -> ResultSet:
-        r = httpx.get(self.search_link, timeout=10.0)
+        r = httpx2.get(self.search_link, timeout=10.0)
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.content, features='html.parser')
 

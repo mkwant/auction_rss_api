@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from typing import Any, List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 from dateutil import tz
 
@@ -22,7 +22,7 @@ class Melkweg(AuctionExtractor):
     def _get_data(self) -> dict[str, Any]:
         url = 'https://www.melkweg.nl/en/agenda/'
 
-        r = httpx.get(url=url)
+        r = httpx2.get(url=url)
         r.raise_for_status()
         soup = BeautifulSoup(r.text, features='html.parser')
 

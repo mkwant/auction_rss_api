@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -23,7 +23,7 @@ class GumTree(AuctionExtractor):
         url = "https://www.gumtree.com/search"
         params = {"q": self.search_term, "sort": "date"}
         headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0"}
-        r = httpx.get(url=url, params=params, headers=headers)
+        r = httpx2.get(url=url, params=params, headers=headers)
         r.raise_for_status()
         if r.status_code == 247:
             raise ConnectionError("Received HTTP Error 247")

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-import httpx
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -17,7 +17,7 @@ class VinylAlert(AuctionExtractor):
         return "VinylAlert"
 
     def get_auctions(self) -> List[Auction]:
-        r = httpx.get(url='https://vrh708nzb0.execute-api.eu-central-1.amazonaws.com/dev/releases/public')
+        r = httpx2.get(url='https://vrh708nzb0.execute-api.eu-central-1.amazonaws.com/dev/releases/public')
         r.raise_for_status()
         releases = r.json()
 

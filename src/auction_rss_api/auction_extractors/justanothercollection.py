@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List
 from urllib.parse import urljoin
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -20,7 +20,7 @@ class JustAnotherCollection(AuctionExtractor):
         return "JustAnotherCollection"
 
     def get_auctions(self) -> List[Auction]:
-        r = httpx.get(url=self.search_link)
+        r = httpx2.get(url=self.search_link)
         r.raise_for_status()
 
         soup = BeautifulSoup(markup=r.text, features="html.parser")

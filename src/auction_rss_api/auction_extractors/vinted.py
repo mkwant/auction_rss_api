@@ -1,7 +1,7 @@
 from typing import List, Optional
 from urllib.parse import urljoin
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -48,7 +48,7 @@ class Vinted(AuctionExtractor):
             "Upgrade-Insecure-Requests": "1",
         }
 
-        with httpx.Client(headers=headers, follow_redirects=True, timeout=30) as client:
+        with httpx2.Client(headers=headers, follow_redirects=True, timeout=30) as client:
             r = client.get(url=url, params=params)
 
         if r.status_code != 200:

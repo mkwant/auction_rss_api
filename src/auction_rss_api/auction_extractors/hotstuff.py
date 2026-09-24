@@ -1,6 +1,6 @@
 from typing import List
 
-import httpx
+import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -28,7 +28,7 @@ class HotStuff(AuctionExtractor):
             'ordBy': 'add',
         }
 
-        r = httpx.get(url=url, params=params)
+        r = httpx2.get(url=url, params=params)
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         items = soup.select('div.xProductList>div')

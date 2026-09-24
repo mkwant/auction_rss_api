@@ -1,4 +1,4 @@
-import httpx
+import httpx2
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from pydantic import AnyUrl
@@ -16,7 +16,7 @@ router = APIRouter(
 @router.get(path="/proxy")
 def proxy_rss(url: AnyUrl) -> XMLResponse:
     """Takes an existing RSS feed and passed it through as is."""
-    r = httpx.get(str(url))
+    r = httpx2.get(str(url))
     r.raise_for_status()
     return XMLResponse(r.text)
 

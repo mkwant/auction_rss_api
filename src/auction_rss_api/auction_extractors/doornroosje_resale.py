@@ -1,7 +1,7 @@
 from typing import List
 
 import dateparser
-import httpx
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -23,7 +23,7 @@ class DoornroosjeResale(AuctionExtractor):
 
         url = 'https://shopping-api.paylogic.com/channels/edd2f25dee0d4d4594975dd8f0dc6b10'
 
-        r = httpx.get(url=url)
+        r = httpx2.get(url=url)
         r.raise_for_status()
 
         events = r.json()['_embedded']['shop:event']
