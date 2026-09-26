@@ -41,7 +41,10 @@ class Subito(AuctionExtractor):
             auction_id = item['urn'].split(':')[-1]
             title = item['subject']
             link = item['urls']['default']
-            image_link = item['images'][0]['cdnBaseUrl'] + '?rule=gallery-desktop-1x-auto'
+            try:
+                image_link = item['images'][0]['cdnBaseUrl'] + '?rule=gallery-desktop-1x-auto'
+            except IndexError:
+                image_link = None
             date_published = datetime.fromisoformat(item['date'])
             _desc = item['body']
             _town = item['geo']['town']['value']
