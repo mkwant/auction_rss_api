@@ -1,6 +1,6 @@
+from datetime import datetime
 from typing import List
 
-import dateparser
 import httpx2
 
 from auction_rss_api.models.auction import Auction
@@ -26,17 +26,18 @@ class DoornroosjeResale(AuctionExtractor):
         r = httpx2.get(url=url)
         r.raise_for_status()
 
-        events = r.json()['_embedded']['shop:event']
-        sales = r.json()['_embedded']['shop:sale']
+        data = r.json()
+        events = data['_embedded']['shop:event']
+        sales = data['_embedded']['shop:sale']
         for idx, event in enumerate(events):
             _sale = sales[idx]
             ticket_count = _sale['resale_availability']['available']
-            link = event['_links']['self']['href']
+            link = _sale['_links']['shop:shop']['href']
             auction_id = link.split('/')[-1]
             image_link = event['image']
             _event_name = event['title']['en']
-            _event_start = dateparser.parse(event['event_start'])
-            _event_end = dateparser.parse(event['event_end'])
+            _event_start = datetime.fromisoformat(event['event_start'])
+            _event_end = datetime.fromisoformat(event['event_end'])
             _event_location = event['location']['name']
             title = f'{_event_start:%a %Y-%m-%d} [{_event_location}]: {_event_name}'
             description = f"{_event_start:%Y-%m-%d %H:%M} - {_event_end:%Y-%m-%d %H:%M}\nAvailable tickets: {ticket_count}"
