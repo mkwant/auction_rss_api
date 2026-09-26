@@ -47,7 +47,7 @@ services:
       # Mount the volume to store the certificates
       - traefik-public-certificates:/certificates
       # Mount the log dir
-      - /var/log/auction_rss_api:/logs
+      - /var/lib/auction_rss_api/logs:/logs
     command:
       # Enable Docker in Traefik, so that it reads labels from Docker services
       - --providers.docker
@@ -112,11 +112,11 @@ services:
       # any other service that needs to be publicly available with HTTPS
       - traefik-public
     volumes:
-      - /var/log/auction_rss_api:/logs
+      - /var/lib/auction_rss_api/logs:/logs
       - ./.translation_cache:/.translation_cache
 
   watchtower:
-    image: containrrr/watchtower
+    image: ghcr.io/nicholas-fedor/watchtower:latest
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
