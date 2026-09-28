@@ -30,9 +30,12 @@ class DoornroosjeResale(AuctionExtractor):
         events = data['_embedded']['shop:event']
         sales = data['_embedded']['shop:sale']
         for idx, event in enumerate(events):
-            _sale = sales[idx]
-            ticket_count = _sale['resale_availability']['available']
-            link = _sale['_links']['shop:shop']['href']
+            sale = sales[idx]
+            ticket_count = sale['resale_availability']['available']
+            link = sale['_links']['shop:shop']['href']
+            if self.available_only and ticket_count == 0:
+                continue
+
             auction_id = link.split('/')[-1]
             image_link = event['image']
             _event_name = event['title']['en']
@@ -41,10 +44,6 @@ class DoornroosjeResale(AuctionExtractor):
             _event_location = event['location']['name']
             title = f'{_event_start:%a %Y-%m-%d} [{_event_location}]: {_event_name}'
             description = f"{_event_start:%Y-%m-%d %H:%M} - {_event_end:%Y-%m-%d %H:%M}\nAvailable tickets: {ticket_count}"
-
-            if self.available_only:
-                if ticket_count == 0:
-                    continue
 
             auctions.append(
                 Auction(
