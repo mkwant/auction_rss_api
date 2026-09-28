@@ -155,19 +155,21 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
         json_str = script.split('searchResult\\":')[1].replace('}]]"});})();', '')
 
         json_str = re.sub(pattern=r'\\"', repl='"', string=json_str)  # Replace escaped quotes with actual quotes
-        json_str = re.sub(pattern=r'\\(?!")', repl='',
+        json_str = re.sub(pattern=r'\\(?![\"u])', repl='',
                           string=json_str)  # Remove unnecessary backslashes that aren't escaping quotes
         json_parsed = json.loads(json_str)
         items = json_parsed['productVariants']
         for item in items:
             auction_id = item['product']['id']
+            vendor = item['product']['vendor']
             title = item['product']['title']
 
-            if self.search_term.lower() not in title.lower():
+            term = self.search_term.lower()
+            if term not in vendor.lower() and term not in title.lower():
                 continue
 
-            link = f'https://{self.domain}{item['product']['url']}'
-            seller = item['product']['vendor']
+            link = f"https://{self.domain}{item['product']['url'].split('?')[0]}"
+            seller = vendor
 
             try:
                 image_link = 'https:' + item['image']['src']
