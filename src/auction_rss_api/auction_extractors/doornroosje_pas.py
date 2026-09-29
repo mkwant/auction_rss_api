@@ -38,7 +38,11 @@ class DoornroosjePas(AuctionExtractor):
             )
 
             _date_text = ' '.join(x.text.strip() for x in item.select('div.c-program__date>span')).strip()
-            _date = dateparser.parse(_date_text) if _date_text else None
+            _date = dateparser.parse(
+                date_string=_date_text,
+                languages=['nl'],
+                settings={'PREFER_DATES_FROM': 'future'}
+            ) if _date_text else None
 
             if _date is not None:
                 last_date = _date
