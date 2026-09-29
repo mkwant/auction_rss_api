@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 from fastapi_rss import RSSResponse
+from playwright.async_api import BrowserContext
 
-from auction_rss_api.app.dependencies import Translate, TranslateLanguage
+from auction_rss_api.app.dependencies import Translate, TranslateLanguage, get_browser
 from auction_rss_api.auction_extractors.anonne import Anonne
 from auction_rss_api.auction_extractors.artunlimited import ArtunLimited
 from auction_rss_api.auction_extractors.atlasrecords import AtlasRecords
@@ -367,9 +368,9 @@ def montreuxjazzshop_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path='/musichug')
-def musichug_rss(search_term: str) -> RSSResponse:
-    site = MusicHug(search_term=search_term)
-    return site.search()
+async def musichug_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = MusicHug(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path='/musicstack')
@@ -485,9 +486,9 @@ def soisong_rss() -> RSSResponse:
 
 
 @router.get(path='/subpop_exclusives')
-def subpop_rss() -> RSSResponse:
-    site = SubpopExclusives()
-    return site.search()
+async def subpop_rss(browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = SubpopExclusives(browser=browser)
+    return await site.search()
 
 
 @router.get(path='/tokyomusicjapan')

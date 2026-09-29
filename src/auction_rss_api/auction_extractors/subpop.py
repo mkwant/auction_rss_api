@@ -1,11 +1,13 @@
+from typing import List
+
 from bs4 import BeautifulSoup
-from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, sync_playwright
+from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
 
-class SubpopExclusives(AuctionExtractor):
+class SubpopExclusives(AuctionExtractorAsync):
     @property
     def search_link(self) -> str:
         return "https://europe.subpop.com/losers"
@@ -14,15 +16,18 @@ class SubpopExclusives(AuctionExtractor):
     def site_desc(self) -> str:
         return "Subpop Exclusives"
 
-    def get_auctions(self) -> list[Auction]:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            context = browser.new_context()
-            page = context.new_page()
-            page.goto(url=self.search_link, wait_until="domcontentloaded")
+    async def get_auctions(self) -> List[Auction]:
+        page = await self.browser.new_page()
 
-            page.wait_for_function(
-                expression="""() => {
+        try:
+            await page.goto(
+                self.search_link,
+                wait_until="domcontentloaded",
+                timeout=30_000,
+            )
+
+            await page.wait_for_function(
+                """() => {
                     return document.cookie.includes("aws-waf-token")
                         || performance.getEntriesByType("navigation")
                             .some(e => e.type === "reload");
@@ -31,35 +36,44 @@ class SubpopExclusives(AuctionExtractor):
             )
 
             try:
-                page.wait_for_load_state(state="networkidle", timeout=30_000)
+                await page.wait_for_load_state(
+                    "networkidle",
+                    timeout=30_000,
+                )
             except PlaywrightTimeoutError:
-                page.wait_for_load_state("domcontentloaded")
+                await page.wait_for_load_state("domcontentloaded")
 
-            html = page.content()
+            html = await page.content()
 
-        soup = BeautifulSoup(markup=html, features="html.parser")
-        items = soup.select('ul.product-list>li')
+        finally:
+            await page.close()
+
+        soup = BeautifulSoup(html, "html.parser")
 
         auctions = []
 
-        for item in items:
-            unique_id = str(item['id'])
-            link = 'https://europe.subpop.com' + item.select_one('a')['href']
-            image_link = item.select_one('div.product-image-box img')['src'].replace("/s/", "/b/").replace("/l/", "/b/")
+        for item in soup.select("ul.product-list > li"):
+            unique_id = str(item["id"])
 
-            _artist = item.select_one('dd.artist').text.strip()
-            _title = item.select_one('dd.release-title').text.strip()
+            link = "https://europe.subpop.com" + item.select_one("a")["href"]
 
-            try:
-                _desc = item.select_one('span.extra-format').text.strip()
-                title = f"{_artist} - {_title} ({_desc})"
-            except AttributeError:
-                title = f"{_artist} - {_title}"
+            image_link = item.select_one("div.product-image-box img")["src"].replace("/s/", "/b/").replace("/l/", "/b/")
 
-            _price = item.select_one('span.price').text.strip()
-            _label = item.select_one('dd.label').text.strip()
-            _reldate = item.select_one('dd.product-release-date').text.strip()
-            description = f"Price: {_price}\nLabel: {_label}\nRelease Date: {_reldate}"
+            artist = item.select_one("dd.artist").text.strip()
+            title = item.select_one("dd.release-title").text.strip()
+
+            extra_format = item.select_one("span.extra-format")
+
+            if extra_format:
+                title = f"{artist} - {title} ({extra_format.text.strip()})"
+            else:
+                title = f"{artist} - {title}"
+
+            price = item.select_one("span.price").text.strip()
+            label = item.select_one("dd.label").text.strip()
+            release_date = item.select_one("dd.product-release-date").text.strip()
+
+            description = f"Price: {price}\nLabel: {label}\nRelease Date: {release_date}"
 
             auctions.append(
                 Auction(
