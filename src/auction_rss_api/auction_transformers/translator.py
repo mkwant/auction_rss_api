@@ -17,7 +17,7 @@ truststore.inject_into_ssl()  # Use OS trust store
 logger = logging.getLogger(__name__)
 
 # Setting up the translation cache
-cache.setup(settings_url="disk://?directory=/.translation_cache")
+cache.setup(settings_url="disk://?directory=/.translation_cache&shards=0")
 
 
 class Translator(ABC):
