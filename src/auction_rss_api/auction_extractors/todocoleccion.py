@@ -27,10 +27,11 @@ class Todocoleccion(AuctionExtractor):
             'Navegacion': 'i'
         }
 
-        scraper = cloudscraper.create_scraper()
+        with cloudscraper.create_scraper() as scraper:
+            r = scraper.get(self.URL, params=params)
+            html = r.content
 
-        r = scraper.get(self.URL, params=params)
-        soup = BeautifulSoup(r.content, features='html.parser')
+        soup = BeautifulSoup(markup=html, features='html.parser')
         site_auctions = soup.select('div.card-lote')
         return site_auctions
 

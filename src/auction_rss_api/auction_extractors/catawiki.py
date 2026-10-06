@@ -27,14 +27,17 @@ class CataWiki(AuctionExtractor):
             'page': 1,
             'sort': 'published_at_desc'
         }
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0'}
-        s = cloudscraper.create_scraper()
-        s.headers.update(headers)
 
-        r = s.get(url=url, params=params)
-        r.raise_for_status()
+        with cloudscraper.create_scraper() as s:
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0'}
+            s.headers.update(headers)
 
-        for auction in r.json()['lots']:
+            r = s.get(url=url, params=params)
+            r.raise_for_status()
+
+            lots = r.json()['lots']
+
+        for auction in lots:
             auctions.append(
                 Auction(
                     auction_id=str(auction['id']),

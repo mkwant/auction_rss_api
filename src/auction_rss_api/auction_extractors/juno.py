@@ -28,18 +28,19 @@ class Juno(AuctionExtractor):
             'solrorder': 'date_down'
         }
 
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0'}
-        s = cloudscraper.create_scraper()
-        s.headers.update(headers)
 
-        # Retrieving cookie
-        s.get(url='https://www.juno.co.uk')
+        with cloudscraper.create_scraper() as s:
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0'}
+            s.headers.update(headers)
 
-        # Retrieving items
-        r = s.get(url=url, params=params, headers=headers)
-        r.raise_for_status()
+            # Retrieving cookie
+            s.get(url='https://www.juno.co.uk')
 
-        soup = BeautifulSoup(r.text, features='html.parser')
+            # Retrieving items
+            r = s.get(url=url, params=params, headers=headers)
+            r.raise_for_status()
+            html = r.text
+        soup = BeautifulSoup(markup=html, features='html.parser')
         items = soup.select('div.product-list>div.dv-item')
         return items
 

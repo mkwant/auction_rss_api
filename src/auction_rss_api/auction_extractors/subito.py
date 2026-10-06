@@ -21,7 +21,6 @@ class Subito(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
         auctions = []
-        scraper = cloudscraper.create_scraper()
 
         url = 'https://www.subito.it/annunci-italia/vendita/sport-hobby/'
         params = {
@@ -29,11 +28,14 @@ class Subito(AuctionExtractor):
             'qso': True,
             'o': 1,
         }
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0'}
-        r = scraper.get(url=url, params=params, headers=headers)
-        r.raise_for_status()
 
-        soup = BeautifulSoup(markup=r.text, features="html.parser")
+        with cloudscraper.create_scraper() as scraper:
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0'}
+            r = scraper.get(url=url, params=params, headers=headers)
+            r.raise_for_status()
+            html = r.text
+
+        soup = BeautifulSoup(markup=html, features="html.parser")
         json_str = soup.select_one('script#__NEXT_DATA__').text
         json_parsed = json.loads(json_str)
         items = json_parsed['props']['pageProps']['initialState']['items']['originalList']

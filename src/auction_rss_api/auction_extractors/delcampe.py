@@ -49,10 +49,11 @@ class Delcampe(AuctionExtractor):
                 )
         }
 
-        scraper = cloudscraper.create_scraper()
+        with cloudscraper.create_scraper() as scraper:
+            r = scraper.get(self.URL, params=params, cookies=cookies)
+            r.raise_for_status()
+            soup = BeautifulSoup(r.content, features='html.parser')
 
-        r = scraper.get(self.URL, params=params, cookies=cookies)
-        soup = BeautifulSoup(r.content, features='html.parser')
         site_auctions = soup.select('div.item-bloc')
         return site_auctions
 
