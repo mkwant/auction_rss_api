@@ -10,6 +10,7 @@ from auction_rss_api.auction_extractors.indebuurt import InDeBuurt
 from auction_rss_api.auction_extractors.justanothercollection import JustAnotherCollection
 from auction_rss_api.auction_extractors.ppl import PPLRepertoireSearch
 from auction_rss_api.auction_extractors.redhandfiles import RedHandFiles
+from auction_rss_api.auction_extractors.zivebowie import ZiveBowieCollection
 from auction_rss_api.routers.logger import LoggedRoute
 
 router = APIRouter(
@@ -70,4 +71,10 @@ async def ppl_repertoire_search_rss(artist: str = "", title: str = "", isrc: str
 @router.get(path='/redhandfiles')
 def redhandfiles_rss() -> RSSResponse:
     site = RedHandFiles()
+    return site.search()
+
+
+@router.get(path='/zivebowie')
+def zivebowie_rss() -> RSSResponse:
+    site = ZiveBowieCollection()
     return site.search()
