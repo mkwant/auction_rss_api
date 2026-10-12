@@ -22,10 +22,8 @@ class ArtunLimited(AuctionExtractor):
         url = "https://www.artunlimited.com/catalogsearch/result/"
         params = {
             "q": self.search_term,
-            "limit": 80,
         }
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0'}
-
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0'}
         r = httpx2.get(url=url, params=params, headers=headers)
         r.raise_for_status()
 
