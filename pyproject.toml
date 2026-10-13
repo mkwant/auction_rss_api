@@ -3,38 +3,38 @@ name = "auction-rss-api"
 version = "1.85.0"
 description = "This API returns RSS feeds for the search results of auction sites, online record stores and concert venues."
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<3.15"
 dependencies = [
     "asgi-correlation-id==5.0.1",
     "beautifulsoup4==4.15.0",
     "cashews==7.6.0",
     "cloudscraper==1.2.71",
-    "cryptography==50.0.1",
+    "cryptography==50.0.2",
     "curl-cffi==0.16.3",
     "dateparser==1.4.3",
     "diskcache==5.6.3",
     "fastapi-rss==0.5.0",
-    "fastapi[standard]==0.141.1",
+    "fastapi[standard]==0.143.0",
     "httpx2>=2.13.1",
-    "nest-asyncio2==1.7.3",
+    "nest-asyncio2==1.7.4",
     "packaging==26.3",
     "playwright==1.63.0",
     "playwright-stealth==2.0.3",
-    "pydantic==2.13.5",
+    "pydantic==2.14.1",
     "pydantic-settings==2.15.0",
     "python-dateutil==2.9.0.post0",
-    "python-dotenv==1.2.3",
+    "python-dotenv==1.2.4",
     "requests==2.34.2",
     "rich==15.0.0",
-    "starlette==1.7.0",
-    "truststore==0.10.4",
-    "uvicorn==0.53.0",
+    "starlette==1.8.0",
+    "truststore==0.10.5",
+    "uvicorn==0.54.0",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff==0.16.8",
-    "ty==0.0.82",
+    "ruff==0.17.0",
+    "ty==0.0.86",
 ]
 
 [tool.uv]
