@@ -19,30 +19,38 @@ class HotStuff(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         auctions = []
 
-        url = 'https://hotstuff.se/index.cfm'
+        url = "https://hotstuff.se/index.cfm"
         params = {
-            'x': 'product',
-            'pg': 1,
-            'prSts': 1,
-            'searchPhrase': self.search_term,
-            'ordBy': 'add',
+            "x": "product",
+            "pg": 1,
+            "prSts": 1,
+            "searchPhrase": self.search_term,
+            "ordBy": "add",
         }
 
         r = httpx2.get(url=url, params=params)
         r.raise_for_status()
-        soup = BeautifulSoup(markup=r.text, features='html.parser')
-        items = soup.select('div.xProductList>div')
+        soup = BeautifulSoup(markup=r.text, features="html.parser")
+        items = soup.select("div.xProductList > div")
         for item in items:
-            title = item.select_one('a')['title']
-            link = item.select_one('a')['href']
-            auction_id = link.split('/')[-1]
+            a = item.select_one("a[href]")
+            if a is None:
+                continue
 
-            try:
-                image_link = item.select_one('div[style^=background-image]')['style'].split('(')[1].split(')')[0]
-            except TypeError:
-                image_link = item.select_one('div.lazy')['data-original']
+            title = a.get("title") or a.get_text(strip=True)
+            link = a["href"]
+            auction_id = link.rstrip("/").split("/")[-1]
 
-            description = item.select_one("div > div:nth-child(2) > div:nth-child(1) > div:nth-child(1)").text
+            img = item.select_one("img")
+            image_link = ""
+            if img is not None:
+                image_link = img.get("data-fallback") or img.get("src") or ""
+
+            desc_div = item.select_one("div[title] + div")
+            desc = desc_div.get_text(" ", strip=True) if desc_div else title
+            price_div = item.select_one("div[title] > div")
+            price = price_div.get_text(strip=True) if price_div else ""
+            description = f"{desc}\n\n{price}" if price else desc
 
             auctions.append(
                 Auction(
