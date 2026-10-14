@@ -19,6 +19,7 @@ from auction_rss_api.auction_extractors.cdandlp import CdAndLp
 from auction_rss_api.auction_extractors.dais import Dais
 from auction_rss_api.auction_extractors.davidbowie import DavidBowie
 from auction_rss_api.auction_extractors.davidtibet import DavidTibet
+from auction_rss_api.auction_extractors.dearvinyl import DearVinyl
 from auction_rss_api.auction_extractors.deezer import Deezer
 from auction_rss_api.auction_extractors.dinkededitions import DinkedEditions
 from auction_rss_api.auction_extractors.discogs_wantlist import DiscogsWantlist
@@ -185,6 +186,12 @@ def davidbowie_rss() -> RSSResponse:
 @router.get(path="/davidtibet")
 def davidtibet_rss(search_term: str | None = None) -> RSSResponse:
     site = DavidTibet(search_term=search_term)
+    return site.search()
+
+
+@router.get(path="/dearvinyl")
+def dearvinyl_rss(search_term: str) -> RSSResponse:
+    site = DearVinyl(search_term=search_term)
     return site.search()
 
 
