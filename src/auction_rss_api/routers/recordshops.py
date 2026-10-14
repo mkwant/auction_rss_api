@@ -51,6 +51,7 @@ from auction_rss_api.auction_extractors.musicstack import MusicStack
 from auction_rss_api.auction_extractors.newburycomics import NewBuryComics
 from auction_rss_api.auction_extractors.obscuurrecords import ObscuurRecords
 from auction_rss_api.auction_extractors.paradisoshop import ParadisoShop
+from auction_rss_api.auction_extractors.platengarage import PlatenGarage
 from auction_rss_api.auction_extractors.platomania import PlatoMania
 from auction_rss_api.auction_extractors.platomania_exclusives import PlatomaniaExclusives
 from auction_rss_api.auction_extractors.pleasuresofpasttimes import PleasuresOfPastTimes
@@ -389,6 +390,12 @@ def obscuurrecords_rss(search_term: str) -> RSSResponse:
 @router.get(path="/paradisoshop")
 def paradisoshop_rss() -> RSSResponse:
     site = ParadisoShop()
+    return site.search()
+
+
+@router.get(path="/platengarage")
+def platengarage_rss(search_term: str) -> RSSResponse:
+    site = PlatenGarage(search_term=search_term)
     return site.search()
 
 
