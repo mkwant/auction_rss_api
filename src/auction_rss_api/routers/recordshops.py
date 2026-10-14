@@ -57,6 +57,7 @@ from auction_rss_api.auction_extractors.pleasuresofpasttimes import PleasuresOfP
 from auction_rss_api.auction_extractors.rarevinyl import RareVinyl
 from auction_rss_api.auction_extractors.raymondorecords import RaymondoRecords
 from auction_rss_api.auction_extractors.recordmecca import RecordMecca
+from auction_rss_api.auction_extractors.recordsale import RecordSale
 from auction_rss_api.auction_extractors.redeye import RedEye
 from auction_rss_api.auction_extractors.rockabuy import RockaBuy
 from auction_rss_api.auction_extractors.rockaway import Rockaway
@@ -427,6 +428,12 @@ def recordmecca_rss(search_term: str) -> RSSResponse:
     return site.search()
 
 
+@router.get(path="/recordsale")
+def recordsale_rss(search_term: str) -> RSSResponse:
+    site = RecordSale(search_term=search_term)
+    return site.search()
+
+
 @router.get(path="/redeye")
 def redeye_rss(search_term: str) -> RSSResponse:
     site = RedEye(search_term=search_term)
@@ -447,9 +454,9 @@ def rockaway_rss(search_term: str) -> RSSResponse:
 
 @router.get(path="/roughtrade")
 def roughtrade_rss(
-    search_term: str | None = None,
-    available_only: bool = False,
-    exclusives_only: bool = False,
+        search_term: str | None = None,
+        available_only: bool = False,
+        exclusives_only: bool = False,
 ) -> RSSResponse:
     site = RoughTrade(search_term=search_term, available_only=available_only, exclusives_only=exclusives_only)
     return site.search()
