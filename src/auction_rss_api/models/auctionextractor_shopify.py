@@ -122,10 +122,9 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
 
     @staticmethod
     def _create_scraper() -> cloudscraper.CloudScraper:
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0"}
-
-        scraper = cloudscraper.create_scraper()
-        scraper.headers.update(headers)
+        scraper = cloudscraper.create_scraper(
+            browser={"browser": "firefox", "platform": "windows", "mobile": False},
+        )
         return scraper
 
     def get_auctions(self) -> List[Auction]:
