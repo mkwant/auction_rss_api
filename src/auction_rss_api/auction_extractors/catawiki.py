@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-import cloudscraper as cloudscraper
+import curl_cffi
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -28,14 +28,10 @@ class CataWiki(AuctionExtractor):
             'sort': 'published_at_desc'
         }
 
-        with cloudscraper.create_scraper() as s:
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0'}
-            s.headers.update(headers)
+        r = curl_cffi.get(url=url, params=params, impersonate='firefox')
+        r.raise_for_status()
 
-            r = s.get(url=url, params=params)
-            r.raise_for_status()
-
-            lots = r.json()['lots']
+        lots = r.json()['lots']
 
         for auction in lots:
             auctions.append(

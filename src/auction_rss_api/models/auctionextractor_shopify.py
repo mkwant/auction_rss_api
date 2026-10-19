@@ -3,9 +3,10 @@ import re
 from abc import ABC, abstractmethod
 from typing import List
 
-import cloudscraper
+import curl_cffi
 import dateparser
 from bs4 import BeautifulSoup
+from curl_cffi import Response, Session
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -29,12 +30,8 @@ class ShopifyExtractor(AuctionExtractor, ABC):
         return f"https://{self.domain}/search?q={self.search_term}"
 
     @staticmethod
-    def _create_scraper() -> cloudscraper.CloudScraper:
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0"}
-
-        scraper = cloudscraper.create_scraper()
-        scraper.headers.update(headers)
-        return scraper
+    def _create_scraper() -> Session[Response]:
+        return curl_cffi.Session(impersonate="firefox") # noqa
 
     def get_auctions(self) -> List[Auction]:
         auctions = []
@@ -121,11 +118,8 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
         return f"https://www.{self.domain}/search?q={self.search_term}"
 
     @staticmethod
-    def _create_scraper() -> cloudscraper.CloudScraper:
-        scraper = cloudscraper.create_scraper(
-            browser={"browser": "firefox", "platform": "windows", "mobile": False},
-        )
-        return scraper
+    def _create_scraper() -> Session[Response]:
+        return curl_cffi.Session(impersonate="firefox") # noqa
 
     def get_auctions(self) -> List[Auction]:
         auctions = []

@@ -1,6 +1,5 @@
 from typing import List
 
-import cloudscraper as cloudscraper
 import curl_cffi
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
@@ -29,6 +28,7 @@ class Todocoleccion(AuctionExtractor):
         }
 
         r = curl_cffi.get(url=self.URL, params=params, impersonate='firefox')
+        r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         site_auctions = soup.select('div.card-lote')
         return site_auctions

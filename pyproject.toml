@@ -8,7 +8,6 @@ dependencies = [
     "asgi-correlation-id==5.0.1",
     "beautifulsoup4==4.15.0",
     "cashews==7.6.0",
-    "cloudscraper==1.2.71",
     "cryptography==50.0.2",
     "curl-cffi==0.16.3",
     "dateparser==1.4.3",

@@ -1,7 +1,7 @@
 import urllib.parse
 from typing import List
 
-import cloudscraper as cloudscraper
+import curl_cffi
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
@@ -49,10 +49,9 @@ class Delcampe(AuctionExtractor):
                 )
         }
 
-        with cloudscraper.create_scraper() as scraper:
-            r = scraper.get(self.URL, params=params, cookies=cookies)
-            r.raise_for_status()
-            soup = BeautifulSoup(r.content, features='html.parser')
+        r = curl_cffi.get(url=self.URL, params=params, cookies=cookies, impersonate='firefox')
+        r.raise_for_status()
+        soup = BeautifulSoup(markup=r.content, features='html.parser')
 
         site_auctions = soup.select('div.item-bloc')
         return site_auctions

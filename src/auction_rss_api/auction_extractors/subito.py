@@ -2,8 +2,7 @@ import json
 from datetime import datetime
 from typing import List
 
-import cloudscraper
-import httpx2
+import curl_cffi
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -29,13 +28,10 @@ class Subito(AuctionExtractor):
             'o': 1,
         }
 
-        with cloudscraper.create_scraper() as scraper:
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0'}
-            r = scraper.get(url=url, params=params, headers=headers)
-            r.raise_for_status()
-            html = r.text
+        r = curl_cffi.get(url=url, params=params, impersonate='firefox')
+        r.raise_for_status()
 
-        soup = BeautifulSoup(markup=html, features="html.parser")
+        soup = BeautifulSoup(markup=r.text, features="html.parser")
         json_str = soup.select_one('script#__NEXT_DATA__').text
         json_parsed = json.loads(json_str)
         items = json_parsed['props']['pageProps']['initialState']['items']['originalList']

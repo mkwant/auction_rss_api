@@ -1,6 +1,6 @@
 from typing import List
 
-import cloudscraper
+import curl_cffi
 import dateparser
 from bs4 import BeautifulSoup
 
@@ -23,10 +23,9 @@ class TivoliVredenburg(AuctionExtractor):
             'nieuw': '1',
         }
 
-        with cloudscraper.create_scraper() as s:
-            r = s.get(url='https://www.tivolivredenburg.nl/agenda/', params=params)
-            r.raise_for_status()
-            soup = BeautifulSoup(markup=r.content, features='html.parser')
+        r = curl_cffi.get(url='https://www.tivolivredenburg.nl/agenda/', params=params, impersonate='firefox')
+        r.raise_for_status()
+        soup = BeautifulSoup(markup=r.content, features='html.parser')
 
         events = soup.select('li.agenda-list-item')
         for event in events:
