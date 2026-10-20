@@ -128,7 +128,7 @@ services:
 
   # Telemetry backend (traces, metrics, logs)
   openobserve:
-    image: public.ecr.aws/zinclabs/openobserve:latest
+    image: public.ecr.aws/zinclabs/openobserve:v1.1.2-arm64-pi
     restart: always
     mem_limit: 1g
     environment:
