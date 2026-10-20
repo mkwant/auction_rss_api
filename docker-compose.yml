@@ -84,8 +84,19 @@ services:
     image: ghcr.io/mkwant/auction_rss_api:latest
     restart: always
     env_file: .env
+    environment:
+      # FastAPI's built-in OpenTelemetry support
+      FASTAPI_OTEL_AUTO_CONFIGURE: "true"
+      OTEL_SERVICE_NAME: auction-rss-api
+      # Base URL (HTTP/protobuf); the SDK appends /v1/traces, /v1/metrics, /v1/logs
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://openobserve:5080/api/default
+      # OTEL_EXPORTER_OTLP_HEADERS (the Authorization header) comes from .env
+      # Change to "0.1" to keep ~10% of traces for example, to limit load on the Pi; errors are still logged
+      OTEL_TRACES_SAMPLER: parentbased_traceidratio
+      OTEL_TRACES_SAMPLER_ARG: "1.0"
     depends_on:
       - traefik
+      - openobserve
     labels:
       # Enable Traefik for this specific "backend" service
       - traefik.enable=true
@@ -114,6 +125,38 @@ services:
     volumes:
       - /var/lib/auction_rss_api/logs:/logs
       - ./.translation_cache:/.translation_cache
+
+  # Telemetry backend (traces, metrics, logs)
+  openobserve:
+    image: public.ecr.aws/zinclabs/openobserve:latest
+    restart: always
+    mem_limit: 1g
+    environment:
+      ZO_ROOT_USER_EMAIL: ${OPENOBSERVE_USER_EMAIL?Variable not set}
+      ZO_ROOT_USER_PASSWORD: ${OPENOBSERVE_USER_PASSWORD?Variable not set}
+      ZO_DATA_DIR: /data
+      # Keep telemetry for 7 days
+      ZO_COMPACT_DATA_RETENTION_DAYS: "7"
+      TZ: Europe/Amsterdam
+    volumes:
+      - /var/lib/auction_rss_api/openobserve:/data
+    labels:
+      # Don't let Watchtower upgrade this automatically
+      - com.centurylinklabs.watchtower.enable=false
+      # Expose the UI through Traefik with HTTPS (OpenObserve has its own login)
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.services.openobserve.loadbalancer.server.port=5080
+      - traefik.http.routers.openobserve-http.entrypoints=http
+      - traefik.http.routers.openobserve-http.rule=Host(`${OPENOBSERVE_URL?Variable not set}`)
+      - traefik.http.routers.openobserve-http.middlewares=https-redirect
+      - traefik.http.routers.openobserve-https.entrypoints=https
+      - traefik.http.routers.openobserve-https.rule=Host(`${OPENOBSERVE_URL?Variable not set}`)
+      - traefik.http.routers.openobserve-https.tls=true
+      - traefik.http.routers.openobserve-https.tls.certresolver=le
+    networks:
+      # Shared with fastapi so the API can reach it as http://openobserve:5080
+      - traefik-public
 
   watchtower:
     image: ghcr.io/nicholas-fedor/watchtower:latest
