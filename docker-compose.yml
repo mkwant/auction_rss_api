@@ -84,7 +84,13 @@ services:
     image: ghcr.io/mkwant/auction_rss_api:latest
     restart: always
     env_file: .env
+    # Firefox crashes randomly with Docker's default 64 MB /dev/shm
+    shm_size: "1gb"
+    # Reap leftover Xvfb/Firefox child processes
+    init: true
     environment:
+      # "virtual" = headful Firefox on Xvfb; use "headless" to test plain headless
+      CAMOUFOX_MODE: virtual
       # FastAPI's built-in OpenTelemetry support
       FASTAPI_OTEL_AUTO_CONFIGURE: "true"
       OTEL_SERVICE_NAME: auction-rss-api
@@ -125,6 +131,8 @@ services:
     volumes:
       - /var/lib/auction_rss_api/logs:/logs
       - ./.translation_cache:/.translation_cache
+      # Camoufox profile (keeps the Cloudflare cf_clearance cookie across restarts/updates)
+      - /var/lib/auction_rss_api/profile:/app/profile
 
   # Telemetry backend (traces, metrics, logs)
   openobserve:

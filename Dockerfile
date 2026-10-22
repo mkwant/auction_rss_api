@@ -5,7 +5,6 @@ COPY --from=ghcr.io/astral-sh/uv:latest@sha256:3adc3706091ce7c2fe595e669628caedd
 ENV TZ=Europe/Amsterdam \
     PIP_ROOT_USER_ACTION=ignore \
     PYTHONPATH=/app/src \
-    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
 
 WORKDIR /app
@@ -15,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 \
     libgbm1 libasound2 libpangocairo-1.0-0 libpango-1.0-0 libgtk-3-0 \
     libxcb1 libx11-xcb1 libxshmfence1 libxrender1 libxext6 xdg-utils \
+    xvfb libdbus-glib-1-2 \
     && rm -rf /var/lib/apt/lists/*
 
 # Third-party deps only — stable across a version-only release
@@ -22,8 +22,10 @@ COPY requirements.txt requirements.txt
 RUN uv venv .venv \
     && uv pip install --python .venv/bin/python -r requirements.txt
 
-# Depends only on playwright already being installed above — also stable
-RUN .venv/bin/python -m playwright install --only-shell chromium
+# Download the Camoufox (Firefox) browser for the build's architecture.
+# Depends only on camoufox already being installed above — also stable.
+# Build this image for the same arch it will run on (linux/arm64 for the Pi).
+RUN .venv/bin/python -m camoufox fetch
 
 # These DO change every release, but installing your own package on top
 # of an already-populated venv is fast — no network calls needed
