@@ -6,6 +6,7 @@ from auction_rss_api.auction_extractors.doornroosje_pas import DoornroosjePas
 from auction_rss_api.auction_extractors.doornroosje_resale import DoornroosjeResale
 from auction_rss_api.auction_extractors.effenaar import Effenaar
 from auction_rss_api.auction_extractors.ekko import Ekko
+from auction_rss_api.auction_extractors.luxorlive import LuxorLive
 from auction_rss_api.auction_extractors.melkweg import Melkweg
 from auction_rss_api.auction_extractors.paradiso import Paradiso
 from auction_rss_api.auction_extractors.tilburg013 import Tilburg013
@@ -55,6 +56,12 @@ def effenaar_rss() -> RSSResponse:
 @router.get(path='/ekko')
 def ekko_rss() -> RSSResponse:
     site = Ekko()
+    return site.search()
+
+
+@router.get(path='/luxorlive')
+def luxorlive_rss() -> RSSResponse:
+    site = LuxorLive()
     return site.search()
 
 
