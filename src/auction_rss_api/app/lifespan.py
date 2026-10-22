@@ -1,12 +1,18 @@
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 import httpx2
+from camoufox import DefaultAddons
+from camoufox.async_api import AsyncCamoufox
 from fastapi import FastAPI
-from playwright.async_api import async_playwright
-from playwright_stealth import Stealth
 
 PROFILE_DIR = Path("/app/profile")
+
+# "virtual" = headful Firefox on an in-memory Xvfb display (needs xvfb in the image).
+# Set CAMOUFOX_MODE=headless to test plain headless on the Pi.
+_MODES = {"virtual": "virtual", "headless": True}
+CAMOUFOX_MODE = _MODES.get(os.getenv("CAMOUFOX_MODE", "headless"), "headless")
 
 
 @asynccontextmanager
@@ -18,22 +24,19 @@ async def lifespan(app: FastAPI):
     )
 
     try:
-        async with Stealth().use_async(async_playwright()) as playwright:
-            app.state.context = await playwright.chromium.launch_persistent_context(
-                user_data_dir=str(PROFILE_DIR),
-                headless=True,
-                args=[
-                    "--no-sandbox",
-                    "--disable-dev-shm-usage",
-                ],
-            )
+        async with AsyncCamoufox(
+            headless=CAMOUFOX_MODE,
+            persistent_context=True,
+            user_data_dir=str(PROFILE_DIR),  # keeps cf_clearance between restarts
+            humanize=True,
+            locale="en-US",
+            exclude_addons=[DefaultAddons.UBO],
+        ) as context:
+            # With persistent_context=True this is a BrowserContext;
+            # context.new_page() works like the old browser attribute did.
+            app.state.context = context
+            app.state.browser = context
 
-            app.state.browser = app.state.context
-
-            try:
-                yield
-            finally:
-                await app.state.context.close()
-
+            yield
     finally:
         await app.state.http_client.aclose()

@@ -42,7 +42,7 @@ router = APIRouter(route_class=LoggedRoute, default_response_class=RSSResponse, 
 
 @router.get(path="/2dehands")
 def tweedehands_rss(
-    search_term: str, search_in_seller_name: bool = False, disable_fuzzy_search: bool = True
+        search_term: str, search_in_seller_name: bool = False, disable_fuzzy_search: bool = True
 ) -> RSSResponse:
     site = TweedeHands(
         search_term=search_term, search_in_seller_name=search_in_seller_name, disable_fuzzy_search=disable_fuzzy_search
@@ -58,9 +58,9 @@ def bonhams_rss(search_term: str) -> RSSResponse:
 
 @router.get("/buyee_mercari")
 async def buyee_mercari_rss(
-    search_term: str,
-    translate: Translate = Depends(get_translate),
-    browser: BrowserContext = Depends(get_browser),
+        search_term: str,
+        translate: Translate = Depends(get_translate),
+        browser: BrowserContext = Depends(get_browser),
 ) -> RSSResponse:
     transformers = []
 
@@ -78,9 +78,9 @@ async def buyee_mercari_rss(
 
 @router.get("/buyee_rakuma")
 async def buyee_rakuma_rss(
-    search_term: str,
-    translate: Translate = Depends(get_translate),
-    browser: BrowserContext = Depends(get_browser),
+        search_term: str,
+        translate: Translate = Depends(get_translate),
+        browser: BrowserContext = Depends(get_browser),
 ) -> RSSResponse:
     transformers = []
 
@@ -98,9 +98,9 @@ async def buyee_rakuma_rss(
 
 @router.get("/buyee_yahoo")
 async def buyee_yahoo_rss(
-    search_term: str,
-    translate: Translate = Depends(get_translate),
-    browser: BrowserContext = Depends(get_browser),
+        search_term: str,
+        translate: Translate = Depends(get_translate),
+        browser: BrowserContext = Depends(get_browser),
 ) -> RSSResponse:
     transformers = []
 
@@ -221,7 +221,7 @@ def liveauctioneers_rss(search_term: str) -> RSSResponse:
 
 @router.get(path="/marktplaats")
 def marktplaats_rss(
-    search_term: str, search_in_seller_name: bool = False, disable_fuzzy_search: bool = True
+        search_term: str, search_in_seller_name: bool = False, disable_fuzzy_search: bool = True
 ) -> RSSResponse:
     site = Marktplaats(
         search_term=search_term, search_in_seller_name=search_in_seller_name, disable_fuzzy_search=disable_fuzzy_search
@@ -259,14 +259,20 @@ def subito_rss(search_term: str, translate: Translate = Depends(get_translate)) 
 
 
 @router.get(path="/todocoleccion")
-def todocoleccion_rss(search_term: str, translate: Translate = Depends(get_translate)) -> RSSResponse:
+async def todocoleccion_rss(
+        search_term: str,
+        translate: Translate = Depends(get_translate),
+        browser: BrowserContext = Depends(get_browser),
+) -> RSSResponse:
     if translate.translate_titles:
         site = Todocoleccion(
-            search_term=search_term, transformers=[translate.translate_from(language=TranslateLanguage.SPANISH)]
+            search_term=search_term,
+            transformers=[translate.translate_from(language=TranslateLanguage.SPANISH)],
+            browser=browser,
         )
     else:
         site = Todocoleccion(search_term=search_term)
-    return site.search()
+    return await site.search()
 
 
 @router.get(path="/tracksauctions")
@@ -283,10 +289,10 @@ def trademe_rss(search_term: str, category: str | None = None) -> RSSResponse:
 
 @router.get(path="/tradera")
 def tradera_rss(
-    search_term: str,
-    currency: Literal["DKK", "EUR", "GBP", "JPY", "NOK", "SEK", "USD"] = Query(
-        default="EUR", enum=["DKK", "EUR", "GBP", "JPY", "NOK", "SEK", "USD"]
-    ),
+        search_term: str,
+        currency: Literal["DKK", "EUR", "GBP", "JPY", "NOK", "SEK", "USD"] = Query(
+            default="EUR", enum=["DKK", "EUR", "GBP", "JPY", "NOK", "SEK", "USD"]
+        ),
 ) -> RSSResponse:
     site = Tradera(search_term=search_term, currency=currency)
     return site.search()
@@ -294,7 +300,7 @@ def tradera_rss(
 
 @router.get(path="/vinted.nl")
 def vinted_rss(
-    search_term: str, catalog_id: Optional[list[int]] = Query(None), search_title_only: bool = True
+        search_term: str, catalog_id: Optional[list[int]] = Query(None), search_title_only: bool = True
 ) -> RSSResponse:
     site = Vinted(search_term=search_term, catalog_id=catalog_id, search_title_only=search_title_only)
     return site.search()
