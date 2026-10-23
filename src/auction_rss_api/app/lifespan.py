@@ -31,6 +31,7 @@ async def lifespan(app: FastAPI):
             humanize=True,
             locale="en-US",
             exclude_addons=[DefaultAddons.UBO],
+            ignore_https_errors=True,
         ) as context:
             # With persistent_context=True this is a BrowserContext;
             # context.new_page() works like the old browser attribute did.
