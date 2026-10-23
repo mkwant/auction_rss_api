@@ -90,7 +90,7 @@ services:
     init: true
     environment:
       # "virtual" = headful Firefox on Xvfb; use "headless" to test plain headless
-      CAMOUFOX_MODE: virtual
+      CAMOUFOX_MODE: headless
       # FastAPI's built-in OpenTelemetry support
       FASTAPI_OTEL_AUTO_CONFIGURE: "true"
       OTEL_SERVICE_NAME: auction-rss-api
