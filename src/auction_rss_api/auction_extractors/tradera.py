@@ -111,44 +111,46 @@ class Tradera(AuctionExtractor):
             item_id = card.get('data-item-card-id')
             item_type = card.get('data-item-type')
             link_element = card.select_one('a[data-testid="item-card-image"]')
-            title_element = card.select_one('.item-card-module-scss-module__ihfzoa__title a')
-            image_element = card.select_one('img[data-testid="item-card-image"]')
 
-            if not image_element:
-                image_element = card.select_one('img.item-card-image-module-scss-module__BeJPHq__primaryImage')
-
+            # CSS-module class names are hashed and change between deploys,
+            # so match on stable fragments / attributes instead of full names.
+            title_element = card.select_one('[class*="title"] a')
+            image_element = (
+                    card.select_one('img[class*="primaryImage"]')
+                    or card.select_one('picture img')
+            )
             time_element = card.select_one('[id$="-time"]')
             price_element = card.select_one('[data-testid="price"]')
 
-            if not item_id or not link_element or not title_element:
+            if not item_id or not link_element:
                 continue
 
-            image_url = None
-            if image_element:
-                image_url = image_element.get('src')
+            title = link_element.get('aria-label')
+            if not title and title_element:
+                title = title_element.get_text(separator=' ', strip=True)
+            if not title:
+                continue
+
+            image_url = image_element.get('src') if image_element else None
 
             end_date = None
             if time_element:
-                end_text = time_element.get_text(separator=' ', strip=True)
-                end_text = re.sub(pattern=r'^Ending time\s*', repl='', string=end_text)
+                visible = time_element.select_one('span[aria-hidden]')
+                end_text = (visible or time_element).get_text(separator=' ', strip=True)
+                end_text = re.sub(r'^Ending time\s*', '', end_text).rstrip(' .')
                 end_date = dateparser.parse(end_text)
 
             price = None
             if price_element:
                 price_text = price_element.get_text(' ', strip=True)
-
-                # EUR 8.82 -> 8.82
-                match = re.search(pattern=r'([\d.,]+)', string=price_text.replace('\xa0', ' '))
-
+                match = re.search(r'([\d.,]+)', price_text.replace('\xa0', ' '))
                 if match:
-                    price = float(
-                        match.group(1).replace(',', '')
-                    )
+                    price = float(match.group(1).replace(',', ''))
 
             items.append({
                 'itemId': int(item_id),
                 'itemType': item_type,
-                'shortDescription': title_element.get_text(separator=' ', strip=True),
+                'shortDescription': title,
                 'itemUrl': link_element.get('href'),
                 'imageUrl': image_url,
                 'endDate': end_date,
