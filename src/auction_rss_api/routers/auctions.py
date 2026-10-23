@@ -259,14 +259,20 @@ def subito_rss(search_term: str, translate: Translate = Depends(get_translate)) 
 
 
 @router.get(path="/todocoleccion")
-def todocoleccion_rss(search_term: str, translate: Translate = Depends(get_translate)) -> RSSResponse:
+async def todocoleccion_rss(
+        search_term: str,
+        translate: Translate = Depends(get_translate),
+        browser: BrowserContext = Depends(get_browser),
+) -> RSSResponse:
     if translate.translate_titles:
         site = Todocoleccion(
-            search_term=search_term, transformers=[translate.translate_from(language=TranslateLanguage.SPANISH)]
+            search_term=search_term,
+            transformers=[translate.translate_from(language=TranslateLanguage.SPANISH)],
+            browser=browser,
         )
     else:
         site = Todocoleccion(search_term=search_term)
-    return site.search()
+    return await site.search()
 
 
 @router.get(path="/tracksauctions")
