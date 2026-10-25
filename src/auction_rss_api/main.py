@@ -20,7 +20,7 @@ truststore.inject_into_ssl()  # Use OS trust store
 
 # Setting up logging
 setup_logging(
-    log_location=Path('/logs/auction_rss_api.log'),
+    log_location=settings.LOG_LOCATION,
     log_level=settings.LOG_LEVEL
 )
 logger = logging.getLogger(__name__)

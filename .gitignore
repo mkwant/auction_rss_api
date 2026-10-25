@@ -1,6 +1,9 @@
 .env
 .deta
 .idea/
+.translation_cache
+.logs
+.profile
 venv
 __pycache__
 requirements.txt

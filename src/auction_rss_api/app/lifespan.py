@@ -7,7 +7,9 @@ from camoufox import DefaultAddons
 from camoufox.async_api import AsyncCamoufox
 from fastapi import FastAPI
 
-PROFILE_DIR = Path("/app/profile")
+from auction_rss_api.app.settings import settings
+
+PROFILE_DIR = settings.CAMOUFOX_PROFILE_DIR
 
 # "virtual" = headful Firefox on an in-memory Xvfb display (needs xvfb in the image).
 # Set CAMOUFOX_MODE=headless to test plain headless on the Pi.
