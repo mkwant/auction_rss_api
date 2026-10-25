@@ -4,11 +4,10 @@ from urllib.parse import urlencode
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
+from auction_rss_api.auction_extractors.buyee_fetch import fetch_buyee_html
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
-
-# TODO Translate titles -> make async
 
 class BuyeeRakuma(AuctionExtractorAsync):
     search_term: str
@@ -22,24 +21,17 @@ class BuyeeRakuma(AuctionExtractorAsync):
         return f'https://buyee.jp/rakuma/search?keyword={self.search_term}&status=all'
 
     async def _get_auctions(self) -> ResultSet:
-        url = 'https://buyee.jp/rakuma/search'
+        base = 'https://buyee.jp/rakuma/search'
         params = {
             'keyword': self.search_term,
-            'status': 'all'
+            'status': 'all',
         }
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
 
-        page = await self.browser.new_page()
-        await page.set_extra_http_headers(headers)
-
-        try:
-            await page.goto(url="https://buyee.jp")
-            await page.wait_for_timeout(timeout=5)
-            await page.goto(url=f"{url}?{urlencode(params)}", wait_until="domcontentloaded", timeout=10000)
-            html = await page.content()
-
-        finally:
-            await page.close()
+        html = await fetch_buyee_html(
+            self.browser,
+            f'{base}?{urlencode(params)}',
+            ready_selector='ul.item-lists > li',
+        )
 
         soup = BeautifulSoup(markup=html, features='html.parser')
         return soup.select('ul.item-lists > li')
@@ -48,12 +40,22 @@ class BuyeeRakuma(AuctionExtractorAsync):
         auctions = []
 
         for item in await self._get_auctions():
-            title = item.select_one('h2.name').text
-            description = f"{item.select_one('p.price').text} {item.select_one('p.price-fx').text}"
+            title = item.select_one('h2.name').text.strip()
+
+            price_yen = item.select_one('p.price').text.strip()
+            price_eur = item.select_one('p.price-fx').text.strip()
+            description = f'{price_yen} {price_eur}'
+
             _link = item.select_one('a')['href'].split('?')[0]
             link = f'https://buyee.jp{_link}'
             auction_id = _link.split('/')[-1]
-            _image_link = item.select_one('img')['data-bind'].replace('\n', ' ').split('\'')[1].replace('/s/', '/l/')
+
+            _image_link = (
+                item.select_one('img')['data-bind']
+                .replace('\n', ' ')
+                .split("'")[1]
+                .replace('/s/', '/l/')
+            )
             image_link = f"https:{_image_link.split('?')[0]}"
 
             auctions.append(
@@ -62,7 +64,7 @@ class BuyeeRakuma(AuctionExtractorAsync):
                     description=description,
                     image_link=image_link,
                     link=link,
-                    title=title
+                    title=title,
                 )
             )
 

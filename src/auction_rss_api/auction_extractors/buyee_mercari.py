@@ -3,6 +3,7 @@ from urllib.parse import urlencode
 
 from bs4 import BeautifulSoup
 
+from auction_rss_api.auction_extractors.buyee_fetch import fetch_buyee_html
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
@@ -27,23 +28,7 @@ class BuyeeMercari(AuctionExtractorAsync):
             'order-sort': 'desc-created_time',
             'currencyCode': 'EUR',
         }
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        }
-
-        page = await self.browser.new_page()
-        await page.set_extra_http_headers(headers)
-
-        try:
-            await page.goto(url="https://buyee.jp")
-            await page.wait_for_timeout(timeout=5)
-            await page.goto(url=f"{url}?{urlencode(params)}", wait_until="domcontentloaded", timeout=10000)
-            html = await page.content()
-
-        finally:
-            await page.close()
-
+        html = await fetch_buyee_html(self.browser, f"{url}?{urlencode(params)}", ready_selector="ul.item-lists > li.list")
         soup = BeautifulSoup(markup=html, features='html.parser')
 
         items = soup.select('ul.item-lists>li.list')
