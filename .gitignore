@@ -4,6 +4,7 @@
 .translation_cache
 .logs
 .profile
+.DS_Store
 venv
 __pycache__
 requirements.txt
