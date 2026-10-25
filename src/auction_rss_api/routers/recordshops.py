@@ -63,6 +63,7 @@ from auction_rss_api.auction_extractors.recordsale import RecordSale
 from auction_rss_api.auction_extractors.redeye import RedEye
 from auction_rss_api.auction_extractors.rockabuy import RockaBuy
 from auction_rss_api.auction_extractors.rockaway import Rockaway
+from auction_rss_api.auction_extractors.rockwell import Rockwell
 from auction_rss_api.auction_extractors.roughtrade import RoughTrade
 from auction_rss_api.auction_extractors.skeletunes import Skeletunes
 from auction_rss_api.auction_extractors.slcd import SLCD
@@ -464,6 +465,12 @@ def rockabuy_rss(search_term: str) -> RSSResponse:
 @router.get(path="/rockaway")
 def rockaway_rss(search_term: str) -> RSSResponse:
     site = Rockaway(search_term=search_term)
+    return site.search()
+
+
+@router.get(path="/rockwell")
+def rockwell_rss(collection: str) -> RSSResponse:
+    site = Rockwell(collection=collection)
     return site.search()
 
 
