@@ -4,6 +4,7 @@ from fastapi_rss import RSSResponse
 from auction_rss_api.auction_extractors.amatterofconcrete import AMatterOfConcrete
 from auction_rss_api.auction_extractors.beeldengeluid import BeeldEnGeluid
 from auction_rss_api.auction_extractors.bowiewonderworld import BowieWonderWorld
+from auction_rss_api.auction_extractors.davidbowienews import DavidBowieNews
 from auction_rss_api.auction_extractors.gelderlander import Gelderlander
 from auction_rss_api.auction_extractors.illustrateddbdiscography import IllustratedDBDiscography
 from auction_rss_api.auction_extractors.indebuurt import InDeBuurt
@@ -35,6 +36,12 @@ def beeldengeluid_rss(search_term: str) -> RSSResponse:
 @router.get(path='/bowiewonderworld')
 def bowiewonderworld_rss() -> RSSResponse:
     site = BowieWonderWorld()
+    return site.search()
+
+
+@router.get(path='/davidbowienews')
+def davidbowienews_rss() -> RSSResponse:
+    site = DavidBowieNews()
     return site.search()
 
 
