@@ -249,12 +249,12 @@ def sothebys_rss(search_term: str) -> RSSResponse:
 
 @router.get(path="/subito")
 def subito_rss(search_term: str, translate: Translate = Depends(get_translate)) -> RSSResponse:
-    if translate.translate_titles:
-        site = Subito(
-            search_term=search_term, transformers=[translate.translate_from(language=TranslateLanguage.ITALIAN)]
-        )
-    else:
-        site = Subito(search_term=search_term)
+    transformers = (
+        [translate.translate_from(language=TranslateLanguage.ITALIAN)]
+        if translate.translate_titles
+        else []
+    )
+    site = Subito(search_term=search_term, transformers=transformers)
     return site.search()
 
 
@@ -264,14 +264,12 @@ async def todocoleccion_rss(
         translate: Translate = Depends(get_translate),
         browser: BrowserContext = Depends(get_browser),
 ) -> RSSResponse:
-    if translate.translate_titles:
-        site = Todocoleccion(
-            search_term=search_term,
-            transformers=[translate.translate_from(language=TranslateLanguage.SPANISH)],
-            browser=browser,
-        )
-    else:
-        site = Todocoleccion(search_term=search_term, browser=browser)
+    transformers = (
+        [translate.translate_from(language=TranslateLanguage.SPANISH)]
+        if translate.translate_titles
+        else []
+    )
+    site = Todocoleccion(search_term=search_term, transformers=transformers, browser=browser)
     return await site.search()
 
 
