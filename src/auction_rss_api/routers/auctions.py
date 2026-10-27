@@ -271,7 +271,7 @@ async def todocoleccion_rss(
             browser=browser,
         )
     else:
-        site = Todocoleccion(search_term=search_term)
+        site = Todocoleccion(search_term=search_term, browser=browser)
     return await site.search()
 
 

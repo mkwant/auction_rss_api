@@ -66,11 +66,6 @@ class Todocoleccion(AuctionExtractorAsync):
                         "Todocoleccion: Cloudflare challenge was not solved in time"
                     )
 
-                try:
-                    await page.wait_for_load_state("networkidle", timeout=15_000)
-                except PlaywrightTimeoutError:
-                    pass
-
                 return await page.content()
             finally:
                 await page.close()
