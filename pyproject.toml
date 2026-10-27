@@ -10,11 +10,11 @@ dependencies = [
     "camoufox==0.5.8",
     "cashews==7.6.0",
     "cryptography==50.0.2",
-    "curl-cffi==0.16.3",
+    "curl-cffi==0.17.0",
     "dateparser==1.4.3",
     "diskcache==5.6.3",
     "fastapi-rss==0.5.0",
-    "fastapi[standard]==0.161.1",
+    "fastapi[standard]==0.162.0",
     "httpx2==2.16.0",
     "nest-asyncio2==1.7.4",
     "pydantic==2.14.1",
@@ -23,15 +23,15 @@ dependencies = [
     "python-dotenv==1.2.4",
     "requests==2.34.2",
     "rich==15.0.0",
-    "starlette==1.9.0",
+    "starlette==1.10.0",
     "truststore==0.10.5",
     "uvicorn==0.54.0",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff==0.17.2",
-    "ty==0.0.91",
+    "ruff==0.17.3",
+    "ty==0.0.92",
 ]
 
 [tool.uv]
