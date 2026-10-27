@@ -2,7 +2,6 @@ import hashlib
 import datetime
 from typing import List
 
-import dateparser
 import httpx2
 from bs4 import BeautifulSoup
 
@@ -25,7 +24,7 @@ class DavidBowieNews(AuctionExtractor):
 
         auctions = []
 
-        soup = BeautifulSoup(markup=r.text, features='html.parser')
+        soup = BeautifulSoup(markup=r.text, features='lxml')
         items = soup.select('div.summary-item')
         for item in items:
             title = item.select_one('div.summary-title').text.strip()
@@ -35,7 +34,7 @@ class DavidBowieNews(AuctionExtractor):
             image_link = str(item.select_one('img')['data-image'])
 
             try:
-                published_date = dateparser.parse(str(item.select_one('time')['datetime']))
+                published_date = datetime.datetime.fromisoformat(item.select_one('time')['datetime'])
             except TypeError:
                 year, month, date = _slug.split('/')[2:5]
                 published_date = datetime.date(year=int(year), month=int(month), day=int(date))
