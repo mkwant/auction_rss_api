@@ -9,6 +9,7 @@ from auction_rss_api.auction_extractors.ekko import Ekko
 from auction_rss_api.auction_extractors.luxorlive import LuxorLive
 from auction_rss_api.auction_extractors.melkweg import Melkweg
 from auction_rss_api.auction_extractors.paradiso import Paradiso
+from auction_rss_api.auction_extractors.patronaat import Patronaat
 from auction_rss_api.auction_extractors.tilburg013 import Tilburg013
 from auction_rss_api.auction_extractors.tivoli_presale import TivoliPresale
 from auction_rss_api.auction_extractors.tivolivredenburg import TivoliVredenburg
@@ -74,6 +75,12 @@ def melkweg_rss() -> RSSResponse:
 @router.get(path='/paradiso')
 def paradiso_rss() -> RSSResponse:
     site = Paradiso()
+    return site.search()
+
+
+@router.get(path='/patronaat')
+def patronaat_rss() -> RSSResponse:
+    site = Patronaat()
     return site.search()
 
 
