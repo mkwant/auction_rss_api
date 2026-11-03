@@ -2,8 +2,9 @@ import asyncio
 import json
 from typing import ClassVar, List
 
-import httpx2
 from bs4 import BeautifulSoup
+from curl_cffi import requests as curl_requests
+from curl_cffi.requests import AsyncSession
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -22,9 +23,9 @@ class BandcampFaves(AuctionExtractor):
 
     @staticmethod
     async def get_bandcamp_merch(
-        subdomain: str,
-        client: httpx2.AsyncClient,
-        semaphore: asyncio.Semaphore,
+            subdomain: str,
+            client: AsyncSession,
+            semaphore: asyncio.Semaphore,
     ) -> list[Auction]:
         """Given a subdomain, scrape the merch items."""
 
@@ -35,10 +36,7 @@ class BandcampFaves(AuctionExtractor):
             response = await client.get(f"{base_url}/merch")
             response.raise_for_status()
 
-        soup = BeautifulSoup(
-            response.text,
-            features="html.parser",
-        )
+        soup = BeautifulSoup(markup=response.text, features="html.parser")
 
         item_list = soup.select_one("ol.merch-grid")
 
@@ -119,19 +117,19 @@ class BandcampFaves(AuctionExtractor):
     def get_followed_subdomains(self) -> list[str]:
         """Get the subdomains of the artists the user is following."""
 
-        with httpx2.Client(follow_redirects=True) as client:
-            response = client.get(self.search_link)
-            response.raise_for_status()
+        response = curl_requests.get(
+            url=self.search_link,
+            impersonate="chrome",
+            allow_redirects=True,
+            verify=False,
+        )
+        response.raise_for_status()
 
-            soup = BeautifulSoup(
-                response.content,
-                features="html.parser",
-            )
+        soup = BeautifulSoup(markup=response.content, features="html.parser")
 
         pagedata = soup.select_one("div#pagedata")
 
         if pagedata is None:
-            print(soup.prettify())
             raise ValueError("Could not find Bandcamp page data")
 
         data_blob = pagedata.get("data-blob")
@@ -156,9 +154,7 @@ class BandcampFaves(AuctionExtractor):
 
         semaphore = asyncio.Semaphore(self.MAX_CONCURRENT_REQUESTS)
 
-        async with httpx2.AsyncClient(
-            follow_redirects=True,
-        ) as client:
+        async with AsyncSession(impersonate="chrome", allow_redirects=True, verify=False) as client:
             tasks = [
                 self.get_bandcamp_merch(
                     subdomain=subdomain,
