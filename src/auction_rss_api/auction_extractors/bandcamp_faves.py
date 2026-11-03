@@ -131,6 +131,7 @@ class BandcampFaves(AuctionExtractor):
         pagedata = soup.select_one("div#pagedata")
 
         if pagedata is None:
+            print(soup.prettify())
             raise ValueError("Could not find Bandcamp page data")
 
         data_blob = pagedata.get("data-blob")
