@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi_rss import RSSResponse
-from playwright.async_api import Browser, BrowserContext
+from playwright.async_api import BrowserContext
 
 from auction_rss_api.app.dependencies import Translate, TranslateLanguage, get_browser, get_translate
 from auction_rss_api.auction_extractors.bonhams import Bonhams
