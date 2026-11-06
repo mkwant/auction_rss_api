@@ -282,9 +282,9 @@ def hhv_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path="/hmvjapan")
-def hmvjapan_rss(search_term: str) -> RSSResponse:
-    site = HMVJapan(search_term=search_term)
-    return site.search()
+async def hmvjapan_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = HMVJapan(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/hotstuff")

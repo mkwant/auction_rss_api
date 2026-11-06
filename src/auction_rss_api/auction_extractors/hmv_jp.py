@@ -1,13 +1,13 @@
 from typing import List
 
-import httpx2
 from bs4 import BeautifulSoup
+from playwright.async_api import Page
 
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
 
-class HMVJapan(AuctionExtractor):
+class HMVJapan(AuctionExtractorAsync):
     @property
     def search_link(self) -> str:
         return f'https://www.hmv.co.jp/en/search/advanced_1/category_1%2C2%2C3%2C4%2C5%2C7%2C9%2C10%2C23%2C24%2C50%2C106/formattype_1/keyword_{self.search_term}/sort_datedesc/target_ALL/'
@@ -16,16 +16,29 @@ class HMVJapan(AuctionExtractor):
     def site_desc(self) -> str:
         return 'HMV Japan'
 
-    def get_auctions(self) -> List[Auction]:
+    async def get_auctions(self) -> List[Auction]:
         auctions = []
 
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0'}
-        s = httpx2.Client(headers=headers)
+        page: Page = await self.browser.new_page()
 
-        r = s.post(url=self.search_link, timeout=10.0)
-        r.raise_for_status()
+        try:
+            await page.goto(
+                url=self.search_link,
+                wait_until="domcontentloaded",
+                timeout=30_000,
+            )
 
-        soup = BeautifulSoup(markup=r.text, features='html.parser')
+            await page.wait_for_selector(
+                selector="ul.resultList>li.list",
+                timeout=30_000,
+            )
+
+            html = await page.content()
+
+        finally:
+            await page.close()
+
+        soup = BeautifulSoup(markup=html, features='html.parser')
         products = soup.select('ul.resultList>li.list')
 
         for product in products:
