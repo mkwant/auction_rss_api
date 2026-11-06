@@ -47,7 +47,6 @@ from auction_rss_api.auction_extractors.kroese import Kroese
 from auction_rss_api.auction_extractors.magicbus import MagicbusExtractor
 from auction_rss_api.auction_extractors.memorabiliauk import MemorabiliaUk
 from auction_rss_api.auction_extractors.montreuxjazzshop import MontreuxJazzShop
-from auction_rss_api.auction_extractors.musichug import MusicHug
 from auction_rss_api.auction_extractors.musicstack import MusicStack
 from auction_rss_api.auction_extractors.newburycomics import NewBuryComics
 from auction_rss_api.auction_extractors.obscuurrecords import ObscuurRecords
@@ -370,12 +369,6 @@ def memorabiliauk_rss(search_term: str) -> RSSResponse:
 def montreuxjazzshop_rss(search_term: str) -> RSSResponse:
     site = MontreuxJazzShop(search_term=search_term)
     return site.search()
-
-
-@router.get(path="/musichug")
-async def musichug_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
-    site = MusicHug(search_term=search_term, browser=browser)
-    return await site.search()
 
 
 @router.get(path="/musicstack")
