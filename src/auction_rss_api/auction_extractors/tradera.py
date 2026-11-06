@@ -3,8 +3,8 @@ import json
 import re
 from typing import List, Literal
 
+import curl_cffi
 import dateparser
-import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -173,18 +173,11 @@ class Tradera(AuctionExtractor):
             'gdpr_consent_v1': '1:1,2:1,3:1,4:1',
         }
 
-        headers = {
-            'User-Agent': (
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:152.0) '
-                'Gecko/20100101 Firefox/152.0'
-            )
-        }
-
-        r = httpx2.get(
+        r = curl_cffi.get(
             url=url,
             params=params,
             cookies=cookies,
-            headers=headers,
+            impersonate='firefox',
         )
         r.raise_for_status()
 
