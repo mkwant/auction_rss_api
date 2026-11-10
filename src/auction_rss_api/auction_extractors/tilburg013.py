@@ -44,9 +44,12 @@ class Tilburg013(AuctionExtractor):
             link = item['href']
             event_id = link.split('/')[-2]
 
-            image_link = \
-                json.loads(item['@mouseenter.debounce.150ms'].split('(')[1].split(')')[0].replace(', true', ''))[
-                    'jpg_srcset'].split()[-2]
+            image_obj = json.loads(item['@mouseenter.debounce.150ms'].split('(')[1].split(')')[0].replace(', true', ''))
+
+            try:
+                image_link = image_obj['jpg_srcset'].split()[-2]
+            except AttributeError:
+                image_link = image_obj['jpg_src']
 
             event_date = dateparser.parse(item.select_one('time')['datetime'])
 
