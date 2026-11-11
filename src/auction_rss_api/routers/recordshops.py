@@ -396,9 +396,9 @@ def paradisoshop_rss() -> RSSResponse:
 
 
 @router.get(path="/platengarage")
-def platengarage_rss(search_term: str) -> RSSResponse:
-    site = PlatenGarage(search_term=search_term)
-    return site.search()
+async def platengarage_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = PlatenGarage(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/platomania")

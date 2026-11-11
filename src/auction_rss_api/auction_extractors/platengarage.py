@@ -1,13 +1,13 @@
 from typing import List
 
-import httpx2
 from bs4 import BeautifulSoup
+from playwright.async_api import Page
 
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
 
-class PlatenGarage(AuctionExtractor):
+class PlatenGarage(AuctionExtractorAsync):
     @property
     def search_link(self) -> str:
         return f"https://www.deplatengarage.nl/search/?search={self.search_term}"
@@ -16,14 +16,31 @@ class PlatenGarage(AuctionExtractor):
     def site_desc(self) -> str:
         return "PlatenGarage"
 
-    def get_auctions(self) -> List[Auction]:
-        client = httpx2.Client()
-        r = client.get(url=self.search_link, timeout=10.0)
-        r.raise_for_status()
-        soup = BeautifulSoup(markup=r.text, features='html.parser')
+    async def get_auctions(self) -> List[Auction]:
         auctions = []
 
+        page: Page = await self.browser.new_page()
+
+        try:
+            await page.goto(
+                url=self.search_link,
+                wait_until="domcontentloaded",
+                timeout=30_000,
+            )
+
+            await page.wait_for_selector(
+                selector="ul.products>li",
+                timeout=30_000,
+            )
+
+            html = await page.content()
+
+        finally:
+            await page.close()
+
+        soup = BeautifulSoup(markup=html, features='html.parser')
         products = soup.select('ul.products>li')
+
         for product in products:
             unique_id = str(product['id'])
             title = product.select_one('a.title').text.strip()
