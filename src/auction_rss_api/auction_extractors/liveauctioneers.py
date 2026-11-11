@@ -26,12 +26,15 @@ class LiveAuctioneers(AuctionExtractor):
             "status": "online",
         }
 
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0'}
+
         r = httpx2.get(
             url="https://search-party-prod.liveauctioneers.com/search/v4/web",
             params={
                 "parameters": json.dumps(parameters, separators=(",", ":")),
                 "useAuctionHouseSearchFiltering": "true",
             },
+            headers=headers,
             timeout=10.0,
         )
         r.raise_for_status()
