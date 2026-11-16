@@ -1,6 +1,6 @@
 from camoufox import pkgman
 
-LOCAL_ZIP = r"P:\Downloads\camoufox-156.0.1-beta.36-win.x86_64.zip"  # your manual download
+LOCAL_ZIP = r"P:\Downloads\camoufox-158.0.1-beta.41-win.x86_64.zip"  # your manual download
 
 
 def _local_download(file, url, *args, **kwargs):
