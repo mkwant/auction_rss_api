@@ -365,9 +365,9 @@ def montreuxjazzshop_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path="/musicstack")
-def musicstack_rss(search_term: str) -> RSSResponse:
-    site = MusicStack(search_term=search_term)
-    return site.search()
+async def musicstack_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = MusicStack(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/newburycomics")
