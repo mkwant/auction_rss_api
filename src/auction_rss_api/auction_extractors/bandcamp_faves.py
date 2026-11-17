@@ -11,7 +11,7 @@ from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
 class BandcampFaves(AuctionExtractorAsync):
     # Every request is a real browser tab, so keep this modest.
-    MAX_CONCURRENT_REQUESTS: ClassVar = 4
+    MAX_CONCURRENT_REQUESTS: ClassVar = 2
     PAGE_TIMEOUT_MS: ClassVar = 60_000
     CHALLENGE_MARKER: ClassVar = "/_fs-ch-"
 
