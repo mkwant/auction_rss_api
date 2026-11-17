@@ -10,7 +10,7 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 class Imusic(AuctionExtractor):
     @property
     def search_link(self) -> str:
-        return f"https://imusic.co/page/search?_form=searchForm&advanced=1&combined={self.search_term}&sort=releaseDateDesc"
+        return f"https://imusic.com/page/search?_form=searchForm&advanced=1&combined={self.search_term}&sort=releaseDateDesc"
 
     @property
     def site_desc(self) -> str:
@@ -19,35 +19,38 @@ class Imusic(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         auctions = []
 
-        url = 'https://imusic.co/page/search'
-        params = {
-            '_form': 'searchForm',
-            'advanced': 1,
-            'combined': self.search_term,
-            'sort': 'releaseDateDesc',
-        }
-        r = httpx2.get(url=url, params=params, timeout=10)
+        r = httpx2.get(url=self.search_link, timeout=10)
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features='html.parser')
-        items = soup.select('div.media')
-        for item in items:
-            _slug = item.select_one('a')['href']
+
+        for item in soup.select('article.search-teaser'):
+            link_el = item.select_one('a.search-teaser__link')
+            if link_el is None:
+                continue
+
+            _slug = link_el['href']  # e.g. /books/9781917274227/some-slug
             auction_id = _slug.split('/')[2]
-            link = 'https://imusic.co' + _slug
-            image_link = item.select_one('img')['src'].replace('scaled', 'original')
-            title = item.select_one('a')['title']
+            link = 'https://imusic.com' + _slug
 
-            try:
-                _price = item.select_one('button.price').text.strip()
-            except AttributeError:
-                _price = soup.select_one("a.btn-success").text.replace('Select size', '').strip()
+            title_el = item.select_one('.item-teaser__title a')
+            title = title_el.get_text(strip=True) if title_el else link_el.get('title', '')
+            artist_el = item.select_one('.item-teaser__artist')
+            if artist_el:
+                title = f'{artist_el.get_text(strip=True)} - {title}'
 
-            try:
-                _note = item.select_one('button.btn-success[title]')['title']
-            except TypeError:
-                _note = item.select_one('a.btn-success[title]')['title']
+            img = item.select_one('img.item-cover')
+            image_link = img['src'].replace('scaled', 'original') if img else ''
 
-            description = f'{_price}\n\n{_note}'
+            price_el = item.select_one('.teaser-cta__price')
+            _price = price_el.get_text(strip=True) if price_el else ''
+
+            fmt_el = item.select_one('.item-teaser__format')
+            _format = fmt_el.get_text(strip=True) if fmt_el else ''
+
+            btn = item.select_one('button.teaser-cta')
+            _note = btn.get('title', '') if btn else ''
+
+            description = f'{_price}\n{_format}\n\n{_note}'.strip()
 
             auctions.append(
                 Auction(
