@@ -1,6 +1,7 @@
 import json
 from typing import List
 
+import curl_cffi
 import httpx2
 from bs4 import BeautifulSoup
 
@@ -25,12 +26,11 @@ class TradeMe(AuctionExtractor):
         auctions = []
 
         cookies = {'trademeclientid': '1c161f2a-eb21-472f-9004-8f5e90252a5b'}
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0'}
-        r = httpx2.get(
+        r = curl_cffi.get(
             url=self.search_link,
             cookies=cookies,
-            headers=headers,
             timeout=10.0,
+            impersonate='firefox',
         )
         r.raise_for_status()
 
