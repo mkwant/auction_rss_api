@@ -110,7 +110,7 @@ class AuctionExtractor(BaseModel):
             auctions = self.get_auctions()
         except Exception as e:
             auctions = self.auctions_on_error(
-                error_text="ERROR: Feed items couldn't be retrieved.",
+                error_text=f"ERROR ({date.today():%Y-%m-%d}): Feed items couldn't be retrieved.",
                 error=f'Received an error of type {type(e).__name__} when trying to retrieve the feed items: \n\n'
                       f'<pre>{traceback.format_exc()}</pre>'
             )
@@ -118,7 +118,7 @@ class AuctionExtractor(BaseModel):
         logger.info(f"[{self.site_desc} ('{self.search_term}')] Retrieved {len(auctions)} entries.")
         if len(auctions) == 0:
             auctions = self.auctions_on_error(
-                error_text="WARNING: No items were found.",
+                error_text=f"WARNING ({date.today():%Y-%m-%d}): No items were found.",
                 error='No items were found when trying to retrieve the feed items.'
             )
 
@@ -167,7 +167,7 @@ class AuctionExtractorAsync(AuctionExtractor, ABC):
 
         except Exception as e:
             auctions = self.auctions_on_error(
-                error_text="ERROR: Feed items couldn't be retrieved.",
+                error_text=f"ERROR ({date.today():%Y-%m-%d}): Feed items couldn't be retrieved.",
                 error=(
                     f"Received an error of type {type(e).__name__} "
                     f"when trying to retrieve the feed items:\n\n"
@@ -182,7 +182,7 @@ class AuctionExtractorAsync(AuctionExtractor, ABC):
 
         if len(auctions) == 0:
             auctions = self.auctions_on_error(
-                error_text="WARNING: No items were found.",
+                error_text=f"WARNING ({date.today():%Y-%m-%d}): No items were found.",
                 error="No items were found when trying to retrieve the feed items.",
             )
 
