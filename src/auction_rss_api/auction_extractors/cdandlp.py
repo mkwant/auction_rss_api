@@ -1,24 +1,21 @@
 from typing import List
 
-import requests
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
+from playwright.async_api import Page
 
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
 
-class CdAndLp(AuctionExtractor):
-    search_term: str
-    URL: str = 'https://www.cdandlp.com/en/search/'
-
+class CdAndLp(AuctionExtractorAsync):
     @property
     def site_desc(self) -> str:
         return 'CDandLP'
 
     @property
     def search_link(self) -> str:
-        return f'{self.URL}?q={self.search_term}&srt=2'
+        return f'https://www.cdandlp.com/en/search/?q={self.search_term}&srt=2'
 
     @staticmethod
     def strike(text):
@@ -27,25 +24,34 @@ class CdAndLp(AuctionExtractor):
             result = result + char + '\u0336'
         return result
 
-    def _get_auctions(self) -> ResultSet:
-        params = {'q': self.search_term,
-                  'srt': 2}
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'}
-        s = requests.Session()
+    async def _get_auctions(self) -> ResultSet:
+        page: Page = await self.browser.new_page()
 
-        # Retrieve cookies
-        s.get(url='https://www.cdandlp.com')
-        r = s.get(url=self.URL, params=params, headers=headers)
-        r.raise_for_status()
+        try:
+            await page.goto(
+                url=self.search_link,
+                wait_until="domcontentloaded",
+                timeout=30_000,
+            )
 
-        soup = BeautifulSoup(r.content, features='html.parser')
+            await page.wait_for_selector(
+                selector='div[class*="twelve large-20 columns div_item_listing"]',
+                timeout=30_000,
+            )
+
+            html = await page.content()
+
+        finally:
+            await page.close()
+
+        soup = BeautifulSoup(markup=html, features='html.parser')
         site_auctions = soup.select('div[class*="twelve large-20 columns div_item_listing"]')
         return site_auctions
 
-    def get_auctions(self) -> List[Auction]:
+    async def get_auctions(self) -> List[Auction]:
         auctions = []
 
-        for auction in self._get_auctions():
+        for auction in await self._get_auctions():
 
             link = auction.find('a')['href']
             auction_id = link.split('/')[-2]
@@ -94,8 +100,3 @@ class CdAndLp(AuctionExtractor):
             )
 
         return auctions
-
-if __name__ == '__main__':
-    c = CdAndLp(search_term='bowie')
-    auctions = c.get_auctions()
-    print(auctions)

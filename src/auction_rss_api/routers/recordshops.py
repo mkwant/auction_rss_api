@@ -160,9 +160,9 @@ def cashensgap_rss() -> RSSResponse:
 
 
 @router.get(path="/cdandlp")
-def cdandlp_rss(search_term: str) -> RSSResponse:
-    site = CdAndLp(search_term=search_term)
-    return site.search()
+async def cdandlp_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = CdAndLp(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/dais")
