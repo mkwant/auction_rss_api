@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from contextlib import asynccontextmanager
 
 import httpx2
@@ -18,6 +19,17 @@ PROFILE_DIR = settings.CAMOUFOX_PROFILE_DIR
 _MODES = {"virtual": "virtual", "headless": True}
 CAMOUFOX_MODE = _MODES.get(os.getenv("CAMOUFOX_MODE", "headless"), "headless")
 BLOCKED_TYPES = {"image", "font", "media"}
+
+
+def host_os() -> str:
+    """Fingerprint OS that matches the machine we're actually running on."""
+    if override := os.getenv("CAMOUFOX_OS"):
+        return override
+    if sys.platform == "darwin":
+        return "macos"
+    if sys.platform.startswith("win"):
+        return "windows"
+    return "linux"
 
 
 async def block_heavy(route):
@@ -44,6 +56,7 @@ async def lifespan(app: FastAPI):
     try:
         async with AsyncCamoufox(
                 headless=CAMOUFOX_MODE,
+                os=host_os(),
                 persistent_context=True,
                 user_data_dir=str(PROFILE_DIR),  # keeps cf_clearance between restarts
                 humanize=True,
