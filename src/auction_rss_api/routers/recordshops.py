@@ -137,9 +137,9 @@ def bandcamp_rss(artist: str) -> RSSResponse:
 
 
 @router.get(path="/bandcamp_faves")
-def bandcamp_faves_rss(username: str) -> RSSResponse:
-    site = BandcampFaves(search_term=username)
-    return site.search()
+async def bandcamp_faves_rss(username: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = BandcampFaves(search_term=username, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/bloodrecords")
