@@ -56,6 +56,10 @@ class LiveAuctioneers(AuctionExtractor):
                 f"{item['shortDescription']}\n\n"
                 f"{item['catalogTitle']}"
             )
+            try:
+                seller = item["sellerName"]
+            except KeyError:
+                seller = None
 
             auctions.append(
                 Auction(
@@ -64,7 +68,7 @@ class LiveAuctioneers(AuctionExtractor):
                     image_link=image_link,
                     link=link,
                     title=item["title"],
-                    seller=item["sellerName"],
+                    seller=seller,
                 )
             )
 
