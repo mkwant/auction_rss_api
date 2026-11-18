@@ -1,7 +1,7 @@
-from auction_rss_api.models.auctionextractor_shopify import ShopifySearchBrowserExtractor
+from auction_rss_api.models.auctionextractor_shopify import ShopifySearchBrowserExtractor, ShopifySearchExtractor
 
 
-class FabFourMemorabilia(ShopifySearchBrowserExtractor):
+class FabFourMemorabilia(ShopifySearchExtractor):
     @property
     def domain(self) -> str:
         return "fabfourmemorabilia.co.uk"

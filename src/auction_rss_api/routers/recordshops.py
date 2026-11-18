@@ -256,11 +256,14 @@ def evilgreed_rss(collection: str | None = None) -> RSSResponse:
     return site.search()
 
 
+# @router.get(path="/fabfourmemorabilia")
+# async def fabfourmemorabilia_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+#     site = FabFourMemorabilia(search_term=search_term, browser=browser)
+#     return await site.search()
 @router.get(path="/fabfourmemorabilia")
-async def fabfourmemorabilia_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
-    site = FabFourMemorabilia(search_term=search_term, browser=browser)
-    return await site.search()
-
+def fabfourmemorabilia_rss(search_term: str) -> RSSResponse:
+    site = FabFourMemorabilia(search_term=search_term)
+    return site.search()
 
 @router.get(path="/firstclassmemorabilia")
 def firstclassmemorabilia_rss(search_term: str) -> RSSResponse:
