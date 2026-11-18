@@ -437,9 +437,9 @@ def recordsale_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path="/redeye")
-def redeye_rss(search_term: str) -> RSSResponse:
-    site = RedEye(search_term=search_term)
-    return site.search()
+async def redeye_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = RedEye(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/rockabuy")
