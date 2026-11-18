@@ -1,8 +1,8 @@
 import json
 from typing import List
 
+import curl_cffi
 import dateparser
-import requests
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
@@ -21,8 +21,8 @@ class Tilburg013(AuctionExtractor):
     def get_auctions(self) -> List[Auction]:
         auctions = []
 
-        r = requests.get(self.search_link)
-        soup = BeautifulSoup(r.content, features='html.parser')
+        r = curl_cffi.get(url=self.search_link, impersonate='firefox')
+        soup = BeautifulSoup(markup=r.content, features='html.parser')
         items = soup.select('a.inline-flex')
         for item in items:
             _title = item.select_one('h2.text-lg').text.strip()
