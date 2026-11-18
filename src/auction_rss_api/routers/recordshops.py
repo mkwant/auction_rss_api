@@ -561,9 +561,9 @@ def waaghals_rss(collection: str) -> RSSResponse:
 
 
 @router.get(path="/waxer")
-def waxer_rss(search_term: str) -> RSSResponse:
-    site = Waxer(search_term=search_term)
-    return site.search()
+async def waxer_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = Waxer(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/waxpoetics")
