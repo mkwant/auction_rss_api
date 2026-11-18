@@ -8,6 +8,8 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 class VinylAlert(AuctionExtractor):
+    warn_on_no_results: bool = False
+
     @property
     def search_link(self) -> str:
         return "https://www.vinylalert.com/releases/new"
