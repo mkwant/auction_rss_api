@@ -317,9 +317,9 @@ def japanrecords_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path="/japanrecordvinyl")
-def japanrecordvinyl_rss(search_term: str) -> RSSResponse:
-    site = JapanRecordVinyl(search_term=search_term)
-    return site.search()
+async def japanrecordvinyl_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = JapanRecordVinyl(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/juno")
