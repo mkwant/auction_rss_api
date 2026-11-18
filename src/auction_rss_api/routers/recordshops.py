@@ -184,9 +184,9 @@ def davidtibet_rss(search_term: str | None = None) -> RSSResponse:
 
 
 @router.get(path="/dearvinyl")
-def dearvinyl_rss(search_term: str) -> RSSResponse:
-    site = DearVinyl(search_term=search_term)
-    return site.search()
+async def dearvinyl_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = DearVinyl(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/deezer")

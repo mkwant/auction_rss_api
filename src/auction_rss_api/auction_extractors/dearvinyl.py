@@ -1,7 +1,7 @@
-from auction_rss_api.models.auctionextractor_shopify import ShopifySearchExtractor
+from auction_rss_api.models.auctionextractor_shopify import ShopifySearchBrowserExtractor
 
 
-class DearVinyl(ShopifySearchExtractor):
+class DearVinyl(ShopifySearchBrowserExtractor):
     @property
     def domain(self) -> str:
         return "dearvinyl.com"
