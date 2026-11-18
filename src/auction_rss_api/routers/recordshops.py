@@ -88,9 +88,9 @@ router = APIRouter(route_class=LoggedRoute, default_response_class=RSSResponse, 
 
 
 @router.get(path="/3345")
-def thehague3345_rss(search_term: str) -> RSSResponse:
-    site = TheHague3345(search_term=search_term)
-    return site.search()
+async def thehague3345_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = TheHague3345(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/anonne")
