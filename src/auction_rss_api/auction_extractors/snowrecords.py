@@ -4,7 +4,7 @@ from auction_rss_api.models.auctionextractor_shopify import ShopifySearchExtract
 class SnowRecords(ShopifySearchExtractor):
     @property
     def domain(self) -> str:
-        return "www.snowrecords.com"
+        return "snowrecords.com"
 
     @property
     def site_desc(self) -> str:
