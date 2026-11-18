@@ -28,6 +28,7 @@ from auction_rss_api.auction_extractors.diskunion_used import DiskUnionUsed
 from auction_rss_api.auction_extractors.doornroosje_merch import DoornroosjeMerch
 from auction_rss_api.auction_extractors.eil import EIL
 from auction_rss_api.auction_extractors.evilgreed import EvilGreed
+from auction_rss_api.auction_extractors.fabfourmemorabilia import FabFourMemorabilia
 from auction_rss_api.auction_extractors.firstclassmemorabilia import FirstClassMemorabilia
 from auction_rss_api.auction_extractors.foetus import Foetus
 from auction_rss_api.auction_extractors.hhv import HHV
@@ -252,6 +253,12 @@ def evilgreed_rss(collection: str | None = None) -> RSSResponse:
     if collection is not None:
         collection = collection.lower().replace(" ", "-")
     site = EvilGreed(search_term=None, collection=collection)
+    return site.search()
+
+
+@router.get(path="/fabfourmemorabilia")
+def fabfourmemorabilia_rss(search_term: str) -> RSSResponse:
+    site = FabFourMemorabilia(search_term=search_term)
     return site.search()
 
 
