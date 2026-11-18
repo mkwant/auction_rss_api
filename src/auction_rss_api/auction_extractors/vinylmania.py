@@ -1,7 +1,6 @@
 from typing import List
 
-import requests
-from bs4 import BeautifulSoup
+import httpx2
 
 from auction_rss_api.models.auction import Auction
 from auction_rss_api.models.auctionextractor import AuctionExtractor
@@ -10,7 +9,7 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 class VinylmaniaExtractor(AuctionExtractor):
     @property
     def search_link(self) -> str:
-        return f'https://vinylmania.net/?orderby=date&paged=1&s={self.search_term}&post_type=product'
+        return f'https://vinylmania.net/?swp_form%5Bform_id%5D=1&s={self.search_term}'
 
     @property
     def site_desc(self) -> str:
@@ -20,41 +19,40 @@ class VinylmaniaExtractor(AuctionExtractor):
 
         auctions = []
 
-        r = requests.get(self.search_link)
+        url = f'https://vinylmania.net/wp-json/wc/store/v1/products?search={self.search_term}&orderby=date&order=desc&per_page=100&page=1'
 
-        soup = BeautifulSoup(r.content, features='html.parser')
+        r = httpx2.get(url=url)
+        r.raise_for_status()
 
-        items = soup.select('li.product')
+        items = r.json()
         for item in items:
-            title = item.select_one('h3.wp-block-post-title').text.strip()
-            link = item.select_one('h3.wp-block-post-title>a')['href']
+            unique_id = item['slug']
+            _title = item['name']
+            _country = item['tags'][0]['name']
+            _category = item['categories'][1]['name']
+            title = f'{_title} | {_country} | {_category}'
 
-            try:
-                image_link = item.select_one('img')['data-opt-src'].split('best/')[1]
-            except KeyError:
-                image_link = item.select_one('img')['srcset'].split(',')[-1].split()[0]
+            link = item['permalink']
+            image_link = item['images'][0]['src']
 
-            auction_id = item.select_one('img')['data-image-id']
+            _price = int(item['prices']['price'])
+            if _price == 0:
+                _price = 'Offer'
+            else:
+                _price = f"€{_price / 100:.2f}"
 
-            try:
-                _desc = item.select_one('div.taxonomy-product_tag').text.strip()
-            except AttributeError:
-                _desc = ''
+            _desc = item['description']
 
-            try:
-                _price = item.select_one('span.amount').text.strip()
-            except AttributeError:
-                _price = 'Make an offer'
-
-            description = '\n'.join([_desc, _price]).strip()
+            description = f"{_price}\n\n{_desc}"
 
             auctions.append(
-                Auction(**{
-                    'title': title,
-                    'auction_id': auction_id,
-                    'description': description,
-                    'link': link,
-                    'image_link': image_link,
-                }))
+                Auction(
+                    auction_id=unique_id,
+                    title=title,
+                    link=link,
+                    image_link=image_link,
+                    description=description,
+                )
+            )
 
         return auctions
