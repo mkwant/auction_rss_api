@@ -1,13 +1,12 @@
 import asyncio
 import re
-import time
 from typing import List, Optional
 
 import httpx2
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor, AuctionExtractorAsync
+from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
 BASE = "https://repsearch.ppluk.com/ars/faces/pages/audioSearch.jspx"
 PAGE_SIZE = 15  # observed range: 0-14, then 15-29, etc.
@@ -362,6 +361,7 @@ async def search_many(queries: list[dict]) -> list[PplRows]:
 
 
 class PPLRepertoireSearch(AuctionExtractorAsync):
+    warn_on_no_results: bool = False
     artist: str = ""
     title: str = ""
     isrc: str = ""
