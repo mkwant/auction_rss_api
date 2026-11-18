@@ -292,9 +292,9 @@ def houseofmythology_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path="/ideanow")
-def ideanow_rss(search_term: str) -> RSSResponse:
-    site = IdeaNow(search_term=search_term)
-    return site.search()
+async def ideanow_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = IdeaNow(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/imusic")

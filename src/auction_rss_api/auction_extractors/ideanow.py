@@ -1,7 +1,7 @@
-from auction_rss_api.models.auctionextractor_shopify import ShopifySearchExtractor
+from auction_rss_api.models.auctionextractor_shopify import ShopifySearchBrowserExtractor
 
 
-class IdeaNow(ShopifySearchExtractor):
+class IdeaNow(ShopifySearchBrowserExtractor):
     @property
     def domain(self) -> str:
         return "ideanow.online"
