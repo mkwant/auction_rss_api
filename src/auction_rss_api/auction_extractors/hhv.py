@@ -1,60 +1,89 @@
 import json
+import re
 from typing import List
+from urllib.parse import quote_plus, urlsplit, urlunsplit
 
-import requests
 from bs4 import BeautifulSoup
 
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractorAsync
 
 
-class HHV(AuctionExtractor):
-    search_term: str
-
+class HHV(AuctionExtractorAsync):
     @property
     def search_link(self) -> str:
-        return f'https://www.hhv.de/shop/en/search/i:N5ST1?term={self.search_term}'
+        return f"https://www.hhv.de/en/records/catalog/filter/search-N5ST1?term={quote_plus(self.search_term)}"
 
     @property
     def site_desc(self) -> str:
-        return 'HHV (2nd hand)'
+        return "HHV (2nd hand)"
 
-    def get_auctions(self) -> List[Auction]:
+    async def _render(self) -> str:
+        page = await self.browser.new_page()
+        try:
+            await page.goto(self.search_link, wait_until="domcontentloaded")
 
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0'}
-        r = requests.get(url=self.search_link, headers=headers)
-        r.raise_for_status()
+            # The JS challenge page reloads itself; wait for the real result list
+            await page.wait_for_selector('[data-highlight-name="Artikelliste"]', timeout=20_000)
 
-        soup = BeautifulSoup(r.text, features='html.parser')
+            # Force all lazy item frames to load without scrolling
+            await page.evaluate("""
+                                () => document.querySelectorAll('turbo-frame[loading="lazy"]')
+                                    .forEach(f => f.setAttribute('loading', 'eager'))
+                                """)
 
-        jsons = soup.find_all(name='script', attrs={'type': 'application/ld+json'})
+            # Wait until no item frame still shows its loader
+            await page.wait_for_function(
+                """
+                                         () => {
+                                             const f = [...document.querySelectorAll(
+                                                 'turbo-frame.item--shared--gallery-entry--base-component')];
+                                             return f.length > 0 &&
+                                                 f.every(x => !x.querySelector('.shared--loader--base-component'));
+                                         }
+                                         """,
+                timeout=30_000,
+            )
+
+            return await page.content()
+        finally:
+            await page.close()
+
+    async def get_auctions(self) -> List[Auction]:
+        html = await self._render()
+        soup = BeautifulSoup(markup=html, features="html.parser")
 
         items = []
+        for frame in soup.select("turbo-frame.item--shared--gallery-entry--base-component"):
+            tracking = frame.find("hhv-tracking", attrs={"data-google-analytics-tracking-data": True})
+            link_tag = frame.find("a", href=True)
+            img = frame.find("img")
+            if not (tracking and link_tag):
+                continue  # frame never finished loading
 
-        for json_str in jsons[1:]:
-            item = json.loads(json_str.text)[0]
+            ga = json.loads(tracking["data-google-analytics-tracking-data"])
 
-            link = item['offers'][0]['url']
-            image_link = item['image']
-            title = item['description'].split('"')[1]
-            item_id = item['sku']
-            _currency = item['offers'][0]['priceCurrency']
-            _price = item['offers'][0]['price']
-            _brand = item['brand']['name']
-            try:
-                _catno = item['mpn']
-            except KeyError:
-                _catno = item['gtin']
-            description = f"{_currency} {_price}\n{_brand} {_catno}"
+            parts = urlsplit(link_tag["href"])
+            link = urlunsplit((parts.scheme, parts.netloc, parts.path, "", ""))  # drop ?pquid=...
+
+            fmt = frame.select_one(".line.price .format")
+            cond = frame.select_one(".line.feature .used_vinyl .description")
+
+            lines = [f"EUR {ga['price']:.2f}"]
+            if ga.get("item_brand"):
+                lines.append(ga["item_brand"])
+            if fmt:
+                lines.append(fmt.get_text(" ", strip=True))
+            if cond:
+                lines.append(re.sub(r"\s+", " ", cond.get_text(" ", strip=True)))
 
             items.append(
                 Auction(
-                    auction_id=item_id,
-                    description=description,
-                    image_link=image_link,
+                    auction_id=ga["item_id"],
+                    description="\n".join(lines),
+                    image_link=img["src"] if img else "",
                     link=link,
-                    title=title
+                    title=ga["item_name"],
                 )
             )
-
         return items

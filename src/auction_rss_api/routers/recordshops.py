@@ -268,9 +268,9 @@ def foetus_rss() -> RSSResponse:
 
 
 @router.get(path="/hhv")
-def hhv_rss(search_term: str) -> RSSResponse:
-    site = HHV(search_term=search_term)
-    return site.search()
+async def hhv_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = HHV(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/hmvjapan")
