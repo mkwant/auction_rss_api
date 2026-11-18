@@ -142,9 +142,9 @@ def bloodrecords_rss(search_term: str | None = None, collection: str | None = No
 
 
 @router.get(path="/boilerroom")
-def boilerroom_rss(search_term: str) -> RSSResponse:
-    site = BoilerRoom(search_term=search_term)
-    return site.search()
+async def boilerroom_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = BoilerRoom(search_term=search_term, browser=browser)
+    return await site.search()
 
 
 @router.get(path="/bowiewebstore")
