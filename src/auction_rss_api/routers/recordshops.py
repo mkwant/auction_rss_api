@@ -148,7 +148,7 @@ def boilerroom_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path="/bowiewebstore")
-def boilerroom_rss() -> RSSResponse:
+def bowiewebstore_rss() -> RSSResponse:
     site = BowieWebStore()
     return site.search()
 
