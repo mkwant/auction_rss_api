@@ -38,6 +38,7 @@ class AuctionExtractor(BaseModel):
     search_term: str | None = None
     transformers: List[Transformer] = Field(default_factory=list)
     default_transformers: List[Transformer] = Field(default_factory=lambda: [html_linebreaks_in_desc])
+    warn_on_no_results: bool = True
 
     @property
     @abstractmethod
@@ -116,7 +117,7 @@ class AuctionExtractor(BaseModel):
             )
 
         logger.info(f"[{self.site_desc} ('{self.search_term}')] Retrieved {len(auctions)} entries.")
-        if len(auctions) == 0:
+        if len(auctions) == 0 and self.warn_on_no_results:
             auctions = self.auctions_on_error(
                 error_text=f"WARNING ({date.today():%Y-%m-%d}): No items were found.",
                 error='No items were found when trying to retrieve the feed items.'
@@ -180,7 +181,7 @@ class AuctionExtractorAsync(AuctionExtractor, ABC):
             f"Retrieved {len(auctions)} entries."
         )
 
-        if len(auctions) == 0:
+        if len(auctions) == 0 and self.warn_on_no_results:
             auctions = self.auctions_on_error(
                 error_text=f"WARNING ({date.today():%Y-%m-%d}): No items were found.",
                 error="No items were found when trying to retrieve the feed items.",

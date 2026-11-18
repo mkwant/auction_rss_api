@@ -8,6 +8,8 @@ from auction_rss_api.models.auctionextractor import AuctionExtractor
 
 
 class Christies(AuctionExtractor):
+    warn_on_no_results: bool = False
+
     @property
     def search_link(self) -> str:
         return f"https://www.christies.com/en/search?entry={self.search_term}&page=1&sortby=date&tab=available_lots"
