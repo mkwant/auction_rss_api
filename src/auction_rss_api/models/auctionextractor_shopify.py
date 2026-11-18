@@ -2,6 +2,7 @@ import json
 import re
 from abc import ABC, abstractmethod
 from typing import List
+from urllib.parse import quote_plus
 
 import curl_cffi
 import dateparser
@@ -9,7 +10,7 @@ from bs4 import BeautifulSoup
 from curl_cffi import Response, Session
 
 from auction_rss_api.models.auction import Auction
-from auction_rss_api.models.auctionextractor import AuctionExtractor
+from auction_rss_api.models.auctionextractor import AuctionExtractor, AuctionExtractorAsync
 
 
 class ShopifyExtractor(AuctionExtractor, ABC):
@@ -31,7 +32,7 @@ class ShopifyExtractor(AuctionExtractor, ABC):
 
     @staticmethod
     def _create_scraper() -> Session[Response]:
-        return curl_cffi.Session(impersonate="firefox") # noqa
+        return curl_cffi.Session(impersonate="firefox")  # noqa
 
     def get_auctions(self) -> List[Auction]:
         auctions = []
@@ -106,8 +107,14 @@ class ShopifyExtractor(AuctionExtractor, ABC):
         return auctions
 
 
-class ShopifySearchExtractor(AuctionExtractor, ABC):
-    """Base class for Shopify sites. Builds a feed off a search result."""
+class ShopifySearchMixin(ABC):
+    """Shared, transport-agnostic logic for Shopify search extractors.
+
+    Deliberately does not inherit from AuctionExtractor / AuctionExtractorAsync,
+    so it can be combined with either.
+    """
+
+    search_term: str  # provided by the AuctionExtractor(Async) base
 
     @property
     @abstractmethod
@@ -115,29 +122,10 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
 
     @property
     def search_link(self) -> str:
-        return f"https://www.{self.domain}/search?q={self.search_term}"
+        return f"https://www.{self.domain}/search?q={quote_plus(self.search_term)}&sort_by=created"
 
-    @staticmethod
-    def _create_scraper() -> Session[Response]:
-        return curl_cffi.Session(impersonate="firefox") # noqa
-
-    def get_auctions(self) -> List[Auction]:
+    def _parse_auctions(self, html: str) -> List["Auction"]:
         auctions = []
-
-        url = f"https://{self.domain}/search"
-        params = {
-            "q": self.search_term,
-            "sort_by": "created",
-        }
-
-        with self._create_scraper() as scraper:
-            response = scraper.get(
-                url=url,
-                params=params,
-                timeout=10.0,
-            )
-            response.raise_for_status()
-            html = response.text
 
         soup = BeautifulSoup(
             markup=html,
@@ -215,3 +203,53 @@ class ShopifySearchExtractor(AuctionExtractor, ABC):
             )
 
         return auctions
+
+
+class ShopifySearchExtractor(ShopifySearchMixin, AuctionExtractor, ABC):
+    """Base class for Shopify sites. Builds a feed off a search result."""
+
+    @staticmethod
+    def _create_scraper() -> Session[Response]:
+        return curl_cffi.Session(impersonate="firefox")  # noqa
+
+    def get_auctions(self) -> List[Auction]:
+        with self._create_scraper() as scraper:
+            response = scraper.get(
+                url=self.search_link,
+                timeout=10.0,
+            )
+            response.raise_for_status()
+            html = response.text
+
+        return self._parse_auctions(html)
+
+
+class ShopifySearchBrowserExtractor(ShopifySearchMixin, AuctionExtractorAsync, ABC):
+    """Same as ShopifySearchExtractor, but fetches the page with the Camoufox
+    browser provided by the lifespan (for sites that block plain HTTP clients).
+    """
+
+    # Navigation timeout in milliseconds.
+    browser_timeout_ms: int = 30_000
+
+    async def get_auctions(self) -> List[Auction]:
+        # Assumes AuctionExtractorAsync exposes the lifespan object as self.browser
+        page = await self.browser.new_page()
+        try:
+            response = await page.goto(
+                url=self.search_link,
+                wait_until="domcontentloaded",
+                timeout=self.browser_timeout_ms,
+            )
+
+            if response is None:
+                raise ValueError(f"No response received from {self.search_link}")
+
+            if response.status >= 400:
+                raise ValueError(f"HTTP {response.status} fetching {self.search_link}")
+
+            html = await page.content()
+        finally:
+            await page.close()
+
+        return self._parse_auctions(html)
