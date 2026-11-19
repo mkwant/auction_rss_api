@@ -210,7 +210,7 @@ class ShopifySearchExtractor(ShopifySearchMixin, AuctionExtractor, ABC):
 
     @staticmethod
     def _create_scraper() -> Session[Response]:
-        return curl_cffi.Session(impersonate="firefox")  # noqa
+        return curl_cffi.Session(impersonate="chrome")  # noqa
 
     def get_auctions(self) -> List[Auction]:
         with self._create_scraper() as scraper:
