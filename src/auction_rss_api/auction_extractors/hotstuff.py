@@ -28,7 +28,7 @@ class HotStuff(AuctionExtractor):
             "ordBy": "add",
         }
 
-        r = httpx2.get(url=url, params=params)
+        r = httpx2.get(url=url, params=params, timeout=10.0)
         r.raise_for_status()
         soup = BeautifulSoup(markup=r.text, features="html.parser")
         items = soup.select("div.xProductList > div")
