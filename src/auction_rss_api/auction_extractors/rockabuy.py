@@ -1,7 +1,7 @@
-from auction_rss_api.models.auctionextractor_shopify import ShopifySearchBrowserExtractor
+from auction_rss_api.models.auctionextractor_shopify import ShopifySearchExtractor
 
 
-class RockaBuy(ShopifySearchBrowserExtractor):
+class RockaBuy(ShopifySearchExtractor):
     @property
     def domain(self) -> str:
         return "rockabuyrecords.co.uk"

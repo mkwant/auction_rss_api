@@ -90,9 +90,9 @@ router = APIRouter(route_class=LoggedRoute, default_response_class=RSSResponse, 
 
 
 @router.get(path="/3345")
-async def thehague3345_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
-    site = TheHague3345(search_term=search_term, browser=browser)
-    return await site.search()
+def thehague3345_rss(search_term: str) -> RSSResponse:
+    site = TheHague3345(search_term=search_term)
+    return site.search()
 
 
 @router.get(path="/anonne")
@@ -192,9 +192,9 @@ def davidtibet_rss(search_term: str | None = None) -> RSSResponse:
 
 
 @router.get(path="/dearvinyl")
-async def dearvinyl_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
-    site = DearVinyl(search_term=search_term, browser=browser)
-    return await site.search()
+def dearvinyl_rss(search_term: str) -> RSSResponse:
+    site = DearVinyl(search_term=search_term)
+    return site.search()
 
 
 @router.get(path="/deezer")
@@ -264,9 +264,9 @@ def evilgreed_rss(collection: str | None = None) -> RSSResponse:
 
 
 @router.get(path="/fabfourmemorabilia")
-async def fabfourmemorabilia_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
-    site = FabFourMemorabilia(search_term=search_term, browser=browser)
-    return await site.search()
+def fabfourmemorabilia_rss(search_term: str) -> RSSResponse:
+    site = FabFourMemorabilia(search_term=search_term)
+    return site.search()
 
 
 @router.get(path="/firstclassmemorabilia")
@@ -306,9 +306,9 @@ def houseofmythology_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path="/ideanow")
-async def ideanow_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
-    site = IdeaNow(search_term=search_term, browser=browser)
-    return await site.search()
+def ideanow_rss(search_term: str) -> RSSResponse:
+    site = IdeaNow(search_term=search_term)
+    return site.search()
 
 
 @router.get(path="/imusic")
@@ -331,9 +331,9 @@ def japanrecords_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path="/japanrecordvinyl")
-async def japanrecordvinyl_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
-    site = JapanRecordVinyl(search_term=search_term, browser=browser)
-    return await site.search()
+def japanrecordvinyl_rss(search_term: str) -> RSSResponse:
+    site = JapanRecordVinyl(search_term=search_term)
+    return site.search()
 
 
 @router.get(path="/juno")
@@ -451,15 +451,15 @@ def recordsale_rss(search_term: str) -> RSSResponse:
 
 
 @router.get(path="/redeye")
-async def redeye_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
-    site = RedEye(search_term=search_term, browser=browser)
-    return await site.search()
+def redeye_rss(search_term: str) -> RSSResponse:
+    site = RedEye(search_term=search_term)
+    return site.search()
 
 
 @router.get(path="/rockabuy")
-async def rockabuy_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
-    site = RockaBuy(search_term=search_term, browser=browser)
-    return await site.search()
+def rockabuy_rss(search_term: str) -> RSSResponse:
+    site = RockaBuy(search_term=search_term)
+    return site.search()
 
 
 @router.get(path="/rockaway")
@@ -575,9 +575,9 @@ def waaghals_rss(collection: str) -> RSSResponse:
 
 
 @router.get(path="/waxer")
-async def waxer_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
-    site = Waxer(search_term=search_term, browser=browser)
-    return await site.search()
+def waxer_rss(search_term: str) -> RSSResponse:
+    site = Waxer(search_term=search_term)
+    return site.search()
 
 
 @router.get(path="/waxpoetics")

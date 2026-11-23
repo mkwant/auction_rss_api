@@ -1,7 +1,7 @@
-from auction_rss_api.models.auctionextractor_shopify import ShopifySearchBrowserExtractor
+from auction_rss_api.models.auctionextractor_shopify import ShopifySearchExtractor
 
 
-class RedEye(ShopifySearchBrowserExtractor):
+class RedEye(ShopifySearchExtractor):
     @property
     def domain(self) -> str:
         return "redeye.com.au"

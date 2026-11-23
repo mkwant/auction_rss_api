@@ -1,7 +1,7 @@
-from auction_rss_api.models.auctionextractor_shopify import ShopifySearchBrowserExtractor
+from auction_rss_api.models.auctionextractor_shopify import ShopifySearchExtractor
 
 
-class JapanRecordVinyl(ShopifySearchBrowserExtractor):
+class JapanRecordVinyl(ShopifySearchExtractor):
 
     @property
     def domain(self) -> str:
