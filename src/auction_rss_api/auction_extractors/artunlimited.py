@@ -24,7 +24,7 @@ class ArtunLimited(AuctionExtractor):
             "q": self.search_term,
         }
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0'}
-        r = httpx2.get(url=url, params=params, headers=headers)
+        r = httpx2.get(url=url, params=params, headers=headers, timeout=10.0)
         r.raise_for_status()
 
         soup = BeautifulSoup(markup=r.text, features="html.parser")

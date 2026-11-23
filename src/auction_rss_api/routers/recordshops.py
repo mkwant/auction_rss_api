@@ -10,6 +10,7 @@ from auction_rss_api.auction_extractors.audiophileusa import AudiophileUSA
 from auction_rss_api.auction_extractors.badworld import BadWorld
 from auction_rss_api.auction_extractors.bandcamp import Bandcamp
 from auction_rss_api.auction_extractors.bandcamp_faves import BandcampFaves
+from auction_rss_api.auction_extractors.bendox import BenDoxBookshop
 from auction_rss_api.auction_extractors.bloodrecords import BloodRecords
 from auction_rss_api.auction_extractors.boilerroom import BoilerRoom
 from auction_rss_api.auction_extractors.bowiewebstore import BowieWebStore
@@ -134,6 +135,12 @@ def bandcamp_rss(artist: str) -> RSSResponse:
 async def bandcamp_faves_rss(username: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
     site = BandcampFaves(search_term=username, browser=browser)
     return await site.search()
+
+
+@router.get(path="/bendoxbookshop")
+def bendoxbookshop_rss(search_term: str) -> RSSResponse:
+    site = BenDoxBookshop(search_term=search_term)
+    return site.search()
 
 
 @router.get(path="/bloodrecords")
