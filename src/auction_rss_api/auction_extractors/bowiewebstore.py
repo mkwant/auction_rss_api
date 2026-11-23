@@ -19,6 +19,8 @@ class BowieWebStore(AuctionExtractor):
 
     def get_auctions(self) -> List[Auction]:
         r = httpx2.get(self.search_link)
+        r.raise_for_status()
+
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         items = soup.select('div.product-card')
 
