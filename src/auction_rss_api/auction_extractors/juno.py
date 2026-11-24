@@ -28,7 +28,7 @@ class Juno(AuctionExtractor):
             'solrorder': 'date_down'
         }
 
-        s = curl_cffi.Session(impersonate='firefox', verify=False)  # noqa
+        s = curl_cffi.Session(impersonate='firefox', verify=False, timeout=10.0)  # noqa
 
         # Retrieving cookie
         s.get(url='https://www.juno.co.uk')
