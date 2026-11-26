@@ -212,15 +212,10 @@ class Tradera(AuctionExtractor):
             price = item['price']
 
             if price is not None:
-                symbol = (
-                        currency['symbolPrefix']
-                        or currency['symbolSuffix']
-                )
-
                 if item['itemType'] == 'Auction':
-                    description = f'{symbol}{price:.2f} (ending {end_date:%d-%m-%Y %H:%M})'
+                    description = f'{currency['code']} {price:.2f} (ending {end_date:%d-%m-%Y %H:%M})'
                 else:
-                    description = f'{symbol}{price:.2f}'
+                    description = f'{currency['code']} {price:.2f}'
             else:
                 description = ''
 
