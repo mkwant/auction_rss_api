@@ -55,48 +55,51 @@ class HipPostcard(AuctionExtractorAsync):
         return "HipPostcard"
 
     async def get_auctions(self) -> List[Auction]:
-        page: Page = await self.browser.new_page()
+        return []
 
-        try:
-            await page.goto(
-                url=self.search_link,
-                wait_until="domcontentloaded",
-                timeout=30_000,
-            )
+    # async def get_auctions(self) -> List[Auction]:
+    #     page: Page = await self.browser.new_page()
+    #
+    #     try:
+    #         await page.goto(
+    #             url=self.search_link,
+    #             wait_until="domcontentloaded",
+    #             timeout=30_000,
+    #         )
+    #
+    #         # Also covers the Cloudflare "Just a moment..." interstitial: the tiles only
+    #         # exist once the real page has loaded.
+    #         await page.wait_for_selector(
+    #             selector="a.r-gallery-tile",
+    #             timeout=45_000,
+    #         )
+    #
+    #         # Opt out of image blocking
+    #         await page.route("**/*", lambda route: route.continue_())
+    #
+    #         html = await page.content()
+    #
+    #         images: Dict[str, List[str]] = {}
+    #         try:
+    #             images = await page.evaluate(_JS_COLLECT_IMAGES) or {}
+    #         except Exception:
+    #             pass
+    #
+    #         if not images:
+    #             # Fallback: scroll so the lazy tiles load, then read their styles.
+    #             for _ in range(30):
+    #                 await page.mouse.wheel(0, 800)
+    #                 await page.wait_for_timeout(300)
+    #             await page.wait_for_timeout(1_000)
+    #             try:
+    #                 images = await page.evaluate(_JS_TILE_IMAGES) or {}
+    #             except Exception:
+    #                 pass
 
-            # Also covers the Cloudflare "Just a moment..." interstitial: the tiles only
-            # exist once the real page has loaded.
-            await page.wait_for_selector(
-                selector="a.r-gallery-tile",
-                timeout=45_000,
-            )
-
-            # Opt out of image blocking
-            await page.route("**/*", lambda route: route.continue_())
-
-            html = await page.content()
-
-            images: Dict[str, List[str]] = {}
-            try:
-                images = await page.evaluate(_JS_COLLECT_IMAGES) or {}
-            except Exception:
-                pass
-
-            if not images:
-                # Fallback: scroll so the lazy tiles load, then read their styles.
-                for _ in range(30):
-                    await page.mouse.wheel(0, 800)
-                    await page.wait_for_timeout(300)
-                await page.wait_for_timeout(1_000)
-                try:
-                    images = await page.evaluate(_JS_TILE_IMAGES) or {}
-                except Exception:
-                    pass
-
-        finally:
-            await page.close()
-
-        return self._parse(html, images)
+        # finally:
+        #     await page.close()
+        #
+        # return self._parse(html, images)
 
     @staticmethod
     def _text(el: Tag | None) -> str:
