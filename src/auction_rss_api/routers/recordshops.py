@@ -33,6 +33,7 @@ from auction_rss_api.auction_extractors.fabfourmemorabilia import FabFourMemorab
 from auction_rss_api.auction_extractors.firstclassmemorabilia import FirstClassMemorabilia
 from auction_rss_api.auction_extractors.foetus import Foetus
 from auction_rss_api.auction_extractors.hhv import HHV
+from auction_rss_api.auction_extractors.hippostcard import HipPostcard
 from auction_rss_api.auction_extractors.hmv_jp import HMVJapan
 from auction_rss_api.auction_extractors.hotstuff import HotStuff
 from auction_rss_api.auction_extractors.houseofmythology import HouseOfMythology
@@ -284,6 +285,12 @@ def foetus_rss() -> RSSResponse:
 @router.get(path="/hhv")
 async def hhv_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
     site = HHV(search_term=search_term, browser=browser)
+    return await site.search()
+
+
+@router.get(path="/hippostcard")
+async def hippostcard_rss(search_term: str, browser: BrowserContext = Depends(get_browser)) -> RSSResponse:
+    site = HipPostcard(search_term=search_term, browser=browser)
     return await site.search()
 
 
